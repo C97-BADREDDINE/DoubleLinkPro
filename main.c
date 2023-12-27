@@ -195,20 +195,35 @@ int main(void)
 
         ClearBackground(BLACK);
 
+         for (int i = 0; i < GetScreenWidth(); i += 20)
+        {
+            DrawLine(i, 0, i, GetScreenHeight(), LIGHTGRAY);
+        }
+
+        for (int i = 0; i < GetScreenHeight(); i += 20)
+        {
+            DrawLine(0, i, GetScreenWidth(), i, LIGHTGRAY);
+        }
+
+        // Get mouse coordinates
+        int mouseX = GetMouseX();
+        int mouseY = GetMouseY();
+
+        // Draw mouse coordinates
+        DrawText(TextFormat("Mouse X: %03d", mouseX), GetScreenWidth()-300,30 , 30, WHITE);
+        DrawText(TextFormat("Mouse Y: %03d", mouseY),GetScreenWidth()-250,50, 35, WHITE);
+
         // Draw text input rectangle
         DrawButton(buttonCreate, "Create", GREEN);
         DrawButton(buttoninsert, "Insert", YELLOW);
         DrawButton(buttonRecherche, "Rechercher", ORANGE);
         DrawButton(buttonDelete, "Delete", RED);
 
-        if (isClicked(buttoninsert))
-        {
-            DrawRectangle(900, 300, buttonWidth, buttonHeight, VIOLET);
-        }
+        DrawRectangle(GetScreenWidth()/2,GetScreenHeight(),1200,800,WHITE);
 
         EndDrawing();
     }
-// close fenètre
+    // close fenètre
     CloseWindow();
 
     return 0;
