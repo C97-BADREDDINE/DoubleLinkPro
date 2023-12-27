@@ -210,8 +210,8 @@ int main(void)
         int mouseY = GetMouseY();
 
         // Draw mouse coordinates
-        DrawText(TextFormat("Mouse X: %03d", mouseX), GetScreenWidth()-300,30 , 30, WHITE);
-        DrawText(TextFormat("Mouse Y: %03d", mouseY),GetScreenWidth()-250,50, 35, WHITE);
+        DrawText(TextFormat("Mouse X: %03d", mouseX), GetScreenWidth()-300,30 , 30, YELLOW);
+        DrawText(TextFormat("Mouse Y: %03d", mouseY),GetScreenWidth()-250,50, 35, YELLOW);
 
         // Draw text input rectangle
         DrawButton(buttonCreate, "Create", GREEN);
@@ -219,7 +219,7 @@ int main(void)
         DrawButton(buttonRecherche, "Rechercher", ORANGE);
         DrawButton(buttonDelete, "Delete", RED);
 
-        DrawRectangle(GetScreenWidth()/2,GetScreenHeight(),1200,800,WHITE);
+        DrawRectangle(1500-2200/2,1000-1500/2,2200,1500,RAYWHITE);
 
         EndDrawing();
     }
