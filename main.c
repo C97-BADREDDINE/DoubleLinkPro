@@ -215,7 +215,7 @@ int main(void)
 
         // Draw text input rectangle
         DrawButton(buttonCreate, "Create", GREEN);
-        DrawButton(buttoninsert, "Insert", YELLOW);
+        DrawButton(buttoninsert, "Insert", GOLD);
         DrawButton(buttonRecherche, "Rechercher", ORANGE);
         DrawButton(buttonDelete, "Delete", RED);
 
