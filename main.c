@@ -208,7 +208,7 @@ int main(void)
 
         EndDrawing();
     }
-
+// close fenètre
     CloseWindow();
 
     return 0;
