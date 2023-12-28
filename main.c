@@ -128,7 +128,7 @@ void TriListDoublement(Node **head)
     }
     Node *current = *head;
     Node *suiv;
-    while (current != NULL)
+    while (current->next != NULL)
     {
         suiv = current->next;
         while (suiv != NULL)
