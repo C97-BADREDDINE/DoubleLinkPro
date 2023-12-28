@@ -159,7 +159,7 @@ void DrawButton(Rectangle rect, const char *text, Color co)
     DrawText(text, rect.x + (rect.width - MeasureText(text, 20)) / 2, rect.y + (rect.height - 20) / 2, 21, WHITE); // Draw button text
 }
 
-void DrawFlech(int firstX, int firstY, int FinX, int finY)
+void DrawFlechRight(int firstX, int firstY, int FinX, int finY)
 {
     // Calculate arrow shaft vector
     Vector2 start = {firstX, firstY};
