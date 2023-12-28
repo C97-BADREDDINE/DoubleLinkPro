@@ -149,6 +149,10 @@ void TriListDoublement(Node **head)
 #define MAX_INPUT_CHARS 9
 #define buttonWidth 180
 #define buttonHeight 70
+#define DebutposX 600
+#define DebutposY 800
+#define ListWidth 170
+#define ListHeight 200
 
 Vector2 buttonPosition = {100, 100};
 
@@ -205,6 +209,36 @@ void DrawFlechLeft(int firstX, int firstY, int FinX, int finY)
 
     // Draw arrow head (left side)
     DrawLineEx(start, arrowHeadLeft, 4.0f, color);
+}
+void drawList()
+{
+    Node *current = head;
+    int xPos = DebutposX;
+    int rectWidth = ListWidth;
+    int rectHeight = ListHeight;
+    int arrowSpacing = 50; // Ajustez cette valeur pour séparer davantage les flèches
+
+    while (current != NULL)
+    {
+        // Dessiner le rectangle avec la valeur
+        Rectangle rec ={xPos, DebutposY, rectWidth, rectHeight};
+        DrawButton(rec,TextFormat("%d", current->data),LIME);
+
+        // Dessiner la flèche suivante (si elle existe)
+        if (current->next != NULL)
+        {
+            DrawFlechRight(xPos + rectWidth,60 - arrowSpacing,xPos + rectWidth + 80, 60 - arrowSpacing);
+        }
+
+        // Dessiner la flèche précédente (si elle existe)
+        if (current->prev != NULL)
+        {
+            DrawFlechLeft(xPos - 80, 70 + arrowSpacing, xPos ,70 + arrowSpacing);
+        }
+
+        current = current->next;
+        xPos += 250;
+    }
 }
 
 bool isClicked(Rectangle rec)
