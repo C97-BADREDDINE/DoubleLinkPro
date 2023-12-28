@@ -2,12 +2,11 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "stdbool.h"
-#include <ctype.h>
 #include <string.h>
+
 
 typedef struct Node
 {
-    Rectangle rect;
     int data;
     struct Node *prev;
     struct Node *next;
@@ -80,73 +79,30 @@ void display(Node *head)
     }
 }
 
-void SwapNodes(Node **head, Node *node1, Node *node2)
-{
-    // Vérifier si les noeuds sont les memes
-    if (node1 == node2)
-        return;
-
-    // Vérifier si l'un des noeuds est NULL
-    if (node1 == NULL || node2 == NULL)
-        return;
-
-    // Trouver les noeuds voisins
-    Node *prevNode1 = node1->prev;
-    Node *nextNode1 = node1->next;
-    Node *prevNode2 = node2->prev;
-    Node *nextNode2 = node2->next;
-
-    // Mettre à jour les liens pour le noeud 1
-    if (prevNode1 != NULL)
-    {
-        prevNode1->next = node2;
-    }
-    else
-    {
-        *head = node2; // Si le nœud 1 est la tête de la liste
-    }
-
-    node2->prev = prevNode1;
-    node2->next = nextNode1;
-
-    // Mettre à jour les liens pour le nœud 2
-    if (prevNode2 != NULL)
-    {
-        prevNode2->next = node1;
-    }
-    else
-    {
-        *head = node1; // Si le nœud 2 est la tête de la liste
-    }
-
-    node1->prev = prevNode2;
-    node1->next = nextNode2;
+void swap(struct Node* a, struct Node* b) {
+    int temp = a->data;
+    a->data = b->data;
+    b->data = temp;
 }
 
-void TriListDoublement(Node **head)
-{
-    if (*head == NULL || (*head)->next == NULL)
-    {
-        return;
-    }
-    Node *current = *head;
-    Node *suiv;
-    while (current->next != NULL)
-    {
-        suiv = current->next;
-        while (suiv != NULL)
-        {
-            if (current->data > suiv->data)
-            {
-                SwapNodes(head, current, suiv);
+void sortListSelection(Node** head) {
+     Node *i, *j, *min;
+
+    for (i = *head; i != NULL; i = i->next) {
+        min = i;
+
+        for (j = i->next; j != NULL; j = j->next) {
+            if (j->data < min->data) {
+                min = j;
             }
-            else
-            {
-                suiv = suiv->next;
-            }
+        }
+
+        if (min != i) {
+            swap(i, min);
         }
     }
 }
+
 
 //----------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------
@@ -351,7 +307,6 @@ void inputDelete()
 //----------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------
 
-
 int main(void)
 {
     Rectangle scroller = {0, 1800, 2500, 30};
@@ -392,7 +347,6 @@ int main(void)
         if (isClicked(buttoninsert))
         {
             InsertNodes(GetRandomValue(0, 50));
-            insertNode(&head, 20);
         }
         if (isClicked(buttonDelete))
         {
@@ -401,7 +355,7 @@ int main(void)
 
         if (isClicked(buttonTRI))
         {
-            TriListDoublement(&head);
+            sortListSelection(&head);
         }
 
         // Draw
@@ -442,7 +396,6 @@ int main(void)
         DrawButton(buttonDelete, "Delete", RED);
         DrawButton(buttonTRI, "Tri", GREEN);
         drawList();
-
 
         /* Draw button
         DrawRectangleRec(inpDelt, isClicked(inpDelt) ? DARKGRAY : LIGHTGRAY);
