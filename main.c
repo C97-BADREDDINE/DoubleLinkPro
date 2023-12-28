@@ -2,6 +2,8 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "stdbool.h"
+#include <ctype.h>
+#include <string.h>
 
 typedef struct Node
 {
@@ -146,6 +148,9 @@ void TriListDoublement(Node **head)
     }
 }
 
+//----------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------
+
 #define MAX_INPUT_CHARS 9
 #define buttonWidth 180
 #define buttonHeight 70
@@ -158,10 +163,22 @@ Node *head = NULL;
 
 Vector2 buttonPosition = {100, 100};
 
+bool isClicked(Rectangle rec)
+{
+    if (CheckCollisionPointRec(GetMousePosition(), rec) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
 void DrawButton(Rectangle rect, const char *text, Color co)
 {
     DrawRectangleLinesEx(rect, 3, BLANK);
-    DrawRectangleRec(rect, co);                                                                                    // Draw button outline
+    DrawRectangleRec(rect, isClicked(rect) ? DARKGRAY : co);                                                       // Draw button outline
     DrawText(text, rect.x + (rect.width - MeasureText(text, 20)) / 2, rect.y + (rect.height - 20) / 2, 21, WHITE); // Draw button text
 }
 
@@ -235,7 +252,7 @@ void drawList()
         // Dessiner la flèche précédente (si elle existe)
         if (current->prev != NULL)
         {
-            DrawFlechLeft(xPos -80, 130 + arrowSpacing, xPos, 130 + arrowSpacing);
+            DrawFlechLeft(xPos - 80, 130 + arrowSpacing, xPos, 130 + arrowSpacing);
         }
 
         current = current->next;
@@ -243,22 +260,101 @@ void drawList()
     }
 }
 
-bool isClicked(Rectangle rec)
+void ColorBouttonMouse(Rectangle box, Color c)
 {
-    if (CheckCollisionPointRec(GetMousePosition(), rec) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+    if (CheckCollisionPointRec(GetMousePosition(), box))
     {
-        return true;
+        c = BLUE;
+
+        // Check if mouse button is pressed
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+        {
+            c = GREEN;
+        }
+
+        // Check if mouse button is released
+        if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON))
+        {
+            c = RED;
+        }
     }
     else
     {
-        return false;
+        // If mouse is not over the rectangle, reset the color
+        c = RED;
     }
 }
 
-int main(void)
+void RandomNodes()
+{
+    int n = GetRandomValue(0, 9);
+    for (int i = 0; i < n; i++)
+    {
+        insertNode(&head, GetRandomValue(0, 99));
+    }
+}
+
+void InsertNodes(int data)
+{
+    insertNode(&head, data);
+}
+
+bool IsNumber(const char *text)
+{
+    while (*text)
+    {
+        if (!isdigit(*text))
+        {
+            return false;
+        }
+        text++;
+    }
+    return true;
+}
+char text[MAX_INPUT_CHARS + 1] = "\0"; // Character array to store input
+int textSize = 10;
+Rectangle inpDelt = {1500 - 600 / 2, 1000 - 400 / 2, 600, 400};
+void inputDelete()
 {
 
-    Rectangle scroller = {0, 1800, 2500, 35};
+    if (isClicked(inpDelt))
+    {
+        strcpy(text, "0");
+    }
+    // Check for number key presses (0-9)
+    for (int key = KEY_ZERO; key <= KEY_NINE; key++)
+    {
+        if (IsKeyPressed(key))
+        {
+            int len = strlen(text);
+            if (len < MAX_INPUT_CHARS)
+            {
+                // Concatenate pressed key to the input text
+                text[len] = (char)('0' + (key - KEY_ZERO));
+                text[len + 1] = '\0';
+            }
+        }
+    }
+
+    // Check for backspace key press
+    if (IsKeyPressed(KEY_BACKSPACE))
+    {
+        int len = strlen(text);
+        if (len > 0)
+        {
+            // Remove the last character from the input text
+            text[len - 1] = '\0';
+        }
+    }
+}
+
+//----------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------
+
+
+int main(void)
+{
+    Rectangle scroller = {0, 1800, 2500, 30};
     int scrollSpeed = 5;
     InitWindow(GetScreenWidth(), GetScreenHeight(), "Raylib Demo");
 
@@ -266,18 +362,7 @@ int main(void)
     Rectangle buttoninsert = {buttonPosition.x, buttonPosition.y + buttonHeight + 10, buttonWidth, buttonHeight};
     Rectangle buttonRecherche = {buttonPosition.x, buttonPosition.y + 2 * (buttonHeight + 10), buttonWidth, buttonHeight};
     Rectangle buttonDelete = {buttonPosition.x, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth, buttonHeight};
-
-    insertNode(&head, 3);
-    insertNode(&head, 5);
-    insertNode(&head, 8);
-    insertNode(&head, 0);
-    insertNode(&head, 10);
-    insertNode(&head, 12);
-    insertNode(&head,99);
-    insertNode(&head, 40);
-    insertNode(&head, 78);
-
-    drawList();
+    Rectangle buttonTRI = {buttonPosition.x, buttonPosition.y + 4 * (buttonHeight + 10), buttonWidth, buttonHeight};
 
     SetTargetFPS(60);
 
@@ -299,14 +384,33 @@ int main(void)
             scroller.x -= scrollSpeed;
         }
 
+        if (isClicked(buttonCreate))
+        {
+            RandomNodes();
+        }
+
+        if (isClicked(buttoninsert))
+        {
+            InsertNodes(GetRandomValue(0, 50));
+            insertNode(&head, 20);
+        }
+        if (isClicked(buttonDelete))
+        {
+            inputDelete();
+        }
+
+        if (isClicked(buttonTRI))
+        {
+            TriListDoublement(&head);
+        }
+
         // Draw
         BeginDrawing();
 
-        ClearBackground(BLACK);
+        ClearBackground(RAYWHITE);
         // DrawRectangle(1500 - 2200 / 2, 1000 - 1500 / 2, 2200, 1500, RAYWHITE);
         DrawRectangleRec(scroller, BLUE);
 
-        drawList();
         /*
 
         if (IsKeyPressed(KEY_D)) {
@@ -332,31 +436,21 @@ int main(void)
         DrawText(TextFormat("Mouse Y: %03d", mouseY), GetScreenWidth() - 250, 50, 35, YELLOW);
         */
         // Draw text input rectangle
-        DrawButton(buttonCreate, "Create", GREEN);
+        DrawButton(buttonCreate, "Create", YELLOW);
         DrawButton(buttoninsert, "Insert", GOLD);
         DrawButton(buttonRecherche, "Rechercher", ORANGE);
         DrawButton(buttonDelete, "Delete", RED);
+        DrawButton(buttonTRI, "Tri", GREEN);
+        drawList();
 
 
-        /*if(isClicked(buttonDelete)){
+        /* Draw button
+        DrawRectangleRec(inpDelt, isClicked(inpDelt) ? DARKGRAY : LIGHTGRAY);
+        DrawText("Enter Number", (int)(inpDelt.x + inpDelt.width / 2 - MeasureText("Enter Number", textSize) / 2), (int)(inpDelt.y + inpDelt.height / 2 - textSize / 2), textSize, isClicked(inpDelt) ? RAYWHITE : GRAY);
 
-            char* data= TextInput(&TextInput,"Enter the number to Delete");
-            Node* nodeToDel=searchNode(head,atoi(data));
-            if(nodeToDel!=NULL){
-                printf("%s\n","Deleting" );
-                deleteNode(&head,nodeToDel->data);
-                }else{
-                    printf("%s%d\n", "No element found with this value : ", atoi(data));
-                    }
-                    }
-
-        
-        /*
-        // Draw premiere Flech
-        DrawFlech(500, 500, 700, 500);
-        DrawFlechLeft(500, 550, 700, 550);
+        // Draw input text
+        DrawText(text, 600 / 2 - MeasureText(text, textSize) / 2, 400 / 2 + 30, textSize, BLACK);
         */
-
         EndDrawing();
     }
     // close fenètre
