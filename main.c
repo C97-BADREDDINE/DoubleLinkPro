@@ -149,6 +149,12 @@ void TriListDoublement(Node **head)
 #define MAX_INPUT_CHARS 9
 #define buttonWidth 180
 #define buttonHeight 70
+#define DebutposX 450
+#define DebutposY 800
+#define ListWidth 170
+#define ListHeight 200
+
+Node *head = NULL;
 
 Vector2 buttonPosition = {100, 100};
 
@@ -159,7 +165,7 @@ void DrawButton(Rectangle rect, const char *text, Color co)
     DrawText(text, rect.x + (rect.width - MeasureText(text, 20)) / 2, rect.y + (rect.height - 20) / 2, 21, WHITE); // Draw button text
 }
 
-void DrawFlech(int firstX, int firstY, int FinX, int finY)
+void DrawFlechRight(int firstX, int firstY, int FinX, int finY)
 {
     // Calculate arrow shaft vector
     Vector2 start = {firstX, firstY};
@@ -206,6 +212,36 @@ void DrawFlechLeft(int firstX, int firstY, int FinX, int finY)
     // Draw arrow head (left side)
     DrawLineEx(start, arrowHeadLeft, 4.0f, color);
 }
+void drawList()
+{
+    Node *current = head;
+    int xPos = DebutposX;
+    int rectWidth = ListWidth;
+    int rectHeight = ListHeight;
+    int arrowSpacing = DebutposY; // Ajustez cette valeur pour séparer davantage les flèches
+
+    while (current != NULL)
+    {
+        // Dessiner le rectangle avec la valeur
+        Rectangle rec = {xPos, DebutposY, rectWidth, rectHeight};
+        DrawButton(rec, TextFormat("%d", current->data), LIME);
+
+        // Dessiner la flèche suivante (si elle existe)
+        if (current->next != NULL)
+        {
+            DrawFlechRight(xPos + rectWidth, 60 + arrowSpacing, xPos + rectWidth + 80, 60 + arrowSpacing);
+        }
+
+        // Dessiner la flèche précédente (si elle existe)
+        if (current->prev != NULL)
+        {
+            DrawFlechLeft(xPos -80, 130 + arrowSpacing, xPos, 130 + arrowSpacing);
+        }
+
+        current = current->next;
+        xPos += 250;
+    }
+}
 
 bool isClicked(Rectangle rec)
 {
@@ -221,17 +257,27 @@ bool isClicked(Rectangle rec)
 
 int main(void)
 {
-    int x1 = 400;
 
-    Rectangle scroller = {50, 200, 200, 100};
+    Rectangle scroller = {0, 1800, 2500, 35};
     int scrollSpeed = 5;
-
     InitWindow(GetScreenWidth(), GetScreenHeight(), "Raylib Demo");
 
     Rectangle buttonCreate = {buttonPosition.x, buttonPosition.y, buttonWidth, buttonHeight};
     Rectangle buttoninsert = {buttonPosition.x, buttonPosition.y + buttonHeight + 10, buttonWidth, buttonHeight};
     Rectangle buttonRecherche = {buttonPosition.x, buttonPosition.y + 2 * (buttonHeight + 10), buttonWidth, buttonHeight};
     Rectangle buttonDelete = {buttonPosition.x, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth, buttonHeight};
+
+    insertNode(&head, 3);
+    insertNode(&head, 5);
+    insertNode(&head, 8);
+    insertNode(&head, 0);
+    insertNode(&head, 10);
+    insertNode(&head, 12);
+    insertNode(&head,99);
+    insertNode(&head, 40);
+    insertNode(&head, 78);
+
+    drawList();
 
     SetTargetFPS(60);
 
@@ -243,12 +289,13 @@ int main(void)
             ToggleFullscreen();
         }
 
-
-        if (IsKeyDown(KEY_RIGHT)) {
+        if (IsKeyDown(KEY_RIGHT))
+        {
             scroller.x += scrollSpeed;
         }
 
-        if (IsKeyDown(KEY_LEFT)) {
+        if (IsKeyDown(KEY_LEFT))
+        {
             scroller.x -= scrollSpeed;
         }
 
@@ -256,7 +303,16 @@ int main(void)
         BeginDrawing();
 
         ClearBackground(BLACK);
+        // DrawRectangle(1500 - 2200 / 2, 1000 - 1500 / 2, 2200, 1500, RAYWHITE);
         DrawRectangleRec(scroller, BLUE);
+
+        drawList();
+        /*
+
+        if (IsKeyPressed(KEY_D)) {
+            deleteNode(head,(*head)->data);
+        }
+
         for (int i = 0; i < GetScreenWidth(); i += 20)
         {
             DrawLine(i, 0, i, GetScreenHeight(), LIGHTGRAY);
@@ -274,17 +330,32 @@ int main(void)
         // Draw mouse coordinates
         DrawText(TextFormat("Mouse X: %03d", mouseX), GetScreenWidth() - 300, 30, 30, YELLOW);
         DrawText(TextFormat("Mouse Y: %03d", mouseY), GetScreenWidth() - 250, 50, 35, YELLOW);
-
+        */
         // Draw text input rectangle
         DrawButton(buttonCreate, "Create", GREEN);
         DrawButton(buttoninsert, "Insert", GOLD);
         DrawButton(buttonRecherche, "Rechercher", ORANGE);
         DrawButton(buttonDelete, "Delete", RED);
 
-        DrawRectangle(1500 - 2200 / 2, 1000 - 1500 / 2, 2200, 1500, RAYWHITE);
+
+        /*if(isClicked(buttonDelete)){
+
+            char* data= TextInput(&TextInput,"Enter the number to Delete");
+            Node* nodeToDel=searchNode(head,atoi(data));
+            if(nodeToDel!=NULL){
+                printf("%s\n","Deleting" );
+                deleteNode(&head,nodeToDel->data);
+                }else{
+                    printf("%s%d\n", "No element found with this value : ", atoi(data));
+                    }
+                    }
+
+        
+        /*
         // Draw premiere Flech
         DrawFlech(500, 500, 700, 500);
         DrawFlechLeft(500, 550, 700, 550);
+        */
 
         EndDrawing();
     }
