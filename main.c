@@ -158,6 +158,30 @@ void DrawButton(Rectangle rect, const char *text, Color co)
     DrawText(text, rect.x + (rect.width - MeasureText(text, 20)) / 2, rect.y + (rect.height - 20) / 2, 21, WHITE); // Draw button text
 }
 
+void DrawFlech(int firstX, int firstY, int FinX, int finY)
+{
+    // Calculate arrow shaft vector
+    Vector2 start = {firstX, firstY};
+    Vector2 end = {FinX, finY};
+
+    // Define arrow shaft thickness and color
+    float thickness = 5.0f;
+    Color color = RED;
+
+    // Draw arrow shaft
+    DrawLineEx(start, end, thickness, color);
+
+    // Calculate arrow head vectors
+    Vector2 arrowHeadSide = {end.x - 10, end.y - 10};
+    Vector2 arrowHeadLeft = {end.x -10, end.y + 10};
+
+    // Draw arrow head (right side)
+    DrawLineEx(end, arrowHeadSide, 4.0f, color);
+
+    // Draw arrow head (left side)
+    DrawLineEx(end, arrowHeadLeft, 4.0f, color);
+}
+
 bool isClicked(Rectangle rec)
 {
     if (CheckCollisionPointRec(GetMousePosition(), rec) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
@@ -172,7 +196,7 @@ bool isClicked(Rectangle rec)
 
 int main(void)
 {
-    int x1 =400;
+    int x1 = 400;
 
     InitWindow(GetScreenWidth(), GetScreenHeight(), "Raylib Demo");
 
@@ -196,7 +220,7 @@ int main(void)
 
         ClearBackground(BLACK);
 
-         for (int i = 0; i < GetScreenWidth(); i += 20)
+        for (int i = 0; i < GetScreenWidth(); i += 20)
         {
             DrawLine(i, 0, i, GetScreenHeight(), LIGHTGRAY);
         }
@@ -211,21 +235,22 @@ int main(void)
         int mouseY = GetMouseY();
 
         // Draw mouse coordinates
-        DrawText(TextFormat("Mouse X: %03d", mouseX), GetScreenWidth()-300,30 , 30, YELLOW);
-        DrawText(TextFormat("Mouse Y: %03d", mouseY),GetScreenWidth()-250,50, 35, YELLOW);
+        DrawText(TextFormat("Mouse X: %03d", mouseX), GetScreenWidth() - 300, 30, 30, YELLOW);
+        DrawText(TextFormat("Mouse Y: %03d", mouseY), GetScreenWidth() - 250, 50, 35, YELLOW);
 
         // Draw text input rectangle
         DrawButton(buttonCreate, "Create", GREEN);
         DrawButton(buttoninsert, "Insert", GOLD);
         DrawButton(buttonRecherche, "Rechercher", ORANGE);
         DrawButton(buttonDelete, "Delete", RED);
-        
-        
 
-        DrawRectangle(1500-2200/2,1000-1500/2,2200,1500,RAYWHITE);
-        
-        if(isClicked(buttonCreate)==true){
-            DrawRectangle(x1,250,buttonWidth,buttonHeight,VIOLET);
+        DrawRectangle(1500 - 2200 / 2, 1000 - 1500 / 2, 2200, 1500, RAYWHITE);
+        //Draw premiere Flech
+        DrawFlech(500, 500, 700, 500);
+
+        if (isClicked(buttonCreate) == true)
+        {
+            DrawRectangle(x1, 250, buttonWidth, buttonHeight, VIOLET);
             x1 += 50;
         }
 
