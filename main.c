@@ -3,8 +3,9 @@
 #include "stdlib.h"
 #include "stdbool.h"
 #include <string.h>
+#include <ctype.h>
 
-
+// Structures
 typedef struct Node
 {
     int data;
@@ -12,6 +13,7 @@ typedef struct Node
     struct Node *next;
 } Node;
 
+// Create a new node with the given data and return it
 Node *createNode(int data)
 {
     Node *newNode = (Node *)malloc(sizeof(Node));
@@ -79,30 +81,35 @@ void display(Node *head)
     }
 }
 
-void swap(struct Node* a, struct Node* b) {
+void swap(struct Node *a, struct Node *b)
+{
     int temp = a->data;
     a->data = b->data;
     b->data = temp;
 }
 
-void sortListSelection(Node** head) {
-     Node *i, *j, *min;
+void sortListSelection(Node **head)
+{
+    Node *i, *j, *min;
 
-    for (i = *head; i != NULL; i = i->next) {
+    for (i = *head; i != NULL; i = i->next)
+    {
         min = i;
 
-        for (j = i->next; j != NULL; j = j->next) {
-            if (j->data < min->data) {
+        for (j = i->next; j != NULL; j = j->next)
+        {
+            if (j->data < min->data)
+            {
                 min = j;
             }
         }
 
-        if (min != i) {
+        if (min != i)
+        {
             swap(i, min);
         }
     }
 }
-
 
 //----------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------
@@ -272,11 +279,8 @@ int textSize = 10;
 Rectangle inpDelt = {1500 - 600 / 2, 1000 - 400 / 2, 600, 400};
 void inputDelete()
 {
+    strcpy(text, "0");
 
-    if (isClicked(inpDelt))
-    {
-        strcpy(text, "0");
-    }
     // Check for number key presses (0-9)
     for (int key = KEY_ZERO; key <= KEY_NINE; key++)
     {
@@ -309,8 +313,16 @@ void inputDelete()
 
 int main(void)
 {
-    Rectangle scroller = {0, 1800, 2500, 30};
+    bool actionRecherche = false;
+    Rectangle scroller = {5, 1800, 500, 30};
     int scrollSpeed = 5;
+
+    Camera2D camera = {0};
+    camera.target = (Vector2){0, 0};
+    camera.offset = (Vector2){GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f};
+    camera.rotation = 0.0f;
+    camera.zoom = 1.0f;
+
     InitWindow(GetScreenWidth(), GetScreenHeight(), "Raylib Demo");
 
     Rectangle buttonCreate = {buttonPosition.x, buttonPosition.y, buttonWidth, buttonHeight};
@@ -329,16 +341,6 @@ int main(void)
             ToggleFullscreen();
         }
 
-        if (IsKeyDown(KEY_RIGHT))
-        {
-            scroller.x += scrollSpeed;
-        }
-
-        if (IsKeyDown(KEY_LEFT))
-        {
-            scroller.x -= scrollSpeed;
-        }
-
         if (isClicked(buttonCreate))
         {
             RandomNodes();
@@ -348,9 +350,15 @@ int main(void)
         {
             InsertNodes(GetRandomValue(0, 50));
         }
+
         if (isClicked(buttonDelete))
         {
             inputDelete();
+        }
+
+        if (isClicked(buttonRecherche))
+        {
+            actionRecherche = !actionRecherche;
         }
 
         if (isClicked(buttonTRI))
@@ -358,37 +366,29 @@ int main(void)
             sortListSelection(&head);
         }
 
+        if (IsKeyDown(KEY_RIGHT))
+        {
+            if (camera.target.x >= 0)
+            {
+                camera.target.x += 5.0f;
+                scroller.x += scrollSpeed;
+            }
+        }
+        else if (IsKeyDown(KEY_LEFT))
+        {
+            if(camera.target.x > 0)
+            camera.target.x -= 5.0f;
+            scroller.x -= scrollSpeed;
+        }
+
         // Draw
         BeginDrawing();
 
         ClearBackground(RAYWHITE);
         // DrawRectangle(1500 - 2200 / 2, 1000 - 1500 / 2, 2200, 1500, RAYWHITE);
-        DrawRectangleRec(scroller, BLUE);
+        DrawRectangleRec(scroller, DARKGRAY);
+        BeginMode2D(camera);
 
-        /*
-
-        if (IsKeyPressed(KEY_D)) {
-            deleteNode(head,(*head)->data);
-        }
-
-        for (int i = 0; i < GetScreenWidth(); i += 20)
-        {
-            DrawLine(i, 0, i, GetScreenHeight(), LIGHTGRAY);
-        }
-
-        for (int i = 0; i < GetScreenHeight(); i += 20)
-        {
-            DrawLine(0, i, GetScreenWidth(), i, LIGHTGRAY);
-        }
-
-        // Get mouse coordinates
-        int mouseX = GetMouseX();
-        int mouseY = GetMouseY();
-
-        // Draw mouse coordinates
-        DrawText(TextFormat("Mouse X: %03d", mouseX), GetScreenWidth() - 300, 30, 30, YELLOW);
-        DrawText(TextFormat("Mouse Y: %03d", mouseY), GetScreenWidth() - 250, 50, 35, YELLOW);
-        */
         // Draw text input rectangle
         DrawButton(buttonCreate, "Create", YELLOW);
         DrawButton(buttoninsert, "Insert", GOLD);
@@ -397,13 +397,18 @@ int main(void)
         DrawButton(buttonTRI, "Tri", GREEN);
         drawList();
 
-        /* Draw button
-        DrawRectangleRec(inpDelt, isClicked(inpDelt) ? DARKGRAY : LIGHTGRAY);
-        DrawText("Enter Number", (int)(inpDelt.x + inpDelt.width / 2 - MeasureText("Enter Number", textSize) / 2), (int)(inpDelt.y + inpDelt.height / 2 - textSize / 2), textSize, isClicked(inpDelt) ? RAYWHITE : GRAY);
+        if (actionRecherche == true)
+        {
+            inputDelete();
+            // Draw button
+            DrawRectangleRec(inpDelt, isClicked(inpDelt) ? DARKGRAY : LIGHTGRAY);
+            DrawText("Enter Number", (int)(inpDelt.x + inpDelt.width / 2 - MeasureText("Enter Number", textSize) / 2), (int)(inpDelt.y + inpDelt.height / 2 - textSize / 2), textSize, isClicked(inpDelt) ? RAYWHITE : GRAY);
 
-        // Draw input text
-        DrawText(text, 600 / 2 - MeasureText(text, textSize) / 2, 400 / 2 + 30, textSize, BLACK);
-        */
+            // Draw input text
+            DrawText(text, 600 / 2 - MeasureText(text, textSize) / 2, 400 / 2 + 30, textSize, BLACK);
+        }
+        EndMode2D();
+
         EndDrawing();
     }
     // close fenètre
