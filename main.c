@@ -221,7 +221,6 @@ bool isClicked(Rectangle rec)
 
 int main(void)
 {
-    int x1 = 400;
 
     Rectangle scroller = {50, 200, 200, 100};
     int scrollSpeed = 5;
@@ -243,12 +242,13 @@ int main(void)
             ToggleFullscreen();
         }
 
-
-        if (IsKeyDown(KEY_RIGHT)) {
+        if (IsKeyDown(KEY_RIGHT))
+        {
             scroller.x += scrollSpeed;
         }
 
-        if (IsKeyDown(KEY_LEFT)) {
+        if (IsKeyDown(KEY_LEFT))
+        {
             scroller.x -= scrollSpeed;
         }
 
@@ -256,7 +256,10 @@ int main(void)
         BeginDrawing();
 
         ClearBackground(BLACK);
+        DrawRectangle(1500 - 2200 / 2, 1000 - 1500 / 2, 2200, 1500, RAYWHITE);
         DrawRectangleRec(scroller, BLUE);
+
+        /*
         for (int i = 0; i < GetScreenWidth(); i += 20)
         {
             DrawLine(i, 0, i, GetScreenHeight(), LIGHTGRAY);
@@ -274,17 +277,19 @@ int main(void)
         // Draw mouse coordinates
         DrawText(TextFormat("Mouse X: %03d", mouseX), GetScreenWidth() - 300, 30, 30, YELLOW);
         DrawText(TextFormat("Mouse Y: %03d", mouseY), GetScreenWidth() - 250, 50, 35, YELLOW);
-
+        */
         // Draw text input rectangle
         DrawButton(buttonCreate, "Create", GREEN);
         DrawButton(buttoninsert, "Insert", GOLD);
         DrawButton(buttonRecherche, "Rechercher", ORANGE);
         DrawButton(buttonDelete, "Delete", RED);
+        DrawRectangle(600, 800, 170, 200, LIME);
 
-        DrawRectangle(1500 - 2200 / 2, 1000 - 1500 / 2, 2200, 1500, RAYWHITE);
+        /*
         // Draw premiere Flech
         DrawFlech(500, 500, 700, 500);
         DrawFlechLeft(500, 550, 700, 550);
+        */
 
         EndDrawing();
     }
