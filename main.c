@@ -172,6 +172,7 @@ bool isClicked(Rectangle rec)
 
 int main(void)
 {
+    int x1 =400;
 
     InitWindow(GetScreenWidth(), GetScreenHeight(), "Raylib Demo");
 
@@ -218,8 +219,15 @@ int main(void)
         DrawButton(buttoninsert, "Insert", GOLD);
         DrawButton(buttonRecherche, "Rechercher", ORANGE);
         DrawButton(buttonDelete, "Delete", RED);
+        
+        
 
         DrawRectangle(1500-2200/2,1000-1500/2,2200,1500,RAYWHITE);
+        
+        if(isClicked(buttonCreate)==true){
+            DrawRectangle(x1,250,buttonWidth,buttonHeight,VIOLET);
+            x1 += 50;
+        }
 
         EndDrawing();
     }
