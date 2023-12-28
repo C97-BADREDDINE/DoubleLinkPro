@@ -5,6 +5,7 @@
 
 typedef struct Node
 {
+    Rectangle rect;
     int data;
     struct Node *prev;
     struct Node *next;
@@ -173,13 +174,37 @@ void DrawFlech(int firstX, int firstY, int FinX, int finY)
 
     // Calculate arrow head vectors
     Vector2 arrowHeadSide = {end.x - 10, end.y - 10};
-    Vector2 arrowHeadLeft = {end.x -10, end.y + 10};
+    Vector2 arrowHeadLeft = {end.x - 10, end.y + 10};
 
     // Draw arrow head (right side)
     DrawLineEx(end, arrowHeadSide, 4.0f, color);
 
     // Draw arrow head (left side)
     DrawLineEx(end, arrowHeadLeft, 4.0f, color);
+}
+
+void DrawFlechLeft(int firstX, int firstY, int FinX, int finY)
+{
+    // Calculate arrow shaft vector
+    Vector2 start = {firstX, firstY};
+    Vector2 end = {FinX, finY};
+
+    // Define arrow shaft thickness and color
+    float thickness = 5.0f;
+    Color color = RED;
+
+    // Draw arrow shaft
+    DrawLineEx(start, end, thickness, color);
+
+    // Calculate arrow head vectors
+    Vector2 arrowHeadSide = {start.x + 10, start.y - 10};
+    Vector2 arrowHeadLeft = {start.x + 10, start.y + 10};
+
+    // Draw arrow head (right side)
+    DrawLineEx(start, arrowHeadSide, 4.0f, color);
+
+    // Draw arrow head (left side)
+    DrawLineEx(start, arrowHeadLeft, 4.0f, color);
 }
 
 bool isClicked(Rectangle rec)
@@ -198,6 +223,9 @@ int main(void)
 {
     int x1 = 400;
 
+    Rectangle scroller = {50, 200, 200, 100};
+    int scrollSpeed = 5;
+
     InitWindow(GetScreenWidth(), GetScreenHeight(), "Raylib Demo");
 
     Rectangle buttonCreate = {buttonPosition.x, buttonPosition.y, buttonWidth, buttonHeight};
@@ -215,11 +243,20 @@ int main(void)
             ToggleFullscreen();
         }
 
+
+        if (IsKeyDown(KEY_RIGHT)) {
+            scroller.x += scrollSpeed;
+        }
+
+        if (IsKeyDown(KEY_LEFT)) {
+            scroller.x -= scrollSpeed;
+        }
+
         // Draw
         BeginDrawing();
 
         ClearBackground(BLACK);
-
+        DrawRectangleRec(scroller, BLUE);
         for (int i = 0; i < GetScreenWidth(); i += 20)
         {
             DrawLine(i, 0, i, GetScreenHeight(), LIGHTGRAY);
@@ -245,14 +282,9 @@ int main(void)
         DrawButton(buttonDelete, "Delete", RED);
 
         DrawRectangle(1500 - 2200 / 2, 1000 - 1500 / 2, 2200, 1500, RAYWHITE);
-        //Draw premiere Flech
+        // Draw premiere Flech
         DrawFlech(500, 500, 700, 500);
-
-        if (isClicked(buttonCreate) == true)
-        {
-            DrawRectangle(x1, 250, buttonWidth, buttonHeight, VIOLET);
-            x1 += 50;
-        }
+        DrawFlechLeft(500, 550, 700, 550);
 
         EndDrawing();
     }
