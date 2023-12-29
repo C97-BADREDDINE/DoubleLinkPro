@@ -321,13 +321,11 @@ int main(void)
 
     SetConfigFlags(FLAG_MSAA_4X_HINT); // Enable Multi Sampling Anti Aliasing 4x
 
-    Vector2 mousePosition;
-    Vector2 objectPosition = {200, 200}; // Initial object position
-
     char name[MAX_INPUT_CHARS + 1] = "\0"; // Buffer to store input text (plus null terminator)
     int letterCount = 0;
 
     int scrollSpeed = 10;
+    Vector2 mousePosition;
 
     Camera2D camera = {0};
     camera.target = (Vector2){0, 0};
@@ -379,12 +377,20 @@ int main(void)
 
         if (isClicked(buttoninsert))
         {
-            InsertNodes(GetRandomValue(0, 50));
+            actionRecherche = !actionRecherche;
+            if (actionRecherche == true && IsKeyPressed(KEY_ENTER))
+            {
+                insertNode(&head, atoi(name));
+            }
         }
 
         if (isClicked(buttonDelete))
         {
             actionRecherche = !actionRecherche;
+            if (actionRecherche == true && IsKeyPressed(KEY_ENTER))
+            {
+                printf(name);
+            }
         }
 
         if (isClicked(buttonRecherche))
@@ -421,75 +427,14 @@ int main(void)
 
         if (Actionscroller)
         {
-            scroller.x += GetMouseDelta().x;
-            camera.target.x += GetMouseDelta().x;
+            if (scroller.x < 0)
+            {
+                scroller.x = 0;
+                camera.target.x=0;
+            }
+                scroller.x += GetMouseDelta().x;
+                camera.target.x += GetMouseDelta().x;
         }
-
-        /*  if (actionRecherche == true)
-          {
-
-              strcpy(name, "0");
-
-              // Check for number key presses (0-9)
-              for (int key = KEY_ZERO; key <= KEY_NINE; key++)
-
-                  if (IsKeyPressed(key))
-                  {
-                      int len = strlen(name);
-                      if (len < MAX_INPUT_CHARS)
-                      {
-                          // Concatenate pressed key to the input text
-                          name[len] = (char)('0' + (key - KEY_ZERO));
-                          name[len + 1] = '\0';
-                      }
-                  }
-
-              // Check for backspace key press
-              if (IsKeyPressed(KEY_BACKSPACE))
-              {
-                  int len = strlen(name);
-                  if (len > 0)
-                  {
-                      // Remove the last character from the input text
-                      name[len - 1] = '\0';
-                  }
-              }
-
-              /* Draw button
-              DrawRectangleRec(inpDelt, isClicked(inpDelt) ? DARKGRAY : LIGHTGRAY);
-              DrawText("Enter Number", (int)(inpDelt.x + inpDelt.width / 2 - MeasureText("Enter Number", textSize) / 2), (int)(inpDelt.y + inpDelt.height / 2 - textSize / 2), textSize, isClicked(inpDelt) ? RAYWHITE : GRAY);
-
-              // Draw input text
-              DrawText(text, 600 / 2 - MeasureText(text, textSize) / 2, 400 / 2 + 30, textSize, BLACK);
-              */
-
-        /*
-
-    // Check for input to add characters to the text
-    if (letterCount < MAX_INPUT_CHARS)
-    {
-     int key = GetKeyPressed();
-
-     if (key != 0)
-     {
-         // Only add ASCII characters
-         if ((key >= 48) && (key <= 57))
-         {
-             name[letterCount] = (char)key;
-             letterCount++;
-         }
-     }
-    }
-
-    // Check for backspace key to remove characters from the text
-    if (IsKeyPressed(KEY_BACKSPACE))
-    {
-     if (letterCount > 0)
-     {
-         letterCount--;
-         name[letterCount] = '\0';
-     }
-    }*/
 
         // Draw
         BeginDrawing();
