@@ -376,6 +376,7 @@ int main(void)
         if (isClicked(buttonCreate))
         {
             RandomNodes();
+            actionRecherche=false;
         }
 
 
