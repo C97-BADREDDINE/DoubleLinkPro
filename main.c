@@ -149,8 +149,31 @@ void DrawButton(Rectangle rect, const char *text, Color co)
         co = SKYBLUE;
     }
 
-    DrawRectangleLinesEx(rect, 10, Fade(BLACK, 120));
+    DrawRectangleLinesEx(rect, 10, Fade(BLANK, 120));
     DrawRectangleRec(rect, isClicked(rect) ? DARKGRAY : co);                                                       // Draw button outline
+    DrawText(text, rect.x + (rect.width - MeasureText(text, 20)) / 2, rect.y + (rect.height - 20) / 2, 23, WHITE); // Draw button text
+}
+
+void DrawButtonInput(Rectangle rect, const char *text, Color co)
+{
+    if (is_mouse_over_button(rect))
+    {
+        SetMouseCursor(2);
+        co = SKYBLUE;
+    }
+    else
+    {
+        SetMouseCursor(0);
+    }
+
+    if (isClicked(rect))
+    {
+        co = BLANK;
+    }
+
+    DrawRectangleLinesEx(rect, 10, BEIGE);
+    DrawRectangleRec(rect, isClicked(rect) ? DARKGRAY : co); // Draw button outline
+    DrawRectangle(rect.x + 10, rect.y + 10, rect.width - 20, rect.height - 20, GRAY);
     DrawText(text, rect.x + (rect.width - MeasureText(text, 20)) / 2, rect.y + (rect.height - 20) / 2, 23, WHITE); // Draw button text
 }
 
@@ -295,13 +318,15 @@ int main(void)
 
     bool actionRecherche = false;
     bool Actionscroller = false;
+
+    SetConfigFlags(FLAG_MSAA_4X_HINT); // Enable Multi Sampling Anti Aliasing 4x
+
     Vector2 mousePosition;
     Vector2 objectPosition = {200, 200}; // Initial object position
 
     char name[MAX_INPUT_CHARS + 1] = "\0"; // Buffer to store input text (plus null terminator)
     int letterCount = 0;
 
-    Rectangle scroller = {5, 1800, 500, 30};
     int scrollSpeed = 10;
 
     Camera2D camera = {0};
@@ -318,7 +343,8 @@ int main(void)
     Rectangle buttonRecherche = {buttonPosition.x, buttonPosition.y + 2 * (buttonHeight + 10), buttonWidth, buttonHeight};
     Rectangle buttonDelete = {buttonPosition.x, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth, buttonHeight};
     Rectangle buttonTRI = {buttonPosition.x, buttonPosition.y + 4 * (buttonHeight + 10), buttonWidth, buttonHeight};
-    Rectangle inpDelt = {buttonRecherche.x + 200, buttonRecherche.y, 350, 170};
+    Rectangle inputing = {GetScreenWidth() / 2, buttonRecherche.y, 350, 100};
+    Rectangle scroller = {5, 1800, 550, 30};
 
     SetTargetFPS(60);
 
@@ -340,11 +366,11 @@ int main(void)
             {
                 Actionscroller = true;
             }
-        }else
-        {
-            Actionscroller =false ;
         }
-        
+        else
+        {
+            Actionscroller = false;
+        }
 
         if (isClicked(buttonCreate))
         {
@@ -477,6 +503,11 @@ int main(void)
         DrawButton(buttonRecherche, "Rechercher", ORANGE);
         DrawButton(buttonDelete, "Delete", RED);
         DrawButton(buttonTRI, "Tri", GREEN);
+        
+
+        if(actionRecherche){
+            DrawButtonInput(inputing, "Enter Number", BLACK);
+        }
 
         // draw list
         drawList();
