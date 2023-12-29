@@ -345,6 +345,9 @@ int main(void)
     Rectangle buttonTRI = {buttonPosition.x, buttonPosition.y + 4 * (buttonHeight + 10), buttonWidth, buttonHeight};
     Rectangle inputing = {GetScreenWidth() / 2, buttonRecherche.y, 350, 100};
     Rectangle scroller = {5, 1800, 550, 30};
+    Rectangle deletedebut ={buttonPosition.x+buttonWidth+10, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth+10, buttonHeight};
+    Rectangle deleteFin ={buttonPosition.x+(buttonWidth+10)*2+10, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth+10, buttonHeight};
+    Rectangle deleteRecherche ={buttonPosition.x+(buttonWidth+10)*3+20, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth+30, buttonHeight};
 
     SetTargetFPS(60);
 
@@ -491,6 +494,12 @@ int main(void)
 
         if(actionRecherche)
             DrawButtonInput(inputing, name, BLACK);
+
+        if(ActionDelete){
+            DrawButton(deletedebut,"Delete Debut",RED);
+            DrawButton(deleteFin,"Delete Fin",RED);
+            DrawButton(deleteRecherche,"Del Rechercher",RED);
+        }    
         // draw list
         drawList();
 
