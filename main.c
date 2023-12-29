@@ -318,6 +318,8 @@ int main(void)
 
     bool actionRecherche = false;
     bool Actionscroller = false;
+    bool ActionDelete =false;
+    bool ActionInsert=false;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT); // Enable Multi Sampling Anti Aliasing 4x
 
@@ -370,29 +372,35 @@ int main(void)
             Actionscroller = false;
         }
 
+
         if (isClicked(buttonCreate))
         {
             RandomNodes();
         }
 
+
         if (isClicked(buttoninsert))
         {
             actionRecherche = !actionRecherche;
-            if (actionRecherche == true && IsKeyPressed(KEY_ENTER))
-            {
-                insertNode(&head, atoi(name));
-            }
+            ActionInsert=actionRecherche;
+        }
+
+        if(ActionInsert){ 
+            if(IsKeyPressed(KEY_ENTER))
+                insertNode(&head,atoi(name));
         }
 
         if (isClicked(buttonDelete))
         {
             actionRecherche = !actionRecherche;
-            if (actionRecherche == true && IsKeyPressed(KEY_ENTER))
-            {
-                printf(name);
-                deleteNode(&head,atoi(name));
-            }
+            ActionDelete=actionRecherche;
         }
+
+        if(ActionDelete){
+            if (IsKeyPressed(KEY_ENTER))
+                deleteNode(&head,atoi(name));
+        }
+            
 
         if (isClicked(buttonRecherche))
         {
@@ -402,6 +410,7 @@ int main(void)
         if (isClicked(buttonTRI))
         {
             sortListSelection(&head);
+            actionRecherche=false;
         }
 
         if (IsKeyDown(KEY_RIGHT) && (camera.target.x >= 0))
@@ -479,8 +488,8 @@ int main(void)
         DrawButton(buttonDelete, "Delete", RED);
         DrawButton(buttonTRI, "Tri", GREEN);
 
-        
-     DrawButtonInput(inputing, name, BLACK);
+        if(actionRecherche)
+            DrawButtonInput(inputing, name, BLACK);
         // draw list
         drawList();
 
