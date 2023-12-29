@@ -63,14 +63,15 @@ void deleteNode(Node **head, int data)
     free(current);
 }
 
-Node *searchNode(Node *head, int data)
+bool searchNode(Node *head, int data)
 {
     while (head != NULL && head->data != data)
     {
         head = head->next;
     }
-    return head;
+    return head != NULL;
 }
+
 // Function to print the doubly linked list
 void display(Node *head)
 {
@@ -172,9 +173,10 @@ void DrawButtonInput(Rectangle rect, const char *text, Color co)
     }
 
     DrawRectangleLinesEx(rect, 10, BEIGE);
-    DrawRectangleRec(rect, isClicked(rect) ? DARKGRAY : co); // Draw button outline
-    DrawRectangle(rect.x + 10, rect.y + 10, rect.width - 20, rect.height - 20, GRAY);
-    DrawText(text, rect.x + (rect.width - MeasureText(text, 20)) / 2, rect.y + (rect.height - 20) / 2, 23, WHITE); // Draw button text
+    DrawRectangleRec(rect, isClicked(rect) ? LIGHTGRAY : co); // Draw button outline
+    DrawRectangle(rect.x + 10, rect.y + 10, rect.width - 20, rect.height - 20, WHITE);
+    DrawText(text, rect.x + (rect.width - MeasureText(text, 20)) / 2, rect.y + (rect.height - 20) / 2, 40, BLACK);    // Draw button text
+    DrawText("Entrer Le Numbre :", rect.x - 530 + (rect.width) / 2, rect.y - 20 + (rect.height - 20) / 2, 35, BLACK); // Draw button text
 }
 
 void DrawFlechRight(int firstX, int firstY, int FinX, int finY)
@@ -318,8 +320,11 @@ int main(void)
 
     bool actionRecherche = false;
     bool Actionscroller = false;
-    bool ActionDelete =false;
-    bool ActionInsert=false;
+    bool ActionDelete = false;
+    bool ActionInsert = false;
+    bool actionRechercheDelete = false;
+    bool rechercher = false;
+    bool resultaRechercher;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT); // Enable Multi Sampling Anti Aliasing 4x
 
@@ -346,13 +351,13 @@ int main(void)
     Rectangle inputing = {1150, buttonRecherche.y, 350, 100};
     Rectangle scroller = {5, 1800, 550, 30};
 
-    Rectangle insertDebut = {buttonPosition.x+buttonWidth+10, buttonPosition.y + buttonHeight + 10, buttonWidth+15, buttonHeight};
-    Rectangle insertFin = {buttonPosition.x+(buttonWidth+10)*2+15, buttonPosition.y + buttonHeight + 10, buttonWidth, buttonHeight};
-    Rectangle insertindex = {buttonPosition.x+(buttonWidth+10)*3+25, buttonPosition.y + buttonHeight + 10, buttonWidth+15, buttonHeight};
+    Rectangle insertDebut = {buttonPosition.x + buttonWidth + 10, buttonPosition.y + buttonHeight + 10, buttonWidth + 15, buttonHeight};
+    Rectangle insertFin = {buttonPosition.x + (buttonWidth + 10) * 2 + 15, buttonPosition.y + buttonHeight + 10, buttonWidth, buttonHeight};
+    Rectangle insertindex = {buttonPosition.x + (buttonWidth + 10) * 3 + 25, buttonPosition.y + buttonHeight + 10, buttonWidth + 15, buttonHeight};
 
-    Rectangle deletedebut ={buttonPosition.x+buttonWidth+10, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth+10, buttonHeight};
-    Rectangle deleteFin ={buttonPosition.x+(buttonWidth+10)*2+10, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth+10, buttonHeight};
-    Rectangle deleteRecherche ={buttonPosition.x+(buttonWidth+10)*3+20, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth+30, buttonHeight};
+    Rectangle deletedebut = {buttonPosition.x + buttonWidth + 10, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth + 10, buttonHeight};
+    Rectangle deleteFin = {buttonPosition.x + (buttonWidth + 10) * 2 + 10, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth + 10, buttonHeight};
+    Rectangle deleteRecherche = {buttonPosition.x + (buttonWidth + 10) * 3 + 20, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth + 30, buttonHeight};
 
     SetTargetFPS(60);
 
@@ -380,46 +385,66 @@ int main(void)
             Actionscroller = false;
         }
 
-
         if (isClicked(buttonCreate))
         {
             RandomNodes();
-            actionRecherche=false;
+            actionRecherche = false;
         }
 
-
+        // click button Insert and active Action Insert
         if (isClicked(buttoninsert))
         {
             actionRecherche = false;
-            ActionInsert= !ActionInsert;
+            ActionInsert = !ActionInsert;
         }
 
-        if(ActionInsert){ 
-            if(IsKeyPressed(KEY_ENTER))
-                insertNode(&head,atoi(name));
+        if (ActionInsert)
+        {
+            if (IsKeyPressed(KEY_ENTER))
+                insertNode(&head, atoi(name));
         }
 
+        // click button Delete and active Action Delete
         if (isClicked(buttonDelete))
         {
             actionRecherche = false;
-            ActionDelete=!ActionDelete;
+            ActionDelete = !ActionDelete;
         }
 
-        if(ActionDelete){
+        if (ActionDelete)
+        {
             if (IsKeyPressed(KEY_ENTER))
-                deleteNode(&head,atoi(name));
+                deleteNode(&head, atoi(name));
         }
-            
 
+        // click button Rechercher Valur in List
         if (isClicked(buttonRecherche))
         {
             actionRecherche = !actionRecherche;
+            rechercher = actionRecherche;
+            strcpy(name, "");
+        }
+
+        if (rechercher)
+        {
+            if (IsKeyReleased(KEY_ENTER))
+            {
+                if (searchNode(head, atoi(name)))
+                {
+                    resultaRechercher = true;
+                }
+                else
+                {
+                    resultaRechercher = false;
+                }
+                // strcpy(name, "");
+            }
         }
 
         if (isClicked(buttonTRI))
         {
             sortListSelection(&head);
-            actionRecherche=false;
+            actionRecherche = false;
         }
 
         if (IsKeyDown(KEY_RIGHT) && (camera.target.x >= 0))
@@ -449,10 +474,10 @@ int main(void)
             if (scroller.x < 0)
             {
                 scroller.x = 0;
-                camera.target.x=0;
+                camera.target.x = 0;
             }
-                scroller.x += GetMouseDelta().x;
-                camera.target.x += GetMouseDelta().x;
+            scroller.x += GetMouseDelta().x;
+            camera.target.x += GetMouseDelta().x;
         }
         if (actionRecherche)
         {
@@ -479,11 +504,22 @@ int main(void)
                     letterCount--;
                     name[letterCount] = '\0';
                 }
-            }           
+            }
         }
-        if(isClicked(deleteRecherche)){
-            actionRecherche= !actionRecherche;
-            ActionDelete=actionRecherche;
+        if (isClicked(deleteRecherche))
+        {
+            actionRechercheDelete = !actionRechercheDelete;
+            actionRecherche = actionRechercheDelete;
+        }
+
+        // activer la recherche pour delete
+        if (actionRechercheDelete)
+        {
+            if (IsKeyPressed(KEY_ENTER))
+            {
+                deleteNode(&head, atoi(name));
+                strcpy(name, "");
+            }
         }
 
         // Draw
@@ -501,19 +537,31 @@ int main(void)
         DrawButton(buttonDelete, "Delete", RED);
         DrawButton(buttonTRI, "Tri", GREEN);
 
-        if(actionRecherche)
+        if (actionRecherche)
             DrawButtonInput(inputing, name, BLACK);
 
-        if(ActionDelete){
-            DrawButton(deletedebut,"Delete Debut",RED);
-            DrawButton(deleteFin,"Delete Fin",RED);
-            DrawButton(deleteRecherche,"Del Rechercher",RED);
+        if (ActionDelete)
+        {
+            DrawButton(deletedebut, "Delete Debut", RED);
+            DrawButton(deleteFin, "Delete Fin", RED);
+            DrawButton(deleteRecherche, "Del Rechercher", RED);
         }
-        if(ActionInsert){
-            DrawButton(insertDebut,"InsertToDebut",GOLD);
-            DrawButton(insertFin,"InsertToFin",GOLD);
-            DrawButton(insertindex,"Insert Indice",GOLD);
-        }    
+        if (ActionInsert)
+        {
+            DrawButton(insertDebut, "InsertToDebut", GOLD);
+            DrawButton(insertFin, "InsertToFin", GOLD);
+            DrawButton(insertindex, "Insert Indice", GOLD);
+        }
+
+        if (resultaRechercher)
+        {
+            DrawText("Valeur is found", inputing.x, inputing.y + 200, 50, GREEN);
+        }
+        else
+        {
+            DrawText("Value not Found", inputing.x, inputing.y + 200, 50, RED);
+        }
+
         // draw list
         drawList();
 
