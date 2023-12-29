@@ -118,10 +118,9 @@ void sortListSelection(Node **head)
 #define buttonWidth 180
 #define buttonHeight 70
 #define DebutposX 450
-#define DebutposY 800
+#define DebutposY GetScreenHeight() / 2
 #define ListWidth 170
 #define ListHeight 200
-
 
 Node *head = NULL;
 
@@ -130,15 +129,9 @@ int AllScreenButton = 1920;
 
 bool isClicked(Rectangle rec)
 {
-    if (CheckCollisionPointRec(GetMousePosition(), rec) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    return CheckCollisionPointRec(GetMousePosition(), rec) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
 }
+
 bool is_mouse_over_button(Rectangle rect)
 {
     /*
@@ -297,7 +290,13 @@ bool IsNumber(const char *text)
 
 int main(void)
 {
+    int screenWidth = 1500;
+    int screenHeight = 1500;
+
     bool actionRecherche = false;
+    bool Actionscroller = false;
+    Vector2 mousePosition;
+    Vector2 objectPosition = {200, 200}; // Initial object position
 
     char name[MAX_INPUT_CHARS + 1] = "\0"; // Buffer to store input text (plus null terminator)
     int letterCount = 0;
@@ -311,7 +310,8 @@ int main(void)
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
 
-    InitWindow(GetScreenWidth(), GetScreenHeight(), "Raylib Demo");
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+    InitWindow(screenWidth, screenHeight, "Raylib Demo");
 
     Rectangle buttonCreate = {buttonPosition.x, buttonPosition.y, buttonWidth, buttonHeight};
     Rectangle buttoninsert = {buttonPosition.x, buttonPosition.y + buttonHeight + 10, buttonWidth, buttonHeight};
@@ -325,10 +325,26 @@ int main(void)
     while (!WindowShouldClose())
     {
         // Update
-        if (IsKeyPressed(KEY_F11))
-        { // Toggle fullscreen on F11
-            ToggleFullscreen();
+        if (IsWindowResized())
+        {
+            // Update content or layout based on new window size
+            // You can get the new width and height using:
+            screenWidth = GetScreenWidth();
+            screenHeight = GetScreenHeight();
         }
+        mousePosition = GetMousePosition();
+
+        if (IsMouseButtonDown(MOUSE_LEFT_BUTTON))
+        {
+            if (CheckCollisionPointRec(mousePosition, scroller))
+            {
+                Actionscroller = true;
+            }
+        }else
+        {
+            Actionscroller =false ;
+        }
+        
 
         if (isClicked(buttonCreate))
         {
@@ -342,7 +358,7 @@ int main(void)
 
         if (isClicked(buttonDelete))
         {
-            // on devloped
+            actionRecherche = !actionRecherche;
         }
 
         if (isClicked(buttonRecherche))
@@ -357,114 +373,121 @@ int main(void)
 
         if (IsKeyDown(KEY_RIGHT) && (camera.target.x >= 0))
         {
-
             camera.target.x += 10.0f;
             scroller.x += scrollSpeed;
+
             if (scroller.x + scroller.width > GetScreenWidth())
             {
                 scroller.x = GetScreenWidth() - scroller.width;
             }
         }
 
-        else if (IsKeyDown(KEY_LEFT) &&  (camera.target.x >= 0))
+        else if (IsKeyDown(KEY_LEFT) && (camera.target.x >= 0))
+        {
+            camera.target.x -= 10.0f;
+            scroller.x -= scrollSpeed;
+            if (scroller.x < 0)
             {
-                camera.target.x -= 10.0f;
-                scroller.x -= scrollSpeed;
-                if(scroller.x < 0){
-                    scroller.x = 0;
-                    camera.target.x = 0;
-                }
+                scroller.x = 0;
+                camera.target.x = 0;
             }
-        
-            /*if (actionRecherche == true)
-            {
+        }
 
-                strcpy(text, "0");
+        if (Actionscroller)
+        {
+            scroller.x += GetMouseDelta().x;
+            camera.target.x += GetMouseDelta().x;
+        }
 
-                // Check for number key presses (0-9)
-                for (int key = KEY_ZERO; key <= KEY_NINE; key++)
+        /*if (actionRecherche == true)
+        {
 
-                    if (IsKeyPressed(key))
-                    {
-                        int len = strlen(text);
-                        if (len < MAX_INPUT_CHARS)
-                        {
-                            // Concatenate pressed key to the input text
-                            text[len] = (char)('0' + (key - KEY_ZERO));
-                            text[len + 1] = '\0';
-                        }
-                    }
+            strcpy(text, "0");
 
-                // Check for backspace key press
-                if (IsKeyPressed(KEY_BACKSPACE))
+            // Check for number key presses (0-9)
+            for (int key = KEY_ZERO; key <= KEY_NINE; key++)
+
+                if (IsKeyPressed(key))
                 {
                     int len = strlen(text);
-                    if (len > 0)
+                    if (len < MAX_INPUT_CHARS)
                     {
-                        // Remove the last character from the input text
-                        text[len - 1] = '\0';
+                        // Concatenate pressed key to the input text
+                        text[len] = (char)('0' + (key - KEY_ZERO));
+                        text[len + 1] = '\0';
                     }
                 }
 
-                // Draw button
-                DrawRectangleRec(inpDelt, isClicked(inpDelt) ? DARKGRAY : LIGHTGRAY);
-                DrawText("Enter Number", (int)(inpDelt.x + inpDelt.width / 2 - MeasureText("Enter Number", textSize) / 2), (int)(inpDelt.y + inpDelt.height / 2 - textSize / 2), textSize, isClicked(inpDelt) ? RAYWHITE : GRAY);
-
-                // Draw input text
-                DrawText(text, 600 / 2 - MeasureText(text, textSize) / 2, 400 / 2 + 30, textSize, BLACK);
-            }
-
-            // Check for input to add characters to the text
-            if (letterCount < MAX_INPUT_CHARS)
-            {
-                int key = GetKeyPressed();
-
-                if (key != 0)
-                {
-                    // Only add ASCII characters
-                    if ((key >= 48) && (key <= 57))
-                    {
-                        name[letterCount] = (char)key;
-                        letterCount++;
-                    }
-                }
-            }
-
-            // Check for backspace key to remove characters from the text
+            // Check for backspace key press
             if (IsKeyPressed(KEY_BACKSPACE))
             {
-                if (letterCount > 0)
+                int len = strlen(text);
+                if (len > 0)
                 {
-                    letterCount--;
-                    name[letterCount] = '\0';
+                    // Remove the last character from the input text
+                    text[len - 1] = '\0';
                 }
-            }*/
+            }
 
-            // Draw
-            BeginDrawing();
+            // Draw button
+            DrawRectangleRec(inpDelt, isClicked(inpDelt) ? DARKGRAY : LIGHTGRAY);
+            DrawText("Enter Number", (int)(inpDelt.x + inpDelt.width / 2 - MeasureText("Enter Number", textSize) / 2), (int)(inpDelt.y + inpDelt.height / 2 - textSize / 2), textSize, isClicked(inpDelt) ? RAYWHITE : GRAY);
 
-            ClearBackground(RAYWHITE);
-            // DrawRectangle(1500 - 2200 / 2, 1000 - 1500 / 2, 2200, 1500, RAYWHITE);
-            DrawRectangleRec(scroller, DARKGRAY);
-            BeginMode2D(camera);
-
-            // Draw text input rectangle
-            DrawButton(buttonCreate, "Create", DARKGREEN);
-            DrawButton(buttoninsert, "Insert", GOLD);
-            DrawButton(buttonRecherche, "Rechercher", ORANGE);
-            DrawButton(buttonDelete, "Delete", RED);
-            DrawButton(buttonTRI, "Tri", GREEN);
-
-            // draw list
-            drawList();
-
-            EndMode2D();
-            DrawFPS(10, 10);
-
-            EndDrawing();
+            // Draw input text
+            DrawText(text, 600 / 2 - MeasureText(text, textSize) / 2, 400 / 2 + 30, textSize, BLACK);
         }
-        // close fenètre
-        CloseWindow();
 
-        return 0;
+        // Check for input to add characters to the text
+        if (letterCount < MAX_INPUT_CHARS)
+        {
+            int key = GetKeyPressed();
+
+            if (key != 0)
+            {
+                // Only add ASCII characters
+                if ((key >= 48) && (key <= 57))
+                {
+                    name[letterCount] = (char)key;
+                    letterCount++;
+                }
+            }
+        }
+
+        // Check for backspace key to remove characters from the text
+        if (IsKeyPressed(KEY_BACKSPACE))
+        {
+            if (letterCount > 0)
+            {
+                letterCount--;
+                name[letterCount] = '\0';
+            }
+        }*/
+
+        // Draw
+        BeginDrawing();
+
+        ClearBackground(RAYWHITE);
+        // DrawRectangle(1500 - 2200 / 2, 1000 - 1500 / 2, 2200, 1500, RAYWHITE);
+        DrawRectangleRec(scroller, DARKGRAY);
+        BeginMode2D(camera);
+
+        // Draw text input rectangle
+        DrawButton(buttonCreate, "Create", DARKGREEN);
+        DrawButton(buttoninsert, "Insert", GOLD);
+        DrawButton(buttonRecherche, "Rechercher", ORANGE);
+        DrawButton(buttonDelete, "Delete", RED);
+        DrawButton(buttonTRI, "Tri", GREEN);
+
+        // draw list
+        drawList();
+
+        EndMode2D();
+        DrawFPS(10, 10);
+
+        EndDrawing();
     }
+    // close fenètre
+    CloseWindow();
+
+    return 0;
+}
