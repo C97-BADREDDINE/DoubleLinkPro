@@ -425,69 +425,71 @@ int main(void)
             camera.target.x += GetMouseDelta().x;
         }
 
-        /*if (actionRecherche == true)
-        {
+        /*  if (actionRecherche == true)
+          {
 
-            strcpy(text, "0");
+              strcpy(name, "0");
 
-            // Check for number key presses (0-9)
-            for (int key = KEY_ZERO; key <= KEY_NINE; key++)
+              // Check for number key presses (0-9)
+              for (int key = KEY_ZERO; key <= KEY_NINE; key++)
 
-                if (IsKeyPressed(key))
-                {
-                    int len = strlen(text);
-                    if (len < MAX_INPUT_CHARS)
-                    {
-                        // Concatenate pressed key to the input text
-                        text[len] = (char)('0' + (key - KEY_ZERO));
-                        text[len + 1] = '\0';
-                    }
-                }
+                  if (IsKeyPressed(key))
+                  {
+                      int len = strlen(name);
+                      if (len < MAX_INPUT_CHARS)
+                      {
+                          // Concatenate pressed key to the input text
+                          name[len] = (char)('0' + (key - KEY_ZERO));
+                          name[len + 1] = '\0';
+                      }
+                  }
 
-            // Check for backspace key press
-            if (IsKeyPressed(KEY_BACKSPACE))
-            {
-                int len = strlen(text);
-                if (len > 0)
-                {
-                    // Remove the last character from the input text
-                    text[len - 1] = '\0';
-                }
-            }
+              // Check for backspace key press
+              if (IsKeyPressed(KEY_BACKSPACE))
+              {
+                  int len = strlen(name);
+                  if (len > 0)
+                  {
+                      // Remove the last character from the input text
+                      name[len - 1] = '\0';
+                  }
+              }
 
-            // Draw button
-            DrawRectangleRec(inpDelt, isClicked(inpDelt) ? DARKGRAY : LIGHTGRAY);
-            DrawText("Enter Number", (int)(inpDelt.x + inpDelt.width / 2 - MeasureText("Enter Number", textSize) / 2), (int)(inpDelt.y + inpDelt.height / 2 - textSize / 2), textSize, isClicked(inpDelt) ? RAYWHITE : GRAY);
+              /* Draw button
+              DrawRectangleRec(inpDelt, isClicked(inpDelt) ? DARKGRAY : LIGHTGRAY);
+              DrawText("Enter Number", (int)(inpDelt.x + inpDelt.width / 2 - MeasureText("Enter Number", textSize) / 2), (int)(inpDelt.y + inpDelt.height / 2 - textSize / 2), textSize, isClicked(inpDelt) ? RAYWHITE : GRAY);
 
-            // Draw input text
-            DrawText(text, 600 / 2 - MeasureText(text, textSize) / 2, 400 / 2 + 30, textSize, BLACK);
-        }
+              // Draw input text
+              DrawText(text, 600 / 2 - MeasureText(text, textSize) / 2, 400 / 2 + 30, textSize, BLACK);
+              */
 
-        // Check for input to add characters to the text
-        if (letterCount < MAX_INPUT_CHARS)
-        {
-            int key = GetKeyPressed();
+        /*
 
-            if (key != 0)
-            {
-                // Only add ASCII characters
-                if ((key >= 48) && (key <= 57))
-                {
-                    name[letterCount] = (char)key;
-                    letterCount++;
-                }
-            }
-        }
+    // Check for input to add characters to the text
+    if (letterCount < MAX_INPUT_CHARS)
+    {
+     int key = GetKeyPressed();
 
-        // Check for backspace key to remove characters from the text
-        if (IsKeyPressed(KEY_BACKSPACE))
-        {
-            if (letterCount > 0)
-            {
-                letterCount--;
-                name[letterCount] = '\0';
-            }
-        }*/
+     if (key != 0)
+     {
+         // Only add ASCII characters
+         if ((key >= 48) && (key <= 57))
+         {
+             name[letterCount] = (char)key;
+             letterCount++;
+         }
+     }
+    }
+
+    // Check for backspace key to remove characters from the text
+    if (IsKeyPressed(KEY_BACKSPACE))
+    {
+     if (letterCount > 0)
+     {
+         letterCount--;
+         name[letterCount] = '\0';
+     }
+    }*/
 
         // Draw
         BeginDrawing();
@@ -503,10 +505,35 @@ int main(void)
         DrawButton(buttonRecherche, "Rechercher", ORANGE);
         DrawButton(buttonDelete, "Delete", RED);
         DrawButton(buttonTRI, "Tri", GREEN);
-        
 
-        if(actionRecherche){
-            DrawButtonInput(inputing, "Enter Number", BLACK);
+        if (actionRecherche == true)
+        {
+            if (letterCount < MAX_INPUT_CHARS)
+            {
+                int key = GetKeyPressed();
+
+                if (key != 0)
+                {
+                    // Only add ASCII characters
+                    if ((key >= 48) && (key <= 57))
+                    {
+                        name[letterCount] = (char)key;
+                        letterCount++;
+                    }
+                }
+            }
+
+            // Check for backspace key to remove characters from the text
+            if (IsKeyPressed(KEY_BACKSPACE))
+            {
+                if (letterCount > 0)
+                {
+                    letterCount--;
+                    name[letterCount] = '\0';
+                }
+            }
+
+            DrawButtonInput(inputing, name, BLACK);
         }
 
         // draw list
