@@ -292,6 +292,7 @@ void RandomNodes()
 
 void InsertNodes(int data)
 {
+    
     insertNode(&head, data);
 }
 
@@ -307,6 +308,77 @@ bool IsNumber(const char *text)
     }
     return true;
 }
+
+
+
+
+
+
+
+// ... (existing code)
+
+int createMode = -1; // 0: random, 1: insert at end, 2: insert at beginning
+
+void createChoicesMenu() {
+    Rectangle randomButton = {buttonPosition.x, buttonPosition.y + buttonHeight * 5 + 40, buttonWidth, buttonHeight};
+    Rectangle endButton = {buttonPosition.x + buttonWidth + 10, buttonPosition.y + buttonHeight * 5 + 40, buttonWidth, buttonHeight};
+    Rectangle beginningButton = {buttonPosition.x + (buttonWidth + 10) * 2 + 10, buttonPosition.y + buttonHeight * 5 + 40, buttonWidth + 30, buttonHeight};
+
+    if (isClicked(randomButton)) createMode = 0;
+    if (isClicked(endButton)) createMode = 1;
+    if (isClicked(beginningButton)) createMode = 2;
+
+    DrawButton(randomButton, "Random", DARKGREEN);
+    DrawButton(endButton, "Insert at End", GOLD);
+    DrawButton(beginningButton, "Insert at Beginning", ORANGE);
+}
+
+// ... (existing code)
+
+
+
+// ... (existing code)
+
+// Function to insert a node at the beginning of the list
+void insertAtBeginning(Node** head, int data) {
+    data = GetRandomValue(0, 99);
+    Node* newNode = createNode(data);
+    newNode->next = *head;
+    if (*head != NULL) (*head)->prev = newNode;
+    *head = newNode;
+}
+
+// Function to insert a node at the end of the list
+void insertAtEnd(Node** head, int data) {
+    data = GetRandomValue(0, 99);
+    Node* newNode = createNode(data);
+
+    // If the list is empty, make the new node the head
+    if (*head == NULL) {
+        *head = newNode;
+        return;
+    }
+
+    // Traverse to the last node
+    Node* last = *head;
+    while (last->next != NULL) {
+        last = last->next;
+    }
+
+    last->next = newNode;
+    newNode->prev = last;
+}
+
+
+
+
+
+
+
+
+
+
+
 
 //----------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------
@@ -345,8 +417,18 @@ int main(void)
     Rectangle buttonTRI = {buttonPosition.x, buttonPosition.y + 4 * (buttonHeight + 10), buttonWidth, buttonHeight};
     Rectangle inputing = {GetScreenWidth() / 2, buttonRecherche.y, 350, 100};
     Rectangle scroller = {5, 1800, 550, 30};
+    Rectangle deletedebut ={buttonPosition.x+buttonWidth+10, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth+10, buttonHeight};
+    Rectangle deleteFin ={buttonPosition.x+(buttonWidth+10)*2+10, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth+10, buttonHeight};
+    Rectangle deleteRecherche ={buttonPosition.x+(buttonWidth+10)*3+20, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth+30, buttonHeight};
 
     SetTargetFPS(60);
+
+    
+    bool createMenuActive = false;
+
+// ... (existing code)
+
+ 
 
     while (!WindowShouldClose())
     {
@@ -372,12 +454,38 @@ int main(void)
             Actionscroller = false;
         }
 
+    
+    if (isClicked(buttonCreate)) {
+    actionRecherche = false;
+    createMenuActive = true;
+    }
+    // ... (existing code)
 
-        if (isClicked(buttonCreate))
-        {
-            RandomNodes();
-            actionRecherche=false;
+    if (createMenuActive) {
+        createChoicesMenu();
+
+        if (createMode != -1) {
+            createMenuActive = false;
         }
+    }
+
+    // ... (existing code)
+
+    if (createMode == 0) {
+        RandomNodes();
+        createMode = -1; // Reset for next creation
+    } else if (createMode == 1) {
+        // Insert at end
+        insertAtEnd(&head, atoi(name));
+        createMode = -1;
+    } else if (createMode == 2) {
+        // Insert at beginning
+        insertAtBeginning(&head, atoi(name));
+        createMode = -1;
+    }
+
+    // ... (existing code)
+
 
 
         if (isClicked(buttoninsert))
@@ -491,6 +599,12 @@ int main(void)
 
         if(actionRecherche)
             DrawButtonInput(inputing, name, BLACK);
+
+        if(ActionDelete){
+            DrawButton(deletedebut,"Delete Debut",RED);
+            DrawButton(deleteFin,"Delete Fin",RED);
+            DrawButton(deleteRecherche,"Del Rechercher",RED);
+        }    
         // draw list
         drawList();
 
