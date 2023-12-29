@@ -343,8 +343,13 @@ int main(void)
     Rectangle buttonRecherche = {buttonPosition.x, buttonPosition.y + 2 * (buttonHeight + 10), buttonWidth, buttonHeight};
     Rectangle buttonDelete = {buttonPosition.x, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth, buttonHeight};
     Rectangle buttonTRI = {buttonPosition.x, buttonPosition.y + 4 * (buttonHeight + 10), buttonWidth, buttonHeight};
-    Rectangle inputing = {GetScreenWidth() / 2, buttonRecherche.y, 350, 100};
+    Rectangle inputing = {1150, buttonRecherche.y, 350, 100};
     Rectangle scroller = {5, 1800, 550, 30};
+
+    Rectangle insertDebut = {buttonPosition.x+buttonWidth+10, buttonPosition.y + buttonHeight + 10, buttonWidth+15, buttonHeight};
+    Rectangle insertFin = {buttonPosition.x+(buttonWidth+10)*2+15, buttonPosition.y + buttonHeight + 10, buttonWidth, buttonHeight};
+    Rectangle insertindex = {buttonPosition.x+(buttonWidth+10)*3+25, buttonPosition.y + buttonHeight + 10, buttonWidth+15, buttonHeight};
+
     Rectangle deletedebut ={buttonPosition.x+buttonWidth+10, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth+10, buttonHeight};
     Rectangle deleteFin ={buttonPosition.x+(buttonWidth+10)*2+10, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth+10, buttonHeight};
     Rectangle deleteRecherche ={buttonPosition.x+(buttonWidth+10)*3+20, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth+30, buttonHeight};
@@ -385,8 +390,8 @@ int main(void)
 
         if (isClicked(buttoninsert))
         {
-            actionRecherche = !actionRecherche;
-            ActionInsert=actionRecherche;
+            actionRecherche = false;
+            ActionInsert= !ActionInsert;
         }
 
         if(ActionInsert){ 
@@ -396,8 +401,8 @@ int main(void)
 
         if (isClicked(buttonDelete))
         {
-            actionRecherche = !actionRecherche;
-            ActionDelete=actionRecherche;
+            actionRecherche = false;
+            ActionDelete=!ActionDelete;
         }
 
         if(ActionDelete){
@@ -476,6 +481,10 @@ int main(void)
                 }
             }           
         }
+        if(isClicked(deleteRecherche)){
+            actionRecherche= !actionRecherche;
+            ActionDelete=actionRecherche;
+        }
 
         // Draw
         BeginDrawing();
@@ -499,6 +508,11 @@ int main(void)
             DrawButton(deletedebut,"Delete Debut",RED);
             DrawButton(deleteFin,"Delete Fin",RED);
             DrawButton(deleteRecherche,"Del Rechercher",RED);
+        }
+        if(ActionInsert){
+            DrawButton(insertDebut,"InsertToDebut",GOLD);
+            DrawButton(insertFin,"InsertToFin",GOLD);
+            DrawButton(insertindex,"Insert Indice",GOLD);
         }    
         // draw list
         drawList();
