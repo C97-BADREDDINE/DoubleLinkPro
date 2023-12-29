@@ -137,12 +137,26 @@ bool isClicked(Rectangle rec)
         return false;
     }
 }
+bool is_mouse_over_button(Rectangle rect)
+{
+    /*
+        This function will check if the mouse is over the button
+        button: the button to check
+    */
+
+    return CheckCollisionPointRec(GetMousePosition(), rect);
+}
 
 void DrawButton(Rectangle rect, const char *text, Color co)
 {
-    DrawRectangleLinesEx(rect, 3, BLANK);
+    if (is_mouse_over_button(rect))
+    {
+        co = SKYBLUE;
+    }
+
+    DrawRectangleLinesEx(rect, 10, Fade(BLACK, 120));
     DrawRectangleRec(rect, isClicked(rect) ? DARKGRAY : co);                                                       // Draw button outline
-    DrawText(text, rect.x + (rect.width - MeasureText(text, 20)) / 2, rect.y + (rect.height - 20) / 2, 21, WHITE); // Draw button text
+    DrawText(text, rect.x + (rect.width - MeasureText(text, 20)) / 2, rect.y + (rect.height - 20) / 2, 23, WHITE); // Draw button text
 }
 
 void DrawFlechRight(int firstX, int firstY, int FinX, int finY)
@@ -204,7 +218,7 @@ void drawList()
     {
         // Dessiner le rectangle avec la valeur
         Rectangle rec = {xPos, DebutposY, rectWidth, rectHeight};
-        DrawButton(rec, TextFormat("%d", current->data), LIME);
+        DrawButton(rec, TextFormat("%d", current->data), DARKBLUE);
 
         // Dessiner la flèche suivante (si elle existe)
         if (current->next != NULL)
@@ -274,39 +288,6 @@ bool IsNumber(const char *text)
     }
     return true;
 }
-char text[MAX_INPUT_CHARS + 1] = "\0"; // Character array to store input
-int textSize = 10;
-Rectangle inpDelt = {1500 - 600 / 2, 1000 - 400 / 2, 600, 400};
-void inputDelete()
-{
-    strcpy(text, "0");
-
-    // Check for number key presses (0-9)
-    for (int key = KEY_ZERO; key <= KEY_NINE; key++)
-    {
-        if (IsKeyPressed(key))
-        {
-            int len = strlen(text);
-            if (len < MAX_INPUT_CHARS)
-            {
-                // Concatenate pressed key to the input text
-                text[len] = (char)('0' + (key - KEY_ZERO));
-                text[len + 1] = '\0';
-            }
-        }
-    }
-
-    // Check for backspace key press
-    if (IsKeyPressed(KEY_BACKSPACE))
-    {
-        int len = strlen(text);
-        if (len > 0)
-        {
-            // Remove the last character from the input text
-            text[len - 1] = '\0';
-        }
-    }
-}
 
 //----------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------
@@ -314,8 +295,12 @@ void inputDelete()
 int main(void)
 {
     bool actionRecherche = false;
+
+    char name[MAX_INPUT_CHARS + 1] = "\0"; // Buffer to store input text (plus null terminator)
+    int letterCount = 0;
+
     Rectangle scroller = {5, 1800, 500, 30};
-    int scrollSpeed = 5;
+    int scrollSpeed = 10;
 
     Camera2D camera = {0};
     camera.target = (Vector2){0, 0};
@@ -330,6 +315,7 @@ int main(void)
     Rectangle buttonRecherche = {buttonPosition.x, buttonPosition.y + 2 * (buttonHeight + 10), buttonWidth, buttonHeight};
     Rectangle buttonDelete = {buttonPosition.x, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth, buttonHeight};
     Rectangle buttonTRI = {buttonPosition.x, buttonPosition.y + 4 * (buttonHeight + 10), buttonWidth, buttonHeight};
+    Rectangle inpDelt = {buttonRecherche.x + 200, buttonRecherche.y, 350, 170};
 
     SetTargetFPS(60);
 
@@ -353,7 +339,7 @@ int main(void)
 
         if (isClicked(buttonDelete))
         {
-            inputDelete();
+            // on devloped
         }
 
         if (isClicked(buttonRecherche))
@@ -370,16 +356,81 @@ int main(void)
         {
             if (camera.target.x >= 0)
             {
-                camera.target.x += 5.0f;
+                camera.target.x += 10.0f;
                 scroller.x += scrollSpeed;
             }
         }
         else if (IsKeyDown(KEY_LEFT))
         {
-            if(camera.target.x > 0)
-            camera.target.x -= 5.0f;
-            scroller.x -= scrollSpeed;
+            if (camera.target.x > 0)
+                camera.target.x -= 10.0f;
+                if(scroller.x > 0){
+            scroller.x -= scrollSpeed;}
         }
+
+        /*if (actionRecherche == true)
+        {
+
+            strcpy(text, "0");
+
+            // Check for number key presses (0-9)
+            for (int key = KEY_ZERO; key <= KEY_NINE; key++)
+
+                if (IsKeyPressed(key))
+                {
+                    int len = strlen(text);
+                    if (len < MAX_INPUT_CHARS)
+                    {
+                        // Concatenate pressed key to the input text
+                        text[len] = (char)('0' + (key - KEY_ZERO));
+                        text[len + 1] = '\0';
+                    }
+                }
+
+            // Check for backspace key press
+            if (IsKeyPressed(KEY_BACKSPACE))
+            {
+                int len = strlen(text);
+                if (len > 0)
+                {
+                    // Remove the last character from the input text
+                    text[len - 1] = '\0';
+                }
+            }
+
+            // Draw button
+            DrawRectangleRec(inpDelt, isClicked(inpDelt) ? DARKGRAY : LIGHTGRAY);
+            DrawText("Enter Number", (int)(inpDelt.x + inpDelt.width / 2 - MeasureText("Enter Number", textSize) / 2), (int)(inpDelt.y + inpDelt.height / 2 - textSize / 2), textSize, isClicked(inpDelt) ? RAYWHITE : GRAY);
+
+            // Draw input text
+            DrawText(text, 600 / 2 - MeasureText(text, textSize) / 2, 400 / 2 + 30, textSize, BLACK);
+        }
+
+        // Check for input to add characters to the text
+        if (letterCount < MAX_INPUT_CHARS)
+        {
+            int key = GetKeyPressed();
+
+            if (key != 0)
+            {
+                // Only add ASCII characters
+                if ((key >= 48) && (key <= 57))
+                {
+                    name[letterCount] = (char)key;
+                    letterCount++;
+                }
+            }
+        }
+
+        // Check for backspace key to remove characters from the text
+        if (IsKeyPressed(KEY_BACKSPACE))
+        {
+            if (letterCount > 0)
+            {
+                letterCount--;
+                name[letterCount] = '\0';
+            }
+        }*/
 
         // Draw
         BeginDrawing();
@@ -390,24 +441,17 @@ int main(void)
         BeginMode2D(camera);
 
         // Draw text input rectangle
-        DrawButton(buttonCreate, "Create", YELLOW);
+        DrawButton(buttonCreate, "Create",DARKGREEN);
         DrawButton(buttoninsert, "Insert", GOLD);
         DrawButton(buttonRecherche, "Rechercher", ORANGE);
         DrawButton(buttonDelete, "Delete", RED);
         DrawButton(buttonTRI, "Tri", GREEN);
+
+        //draw list
         drawList();
 
-        if (actionRecherche == true)
-        {
-            inputDelete();
-            // Draw button
-            DrawRectangleRec(inpDelt, isClicked(inpDelt) ? DARKGRAY : LIGHTGRAY);
-            DrawText("Enter Number", (int)(inpDelt.x + inpDelt.width / 2 - MeasureText("Enter Number", textSize) / 2), (int)(inpDelt.y + inpDelt.height / 2 - textSize / 2), textSize, isClicked(inpDelt) ? RAYWHITE : GRAY);
-
-            // Draw input text
-            DrawText(text, 600 / 2 - MeasureText(text, textSize) / 2, 400 / 2 + 30, textSize, BLACK);
-        }
         EndMode2D();
+        DrawFPS(10, 10);
 
         EndDrawing();
     }
