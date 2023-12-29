@@ -390,6 +390,7 @@ int main(void)
             if (actionRecherche == true && IsKeyPressed(KEY_ENTER))
             {
                 printf(name);
+                deleteNode(&head,atoi(name));
             }
         }
 
@@ -435,23 +436,7 @@ int main(void)
                 scroller.x += GetMouseDelta().x;
                 camera.target.x += GetMouseDelta().x;
         }
-
-        // Draw
-        BeginDrawing();
-
-        ClearBackground(RAYWHITE);
-        // DrawRectangle(1500 - 2200 / 2, 1000 - 1500 / 2, 2200, 1500, RAYWHITE);
-        DrawRectangleRec(scroller, DARKGRAY);
-        BeginMode2D(camera);
-
-        // Draw text input rectangle
-        DrawButton(buttonCreate, "Create", DARKGREEN);
-        DrawButton(buttoninsert, "Insert", GOLD);
-        DrawButton(buttonRecherche, "Rechercher", ORANGE);
-        DrawButton(buttonDelete, "Delete", RED);
-        DrawButton(buttonTRI, "Tri", GREEN);
-
-        if (actionRecherche == true)
+        if (actionRecherche)
         {
             if (letterCount < MAX_INPUT_CHARS)
             {
@@ -476,11 +461,26 @@ int main(void)
                     letterCount--;
                     name[letterCount] = '\0';
                 }
-            }
-
-            DrawButtonInput(inputing, name, BLACK);
+            }           
         }
 
+        // Draw
+        BeginDrawing();
+
+        ClearBackground(RAYWHITE);
+        // DrawRectangle(1500 - 2200 / 2, 1000 - 1500 / 2, 2200, 1500, RAYWHITE);
+        DrawRectangleRec(scroller, DARKGRAY);
+        BeginMode2D(camera);
+
+        // Draw text input rectangle
+        DrawButton(buttonCreate, "Create", DARKGREEN);
+        DrawButton(buttoninsert, "Insert", GOLD);
+        DrawButton(buttonRecherche, "Rechercher", ORANGE);
+        DrawButton(buttonDelete, "Delete", RED);
+        DrawButton(buttonTRI, "Tri", GREEN);
+
+        
+     DrawButtonInput(inputing, name, BLACK);
         // draw list
         drawList();
 
