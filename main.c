@@ -92,7 +92,7 @@ void sortListSelection(Node **head)
 {
     Node *i, *j, *min;
 
-    for (i = *head; i != NULL; i = i->next)
+    for (i = *head; i->next != NULL; i = i->next)
     {
         min = i;
 
@@ -122,7 +122,6 @@ void sortListSelection(Node **head)
 #define ListWidth 170
 #define ListHeight 200
 
-
 Node *head = NULL;
 
 Vector2 buttonPosition = {100, 100};
@@ -139,6 +138,7 @@ bool isClicked(Rectangle rec)
         return false;
     }
 }
+
 bool is_mouse_over_button(Rectangle rect)
 {
     /*
@@ -240,31 +240,6 @@ void drawList()
     AllScreenButton = xPos;
 }
 
-void ColorBouttonMouse(Rectangle box, Color c)
-{
-    if (CheckCollisionPointRec(GetMousePosition(), box))
-    {
-        c = BLUE;
-
-        // Check if mouse button is pressed
-        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
-        {
-            c = GREEN;
-        }
-
-        // Check if mouse button is released
-        if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON))
-        {
-            c = RED;
-        }
-    }
-    else
-    {
-        // If mouse is not over the rectangle, reset the color
-        c = RED;
-    }
-}
-
 void RandomNodes()
 {
     int n = GetRandomValue(0, 9);
@@ -291,6 +266,14 @@ bool IsNumber(const char *text)
     }
     return true;
 }
+
+
+
+
+
+
+
+
 
 //----------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------
@@ -321,9 +304,10 @@ int main(void)
     Rectangle inpDelt = {buttonRecherche.x + 200, buttonRecherche.y, 350, 170};
 
     SetTargetFPS(60);
-
+    char feedbackText[80] = "";
     while (!WindowShouldClose())
     {
+        
         // Update
         if (IsKeyPressed(KEY_F11))
         { // Toggle fullscreen on F11
@@ -340,15 +324,47 @@ int main(void)
             InsertNodes(GetRandomValue(0, 50));
         }
 
-        if (isClicked(buttonDelete))
-        {
-            // on devloped
+        
+    // Recherche button action
+        if (isClicked(buttonRecherche)) {
+            int valueToSearch = atoi(name);
+            Node *foundNode = searchNode(head, valueToSearch);
+            if (foundNode) {
+            strcpy(feedbackText, "Value found!");
+            } else {
+            strcpy(feedbackText, "Value not found.");
+            }
         }
 
-        if (isClicked(buttonRecherche))
-        {
-            actionRecherche = !actionRecherche;
+        // Delete button action
+        if (isClicked(buttonDelete)) {
+            int valueToDelete = atoi(name);
+            deleteNode(&head, valueToDelete);
         }
+
+        // Input handling
+        if (CheckCollisionPointRec(GetMousePosition(), inpDelt)) {
+            // Check for input focus
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+                actionRecherche = true;
+                letterCount = 0;
+            }
+        } else {
+            actionRecherche = false;
+        }
+
+        if (actionRecherche) {
+            // Handle text input
+            if (IsKeyPressed(KEY_BACKSPACE) && letterCount > 0) {
+                name[letterCount--] = '\0';
+            } else if (letterCount < MAX_INPUT_CHARS) {
+                char newChar = GetCharPressed();
+                if (isalnum(newChar)) {
+                    name[letterCount++] = newChar;
+                }
+            }
+        }
+
 
         if (isClicked(buttonTRI))
         {
@@ -366,105 +382,53 @@ int main(void)
             }
         }
 
-        else if (IsKeyDown(KEY_LEFT) &&  (camera.target.x >= 0))
+        else if (IsKeyDown(KEY_LEFT) && (camera.target.x >= 0))
+        {
+            camera.target.x -= 10.0f;
+            scroller.x -= scrollSpeed;
+            if (scroller.x < 0)
             {
-                camera.target.x -= 10.0f;
-                scroller.x -= scrollSpeed;
-                if(scroller.x < 0){
-                    scroller.x = 0;
-                    camera.target.x = 0;
-                }
+                scroller.x = 0;
+                camera.target.x = 0;
             }
-        
-            /*if (actionRecherche == true)
-            {
-
-                strcpy(text, "0");
-
-                // Check for number key presses (0-9)
-                for (int key = KEY_ZERO; key <= KEY_NINE; key++)
-
-                    if (IsKeyPressed(key))
-                    {
-                        int len = strlen(text);
-                        if (len < MAX_INPUT_CHARS)
-                        {
-                            // Concatenate pressed key to the input text
-                            text[len] = (char)('0' + (key - KEY_ZERO));
-                            text[len + 1] = '\0';
-                        }
-                    }
-
-                // Check for backspace key press
-                if (IsKeyPressed(KEY_BACKSPACE))
-                {
-                    int len = strlen(text);
-                    if (len > 0)
-                    {
-                        // Remove the last character from the input text
-                        text[len - 1] = '\0';
-                    }
-                }
-
-                // Draw button
-                DrawRectangleRec(inpDelt, isClicked(inpDelt) ? DARKGRAY : LIGHTGRAY);
-                DrawText("Enter Number", (int)(inpDelt.x + inpDelt.width / 2 - MeasureText("Enter Number", textSize) / 2), (int)(inpDelt.y + inpDelt.height / 2 - textSize / 2), textSize, isClicked(inpDelt) ? RAYWHITE : GRAY);
-
-                // Draw input text
-                DrawText(text, 600 / 2 - MeasureText(text, textSize) / 2, 400 / 2 + 30, textSize, BLACK);
-            }
-
-            // Check for input to add characters to the text
-            if (letterCount < MAX_INPUT_CHARS)
-            {
-                int key = GetKeyPressed();
-
-                if (key != 0)
-                {
-                    // Only add ASCII characters
-                    if ((key >= 48) && (key <= 57))
-                    {
-                        name[letterCount] = (char)key;
-                        letterCount++;
-                    }
-                }
-            }
-
-            // Check for backspace key to remove characters from the text
-            if (IsKeyPressed(KEY_BACKSPACE))
-            {
-                if (letterCount > 0)
-                {
-                    letterCount--;
-                    name[letterCount] = '\0';
-                }
-            }*/
-
-            // Draw
-            BeginDrawing();
-
-            ClearBackground(RAYWHITE);
-            // DrawRectangle(1500 - 2200 / 2, 1000 - 1500 / 2, 2200, 1500, RAYWHITE);
-            DrawRectangleRec(scroller, DARKGRAY);
-            BeginMode2D(camera);
-
-            // Draw text input rectangle
-            DrawButton(buttonCreate, "Create", DARKGREEN);
-            DrawButton(buttoninsert, "Insert", GOLD);
-            DrawButton(buttonRecherche, "Rechercher", ORANGE);
-            DrawButton(buttonDelete, "Delete", RED);
-            DrawButton(buttonTRI, "Tri", GREEN);
-
-            // draw list
-            drawList();
-
-            EndMode2D();
-            DrawFPS(10, 10);
-
-            EndDrawing();
         }
-        // close fenètre
-        CloseWindow();
 
-        return 0;
+        
+
+
+
+        // Draw
+        BeginDrawing();
+
+        ClearBackground(RAYWHITE);
+        // DrawRectangle(1500 - 2200 / 2, 1000 - 1500 / 2, 2200, 1500, RAYWHITE);
+        DrawRectangleRec(scroller, DARKGRAY);
+        BeginMode2D(camera);
+
+        // Draw text input rectangle
+        DrawButton(buttonCreate, "Create", DARKGREEN);
+        DrawButton(buttoninsert, "Insert", GOLD);
+        DrawButton(buttonRecherche, "Rechercher", ORANGE);
+        DrawButton(buttonDelete, "Delete", RED);
+        DrawButton(buttonTRI, "Tri", GREEN);
+
+        // draw list
+        drawList();
+
+        
+
+        EndMode2D();
+        DrawFPS(10, 10);
+
+    DrawRectangleRec(inpDelt, LIGHTGRAY);
+    DrawText(name, inpDelt.x + 10, inpDelt.y + 10, 20, BLACK);
+    DrawText(feedbackText, 300, 300, 40, GREEN);
+
+        EndDrawing();
     }
+    DrawText(feedbackText, 300, 300, 40, GREEN);
+    // close fenètre
+    CloseWindow();
+
+    return 0;
+}
