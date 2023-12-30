@@ -4,6 +4,7 @@
 #include "stdbool.h"
 #include <string.h>
 #include <ctype.h>
+#include <time.h>
 
 // Structures
 typedef struct Node
@@ -161,11 +162,44 @@ void supprimerDerniereValeur(struct Node **head)
 
     printf("La dernière valeur a été supprimée avec succès.\n");
 }
+// Function to insert a new node at the end of the doubly linked list
+void insertAtend(Node **head, int newData)
+{
+    // Allocate memory for the new node
+    Node *newNode = (Node *)malloc(sizeof(Node));
+
+    // Set the data of the new node
+    newNode->data = newData;
+
+    // The new node will be the last node, so set its next to NULL
+    newNode->next = NULL;
+
+    // If the list is empty, make the new node the head
+    if (*head == NULL)
+    {
+        newNode->prev = NULL;
+        *head = newNode;
+        return;
+    }
+
+    // Traverse the list to find the last node
+    Node *last = *head;
+    while (last->next != NULL)
+    {
+        last = last->next;
+    }
+
+    // Update the next of the last node to point to the new node
+    last->next = newNode;
+
+    // Set the previous of the new node to the last node
+    newNode->prev = last;
+}
 
 //----------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------
 
-#define MAX_INPUT_CHARS 9
+#define MAX_INPUT_CHARS 5
 #define buttonWidth 180
 #define buttonHeight 70
 #define DebutposX 450
@@ -227,6 +261,30 @@ void DrawButtonInput(Rectangle rect, const char *text, Color co)
     DrawRectangle(rect.x + 10, rect.y + 10, rect.width - 20, rect.height - 20, WHITE);
     DrawText(text, rect.x + (rect.width - MeasureText(text, 20)) / 2, rect.y + (rect.height - 20) / 2, 40, BLACK);    // Draw button text
     DrawText("Entrer Le Numbre :", rect.x - 530 + (rect.width) / 2, rect.y - 20 + (rect.height - 20) / 2, 35, BLACK); // Draw button text
+}
+
+void DrawButtonInput2(Rectangle rect, const char *text, Color co)
+{
+    if (is_mouse_over_button(rect))
+    {
+        SetMouseCursor(2);
+        co = SKYBLUE;
+    }
+    else
+    {
+        SetMouseCursor(0);
+    }
+
+    if (isClicked(rect))
+    {
+        co = BLANK;
+    }
+
+    DrawRectangleLinesEx(rect, 10, BEIGE);
+    DrawRectangleRec(rect, isClicked(rect) ? LIGHTGRAY : co); // Draw button outline
+    DrawRectangle(rect.x + 10, rect.y + 10, rect.width - 20, rect.height - 20, WHITE);
+    DrawText(text, rect.x + (rect.width - MeasureText(text, 20)) / 2, rect.y + (rect.height - 20) / 2, 40, BLACK); // Draw button text
+    DrawText("Entrer Indice:", rect.x - 530 + (rect.width) / 2, rect.y - 20 + (rect.height - 20) / 2, 35, BLACK);  // Draw button text
 }
 
 void DrawFlechRight(int firstX, int firstY, int FinX, int finY)
@@ -348,30 +406,6 @@ void insertAtBeginning(Node **head, int data)
     *head = newNode;
 }
 
-// Function to insert a node at the end of the list
-void insertAtEnd(Node **head, int data)
-{
-    data = GetRandomValue(0, 99);
-    Node *newNode = createNode(data);
-
-    // If the list is empty, make the new node the head
-    if (*head == NULL)
-    {
-        *head = newNode;
-        return;
-    }
-
-    // Traverse to the last node
-    Node *last = *head;
-    while (last->next != NULL)
-    {
-        last = last->next;
-    }
-
-    last->next = newNode;
-    newNode->prev = last;
-}
-
 // Function to delete all nodes in the linked list
 void deleteAllNodes(Node **head)
 {
@@ -430,13 +464,16 @@ int main(void)
     bool actionRechercheDelete = false;
     bool rechercher = false;
     bool createMenuActive = false;
+
+    bool insertdebut = false;
+    bool insertfin = false;
+
     int resultaRechercher = -1;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT); // Enable Multi Sampling Anti Aliasing 4x
 
     char name[MAX_INPUT_CHARS + 1] = "\0"; // Buffer to store input text (plus null terminator)
     int letterCount = 0;
-
 
     int scrollSpeed = 10;
     Vector2 mousePosition;
@@ -494,6 +531,7 @@ int main(void)
         {
             Actionscroller = false;
         }
+        //=====================================================insert button===========================
 
         if (isClicked(buttoninsert))
         {
@@ -504,7 +542,57 @@ int main(void)
             ActionInsert = !ActionInsert;
         }
 
-        //((((((((((((((((((((((((((((((((((((((((((((()))))))))))))))))))))))))))))))))))))))))))))
+        if (isClicked(insertDebut))
+        {
+            actionRecherche = !actionRecherche;
+            insertdebut = actionRecherche;
+            formatter(name);
+            letterCount = 0;
+        }
+
+        if (insertdebut)
+        {
+            if (IsKeyPressed(KEY_ENTER))
+            {
+                if (letterCount == 0)
+                {
+                    printf("please entrer valur");
+                }
+                else
+                {
+                    insertNode(&head, atoi(name));
+                    formatter(name);
+                    letterCount = 0;
+                }
+            }
+        }
+
+        if (isClicked(insertFin))
+        {
+            actionRecherche = !actionRecherche;
+            insertfin = actionRecherche;
+            formatter(name);
+            letterCount = 0;
+        }
+
+        if (insertfin)
+        {
+            if (IsKeyPressed(KEY_ENTER))
+            {
+                if (letterCount == 0)
+                {
+                    printf("please entrer valur");
+                }
+                else
+                {
+                    insertAtend(&head,atoi(name));
+                    formatter(name);
+                    letterCount = 0;
+                }
+            }
+        }
+
+        //====================================== Create Button =======================================
         if (isClicked(buttonCreate))
         {
             actionRecherche = false;
@@ -528,13 +616,13 @@ int main(void)
         else if (createMode == 1)
         {
             // Insert at end
-            insertAtEnd(&head, atoi(name));
+            insertAtend(&head, GetRandomValue(0, 99));
             createMode = -1;
         }
         else if (createMode == 2)
         {
             // Insert at beginning
-            insertAtBeginning(&head, atoi(name));
+            insertAtBeginning(&head, GetRandomValue(0, 99));
             createMode = -1;
         }
 
@@ -608,7 +696,6 @@ int main(void)
         {
             camera.target.x += 10.0f;
             scroller.x += scrollSpeed;
-
 
             if (scroller.x + scroller.width > GetScreenWidth())
             {
