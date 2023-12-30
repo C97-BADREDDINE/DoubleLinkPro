@@ -112,6 +112,49 @@ void sortListSelection(Node **head)
     }
 }
 
+void DeletePremiereValeur(struct Node** head) {
+    if (*head == NULL) {
+        return;
+    }
+
+    struct Node* temp = *head;
+
+    *head = (*head)->next;
+    if (*head != NULL) {
+        (*head)->prev = NULL;
+    }
+
+    free(temp);
+
+}
+
+// Fonction pour supprimer la dernière valeur d'une liste doublement chaînée
+void supprimerDerniereValeur(struct Node** head) {
+    if (*head == NULL) {
+        return;
+    }
+
+    struct Node* current = *head;
+
+    // Parcourir la liste jusqu'au dernier élément
+    while (current->next != NULL) {
+        current = current->next;
+    }
+
+    // Si la liste a plus d'un élément
+    if (current->prev != NULL) {
+        current->prev->next = NULL;
+    } else {
+        // Si la liste a un seul élément
+        *head = NULL;
+    }
+
+    free(current);
+
+    printf("La dernière valeur a été supprimée avec succès.\n");
+}
+
+
 //----------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------
 
@@ -531,6 +574,14 @@ int main(void)
             formatter(name);
                 letterCount=0;
         }
+
+        //supprimer la première valeur d'une liste doublement chaînée
+        if(isClicked(deletedebut))
+            DeletePremiereValeur(&head);
+
+        //supprimer la dernière valeur d'une liste doublement chaînée
+        if(isClicked(deleteFin))
+            supprimerDerniereValeur(&head);    
 
         // activer la recherche pour delete
         if (actionRechercheDelete)
