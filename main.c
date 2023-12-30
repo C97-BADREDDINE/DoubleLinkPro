@@ -196,6 +196,56 @@ void insertAtend(Node **head, int newData)
     newNode->prev = last;
 }
 
+int isValidIndex(Node **head)
+{
+
+    Node *current = *head;
+    int length = 0;
+    while (current != NULL)
+    {
+        length++;
+        current = current->next;
+    }
+
+    return  length ;
+}
+
+// Function to add data at a specific index in a doubly linked list
+void insertAtIndex(Node **head, int data, int Index)
+{
+    Node *current = *head;
+
+    // If the list is empty or index is 0, insert at the beginning
+    if (*head == NULL || Index == 0)
+    {
+        insertNode(head, data);
+        return;
+    }
+
+    // Traverse to the node at index - 1
+    for (int i = 0; i < Index-1  && current != NULL; ++i)
+    {
+        current = current->next;
+    }
+
+    // If index is greater than the number of nodes, insert at the end
+    if (current == NULL)
+    {
+        insertAtend(head, data);
+        return;
+    }
+
+    // Insert the new node
+    Node *newNode = createNode(data);
+
+    newNode->next = current->next;
+    newNode->prev = current;
+    if (current->next != NULL)
+    {
+        current->next->prev = newNode;
+    }
+    current->next = newNode;
+}
 //----------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------
 
@@ -443,6 +493,9 @@ int main(void)
 
     bool insertdebut = false;
     bool insertfin = false;
+    bool insertind = false;
+    bool insertval = false;
+    int index=0;
 
     int resultaRechercher = -1;
 
@@ -561,10 +614,82 @@ int main(void)
                 }
                 else
                 {
-                    insertAtend(&head,atoi(name));
+                    insertAtend(&head, atoi(name));
                     formatter(name);
                     letterCount = 0;
                 }
+            }
+        }
+
+        //=====================================================66666666666666666666666666666===========
+        if (isClicked(insertindex))
+        {
+            insertind = !insertind;
+            formatter(name);
+            letterCount = 0;
+        }
+
+        if (insertind)
+        {
+
+            if (letterCount < MAX_INPUT_CHARS)
+            {
+                int key = GetKeyPressed();
+
+                if (key != 0)
+                {
+                    // Only add ASCII characters
+                    if ((key >= 48) && (key <= 57))
+                    {
+                        name[letterCount] = (char)key;
+                        letterCount++;
+                    }
+                }
+            }
+
+            // Check for backspace key to remove characters from the text
+            if (IsKeyPressed(KEY_BACKSPACE))
+            {
+                if (letterCount > 0)
+                {
+                    letterCount--;
+                    name[letterCount] = '\0';
+                }
+            }
+
+            if (IsKeyPressed(KEY_ENTER))
+            {
+                if (letterCount == 0)
+                {
+                    printf("please entrer valur");
+                }
+                else if (isValidIndex(&head)>atoi(name))
+                {
+                    index = atoi(name);
+                    insertval = true;
+                    formatter(name);
+                    letterCount = 0;
+                    insertind=false;
+                    actionRecherche=true;                    
+                }
+                else
+                {
+                    printf("valeur n exit pas");
+                    formatter(name);
+                    letterCount = 0;
+                }
+            }
+        }
+        // Search in list by index        
+        if (insertval)
+        {
+            if (IsKeyPressedRepeat(KEY_ENTER))
+            {
+                insertAtIndex(&head, atoi(name), index);
+                formatter(name);
+                letterCount = 0;
+                insertval = false;
+                actionRecherche=false;
             }
         }
 
@@ -805,6 +930,14 @@ int main(void)
                 DrawText("", inputing.x, inputing.y + 200, 50, RED);
             }
         }
+
+        if (insertind)
+        {
+            DrawButtonInput2(inputing, name, BLACK);
+        }
+        /*if(insertval){
+            DrawButtonInput(inputing,name,BLACK);
+        }*/
 
         // draw list
         drawList();
