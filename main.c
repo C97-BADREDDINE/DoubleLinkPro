@@ -63,14 +63,15 @@ void deleteNode(Node **head, int data)
     free(current);
 }
 
-Node *searchNode(Node *head, int data)
+bool searchNode(Node *head, int data)
 {
     while (head != NULL && head->data != data)
     {
         head = head->next;
     }
-    return head;
+    return head != NULL;
 }
+
 // Function to print the doubly linked list
 void display(Node *head)
 {
@@ -111,6 +112,56 @@ void sortListSelection(Node **head)
     }
 }
 
+void DeletePremiereValeur(struct Node **head)
+{
+    if (*head == NULL)
+    {
+        return;
+    }
+
+    struct Node *temp = *head;
+
+    *head = (*head)->next;
+    if (*head != NULL)
+    {
+        (*head)->prev = NULL;
+    }
+
+    free(temp);
+}
+
+// Fonction pour supprimer la dernière valeur d'une liste doublement chaînée
+void supprimerDerniereValeur(struct Node **head)
+{
+    if (*head == NULL)
+    {
+        return;
+    }
+
+    struct Node *current = *head;
+
+    // Parcourir la liste jusqu'au dernier élément
+    while (current->next != NULL)
+    {
+        current = current->next;
+    }
+
+    // Si la liste a plus d'un élément
+    if (current->prev != NULL)
+    {
+        current->prev->next = NULL;
+    }
+    else
+    {
+        // Si la liste a un seul élément
+        *head = NULL;
+    }
+
+    free(current);
+
+    printf("La dernière valeur a été supprimée avec succès.\n");
+}
+
 //----------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------
 
@@ -131,6 +182,7 @@ bool isClicked(Rectangle rec)
 {
     return CheckCollisionPointRec(GetMousePosition(), rec) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
 }
+
 
 bool is_mouse_over_button(Rectangle rect)
 {
@@ -172,9 +224,10 @@ void DrawButtonInput(Rectangle rect, const char *text, Color co)
     }
 
     DrawRectangleLinesEx(rect, 10, BEIGE);
-    DrawRectangleRec(rect, isClicked(rect) ? DARKGRAY : co); // Draw button outline
-    DrawRectangle(rect.x + 10, rect.y + 10, rect.width - 20, rect.height - 20, GRAY);
-    DrawText(text, rect.x + (rect.width - MeasureText(text, 20)) / 2, rect.y + (rect.height - 20) / 2, 23, WHITE); // Draw button text
+    DrawRectangleRec(rect, isClicked(rect) ? LIGHTGRAY : co); // Draw button outline
+    DrawRectangle(rect.x + 10, rect.y + 10, rect.width - 20, rect.height - 20, WHITE);
+    DrawText(text, rect.x + (rect.width - MeasureText(text, 20)) / 2, rect.y + (rect.height - 20) / 2, 40, BLACK);    // Draw button text
+    DrawText("Entrer Le Numbre :", rect.x - 530 + (rect.width) / 2, rect.y - 20 + (rect.height - 20) / 2, 35, BLACK); // Draw button text
 }
 
 void DrawFlechRight(int firstX, int firstY, int FinX, int finY)
@@ -290,6 +343,79 @@ void RandomNodes()
     }
 }
 
+int createMode = -1; // 0: random, 1: insert at end, 2: insert at beginning
+
+void createChoicesMenu()
+{
+    Rectangle randomButton = {buttonPosition.x + buttonWidth + 10, buttonPosition.y, buttonWidth, buttonHeight};
+    Rectangle endButton = {buttonPosition.x + (buttonWidth + 10) * 2 + 10, buttonPosition.y, buttonWidth, buttonHeight};
+    Rectangle beginningButton = {buttonPosition.x + (buttonWidth + 10) * 3 + 20, buttonPosition.y, buttonWidth + 70, buttonHeight};
+
+    if (isClicked(randomButton))
+        createMode = 0;
+    if (isClicked(endButton))
+        createMode = 1;
+    if (isClicked(beginningButton))
+        createMode = 2;
+
+    DrawButton(randomButton, "Random", DARKGREEN);
+    DrawButton(endButton, "Insert at End", DARKGREEN);
+    DrawButton(beginningButton, "Insert at Beginning", DARKGREEN);
+}
+
+// Function to insert a node at the beginning of the list
+void insertAtBeginning(Node **head, int data)
+{
+    data = GetRandomValue(0, 99);
+    Node *newNode = createNode(data);
+    newNode->next = *head;
+    if (*head != NULL)
+        (*head)->prev = newNode;
+    *head = newNode;
+}
+
+// Function to insert a node at the end of the list
+void insertAtEnd(Node **head, int data)
+{
+    data = GetRandomValue(0, 99);
+    Node *newNode = createNode(data);
+
+    // If the list is empty, make the new node the head
+    if (*head == NULL)
+    {
+        *head = newNode;
+        return;
+    }
+
+    // Traverse to the last node
+    Node *last = *head;
+    while (last->next != NULL)
+    {
+        last = last->next;
+    }
+
+    last->next = newNode;
+    newNode->prev = last;
+}
+
+// Function to delete all nodes in the linked list
+void deleteAllNodes(Node **head)
+{
+    Node *current = *head;
+    Node *next;
+
+    while (current != NULL)
+    {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+
+    *head = NULL;
+}
+
+// exaiting++++++++++++++++++========================---------------------------
+
 void InsertNodes(int data)
 {
     
@@ -309,91 +435,13 @@ bool IsNumber(const char *text)
     return true;
 }
 
-
-
-
-
-
-
-// ... (existing code)
-
-int createMode = -1; // 0: random, 1: insert at end, 2: insert at beginning
-
-void createChoicesMenu() {
-    Rectangle randomButton = {buttonPosition.x+buttonWidth+10, buttonPosition.y, buttonWidth, buttonHeight};
-    Rectangle endButton = {buttonPosition.x +(buttonWidth+10)*2+10, buttonPosition.y, buttonWidth, buttonHeight};
-    Rectangle beginningButton = {buttonPosition.x +(buttonWidth+10)*3+20, buttonPosition.y, buttonWidth + 70, buttonHeight};
-
-    if (isClicked(randomButton)) createMode = 0;
-    if (isClicked(endButton)) createMode = 1;
-    if (isClicked(beginningButton)) createMode = 2;
-
-    DrawButton(randomButton, "Random", DARKGREEN);
-    DrawButton(endButton, "Insert at End", DARKGREEN);
-    DrawButton(beginningButton, "Insert at Beginning", DARKGREEN);
-}
-
-
-
-
-// Function to insert a node at the beginning of the list
-void insertAtBeginning(Node** head, int data) {
-    data = GetRandomValue(0, 99);
-    Node* newNode = createNode(data);
-    newNode->next = *head;
-    if (*head != NULL) (*head)->prev = newNode;
-    *head = newNode;
-}
-
-// Function to insert a node at the end of the list
-void insertAtEnd(Node** head, int data) {
-    data = GetRandomValue(0, 99);
-    Node* newNode = createNode(data);
-
-    // If the list is empty, make the new node the head
-    if (*head == NULL) {
-        *head = newNode;
-        return;
-    }
-
-    // Traverse to the last node
-    Node* last = *head;
-    while (last->next != NULL) {
-        last = last->next;
-    }
-
-    last->next = newNode;
-    newNode->prev = last;
-}
-
-
-// Function to delete all nodes in the linked list
-void deleteAllNodes(Node **head)
+void formatter(char c[MAX_INPUT_CHARS + 1])
 {
-    Node *current = *head;
-    Node *next;
-
-    while (current != NULL)
+    for (int i = 0; i < MAX_INPUT_CHARS + 1; i++)
     {
-        next = current->next;
-        free(current);
-        current = next;
+        c[i] = '\0';
     }
-
-    *head = NULL;
 }
-
-
-// ... (existing code)
-
-
-
-
-
-
-
-
-
 //----------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------
 
@@ -404,13 +452,18 @@ int main(void)
 
     bool actionRecherche = false;
     bool Actionscroller = false;
-    bool ActionDelete =false;
-    bool ActionInsert=false;
+    bool ActionDelete = false;
+    bool ActionInsert = false;
+    bool actionRechercheDelete = false;
+    bool rechercher = false;
+    bool createMenuActive = false;
+    int resultaRechercher = -1;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT); // Enable Multi Sampling Anti Aliasing 4x
 
     char name[MAX_INPUT_CHARS + 1] = "\0"; // Buffer to store input text (plus null terminator)
     int letterCount = 0;
+
 
     int scrollSpeed = 10;
     Vector2 mousePosition;
@@ -429,24 +482,24 @@ int main(void)
     Rectangle buttonRecherche = {buttonPosition.x, buttonPosition.y + 2 * (buttonHeight + 10), buttonWidth, buttonHeight};
     Rectangle buttonDelete = {buttonPosition.x, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth, buttonHeight};
     Rectangle buttonTRI = {buttonPosition.x, buttonPosition.y + 4 * (buttonHeight + 10), buttonWidth, buttonHeight};
-    Rectangle inputing = {GetScreenWidth() / 2, buttonRecherche.y, 350, 100};
+    Rectangle inputing = {1150, buttonRecherche.y, 350, 100};
     Rectangle scroller = {5, 1800, 550, 30};
-    Rectangle deletedebut ={buttonPosition.x+buttonWidth+10, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth+10, buttonHeight};
-    Rectangle deleteFin ={buttonPosition.x+(buttonWidth+10)*2+10, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth+10, buttonHeight};
-    Rectangle deleteRecherche ={buttonPosition.x+(buttonWidth+10)*3+20, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth+30, buttonHeight};
+
+    Rectangle insertDebut = {buttonPosition.x + buttonWidth + 10, buttonPosition.y + buttonHeight + 10, buttonWidth + 15, buttonHeight};
+    Rectangle insertFin = {buttonPosition.x + (buttonWidth + 10) * 2 + 15, buttonPosition.y + buttonHeight + 10, buttonWidth, buttonHeight};
+    Rectangle insertindex = {buttonPosition.x + (buttonWidth + 10) * 3 + 25, buttonPosition.y + buttonHeight + 10, buttonWidth + 15, buttonHeight};
+
+    Rectangle deletedebut = {buttonPosition.x + buttonWidth + 10, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth + 10, buttonHeight};
+    Rectangle deleteFin = {buttonPosition.x + (buttonWidth + 10) * 2 + 10, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth + 10, buttonHeight};
+    Rectangle deleteRecherche = {buttonPosition.x + (buttonWidth + 10) * 3 + 20, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth + 30, buttonHeight};
 
     SetTargetFPS(60);
-
-// ... (existing code)
-    bool createMenuActive = false;
-
-// ... (existing code)
-
- 
 
     while (!WindowShouldClose())
     {
         // Update
+
+        // add minimize and maximize
         if (IsWindowResized())
         {
             // Update content or layout based on new window size
@@ -454,6 +507,7 @@ int main(void)
             screenWidth = GetScreenWidth();
             screenHeight = GetScreenHeight();
         }
+
         mousePosition = GetMousePosition();
 
         if (IsMouseButtonDown(MOUSE_LEFT_BUTTON))
@@ -468,75 +522,114 @@ int main(void)
             Actionscroller = false;
         }
 
-    // ... (existing code)
-
-
-    if (isClicked(buttonCreate)) {
-    actionRecherche = false;
-    createMenuActive = true;
-    }
-    
-
-    if (createMenuActive) {
-        createChoicesMenu();
-
-        if (createMode != -1) {
-            createMenuActive = false;
-        }
-    }
-
-    if (createMode == 0) {
-        deleteAllNodes(&head);
-        RandomNodes();
-        createMode = -1; // Reset for next creation
-    } else if (createMode == 1) {
-        // Insert at end
-        insertAtEnd(&head, atoi(name));
-        createMode = -1;
-    } else if (createMode == 2) {
-        // Insert at beginning
-        insertAtBeginning(&head, atoi(name));
-        createMode = -1;
-    }
-
-    // ... (existing code)
-
-
-
         if (isClicked(buttoninsert))
         {
-            actionRecherche = !actionRecherche;
-            ActionInsert=actionRecherche;
+            createMenuActive = false;
+            actionRecherche = false;
+            ActionDelete = false;
+            rechercher = false;
+            ActionInsert = !ActionInsert;
         }
 
-        if(ActionInsert){ 
-            if(IsKeyPressed(KEY_ENTER))
-                insertNode(&head,atoi(name));
+        //((((((((((((((((((((((((((((((((((((((((((((()))))))))))))))))))))))))))))))))))))))))))))
+        if (isClicked(buttonCreate))
+        {
+            actionRecherche = false;
+            createMenuActive = !createMenuActive;
+            ActionDelete = false;
+            ActionInsert = false;
+            rechercher = false;
         }
 
+        if (createMenuActive)
+        {
+            createChoicesMenu();
+        }
+
+        if (createMode == 0)
+        {
+            deleteAllNodes(&head);
+            RandomNodes();
+            createMode = -1; // Reset for next creation
+        }
+        else if (createMode == 1)
+        {
+            // Insert at end
+            insertAtEnd(&head, atoi(name));
+            createMode = -1;
+        }
+        else if (createMode == 2)
+        {
+            // Insert at beginning
+            insertAtBeginning(&head, atoi(name));
+            createMode = -1;
+        }
+
+        //+++++++++++++++++++=================================================--------------------------------
+
+        // click button Delete and active Action Delete
         if (isClicked(buttonDelete))
         {
-            actionRecherche = !actionRecherche;
-            ActionDelete=actionRecherche;
+            // unactiver les button autres
+            actionRecherche = false;
+            rechercher = false;
+            ActionInsert = false;
+            createMenuActive = false;
+            ActionDelete = !ActionDelete;
         }
 
-        if(ActionDelete){
+        if (ActionDelete)
+        {
             if (IsKeyPressed(KEY_ENTER))
-                deleteNode(&head,atoi(name));
+                deleteNode(&head, atoi(name));
         }
-            
 
+        // click button Rechercher Valur in List===================================
         if (isClicked(buttonRecherche))
         {
+            // desaciver button is is On
+            ActionDelete = false;
+            ActionInsert = false;
+            createMenuActive = false;
+
             actionRecherche = !actionRecherche;
+            rechercher = actionRecherche;
+            formatter(name);
+            letterCount = 0;
         }
 
+        // activer signal recherche ============================================
+        if (rechercher)
+        {
+            if (IsKeyReleased(KEY_ENTER))
+            {
+                if (searchNode(head, atoi(name)))
+                {
+                    resultaRechercher = 0;
+                }
+                else
+                {
+                    resultaRechercher = 1;
+                }
+                formatter(name);
+                letterCount = 0;
+            }
+        }
+
+        // tri list if click button Tri ======================================
         if (isClicked(buttonTRI))
         {
             sortListSelection(&head);
-            actionRecherche=false;
+
+            // turn off other button
+            ActionDelete = false;
+            actionRecherche = false;
+            ActionInsert = false;
+            rechercher = false;
+            createMenuActive = false;
         }
 
+        // scroller and camera if use key Right
         if (IsKeyDown(KEY_RIGHT) && (camera.target.x >= 0))
         {
             camera.target.x += 10.0f;
@@ -548,6 +641,7 @@ int main(void)
             }
         }
 
+        // scroller and camera if use key Left
         else if (IsKeyDown(KEY_LEFT) && (camera.target.x >= 0))
         {
             camera.target.x -= 10.0f;
@@ -564,11 +658,13 @@ int main(void)
             if (scroller.x < 0)
             {
                 scroller.x = 0;
-                camera.target.x=0;
+                camera.target.x = 0;
             }
-                scroller.x += GetMouseDelta().x;
-                camera.target.x += GetMouseDelta().x;
+            scroller.x += GetMouseDelta().x;
+            camera.target.x += GetMouseDelta().x;
         }
+
+        // input numbre ====================================================
         if (actionRecherche)
         {
             if (letterCount < MAX_INPUT_CHARS)
@@ -594,7 +690,35 @@ int main(void)
                     letterCount--;
                     name[letterCount] = '\0';
                 }
-            }           
+            }
+        }
+
+        // click delete Recherche ===============================================
+        if (isClicked(deleteRecherche))
+        {
+            actionRechercheDelete = !actionRechercheDelete;
+            actionRecherche = actionRechercheDelete;
+            formatter(name);
+            letterCount = 0;
+        }
+
+        // supprimer la première valeur d'une liste doublement chaînée
+        if (isClicked(deletedebut))
+            DeletePremiereValeur(&head);
+
+        // supprimer la dernière valeur d'une liste doublement chaînée
+        if (isClicked(deleteFin))
+            supprimerDerniereValeur(&head);
+
+        // activer la recherche pour delete
+        if (actionRechercheDelete)
+        {
+            if (IsKeyPressed(KEY_ENTER))
+            {
+                deleteNode(&head, atoi(name));
+                formatter(name);
+                letterCount = 0;
+            }
         }
 
         // Draw
@@ -612,14 +736,38 @@ int main(void)
         DrawButton(buttonDelete, "Delete", RED);
         DrawButton(buttonTRI, "Tri", GREEN);
 
-        if(actionRecherche)
+        if (actionRecherche)
             DrawButtonInput(inputing, name, BLACK);
 
-        if(ActionDelete){
-            DrawButton(deletedebut,"Delete Debut",RED);
-            DrawButton(deleteFin,"Delete Fin",RED);
-            DrawButton(deleteRecherche,"Del Rechercher",RED);
-        }    
+        if (ActionDelete)
+        {
+            DrawButton(deletedebut, "Delete Debut", RED);
+            DrawButton(deleteFin, "Delete Fin", RED);
+            DrawButton(deleteRecherche, "Del Rechercher", RED);
+        }
+        if (ActionInsert)
+        {
+            DrawButton(insertDebut, "InsertToDebut", GOLD);
+            DrawButton(insertFin, "InsertToFin", GOLD);
+            DrawButton(insertindex, "Insert Indice", GOLD);
+        }
+
+        if (rechercher)
+        {
+            if (resultaRechercher == 0)
+            {
+                DrawText("Valeur is found", inputing.x, inputing.y + 200, 50, GREEN);
+            }
+            else if (resultaRechercher == 1)
+            {
+                DrawText("Value not Found", inputing.x, inputing.y + 200, 50, RED);
+            }
+            else
+            {
+                DrawText("", inputing.x, inputing.y + 200, 50, RED);
+            }
+        }
+
         // draw list
         drawList();
 
