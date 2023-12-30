@@ -375,13 +375,20 @@ int main(void)
         if (isClicked(buttonCreate))
         {
             RandomNodes();
+            //turn off outre button
             actionRecherche = false;
+            ActionDelete=false;
+            ActionInsert=false;
+            rechercher=false;
         }
 
         // click button Insert and active Action Insert
         if (isClicked(buttoninsert))
         {
             actionRecherche = false;
+            rechercher=false;
+            ActionDelete=false;
+
             ActionInsert = !ActionInsert;
         }
 
@@ -394,7 +401,11 @@ int main(void)
         // click button Delete and active Action Delete
         if (isClicked(buttonDelete))
         {
+            //unactiver les button autres
             actionRecherche = false;
+            rechercher=false;
+            ActionInsert=false;
+
             ActionDelete = !ActionDelete;
         }
 
@@ -404,15 +415,20 @@ int main(void)
                 deleteNode(&head, atoi(name));
         }
 
-        // click button Rechercher Valur in List
+        // click button Rechercher Valur in List===================================
         if (isClicked(buttonRecherche))
         {
+            //desaciver button is is On
+            ActionDelete=false;
+            ActionInsert=false;
+
             actionRecherche = !actionRecherche;
             rechercher = actionRecherche;
             formatter(name);
             letterCount = 0;
         }
 
+        //activer signal recherche ============================================
         if (rechercher)
         {
             if (IsKeyReleased(KEY_ENTER))
@@ -430,10 +446,16 @@ int main(void)
             }
         }
 
+        //tri list if click button Tri ======================================
         if (isClicked(buttonTRI))
         {
             sortListSelection(&head);
+
+            //turn off other button 
+            ActionDelete=false;
             actionRecherche = false;
+            ActionInsert=false;
+            rechercher=false;
         }
 
 
@@ -471,6 +493,8 @@ int main(void)
             scroller.x += GetMouseDelta().x;
             camera.target.x += GetMouseDelta().x;
         }
+
+        //input numbre ====================================================
         if (actionRecherche)
         {
             if (letterCount < MAX_INPUT_CHARS)
