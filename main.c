@@ -564,6 +564,7 @@ int main(void)
             ActionDelete = false;
             ActionInsert = false;
             createMenuActive = false;
+            resultaRechercher = -1;
 
             actionRecherche = !actionRecherche;
             rechercher = actionRecherche;
@@ -607,6 +608,7 @@ int main(void)
         {
             camera.target.x += 10.0f;
             scroller.x += scrollSpeed;
+
 
             if (scroller.x + scroller.width > GetScreenWidth())
             {
