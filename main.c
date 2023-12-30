@@ -258,31 +258,6 @@ void drawList()
     AllScreenButton = xPos;
 }
 
-void ColorBouttonMouse(Rectangle box, Color c)
-{
-    if (CheckCollisionPointRec(GetMousePosition(), box))
-    {
-        c = BLUE;
-
-        // Check if mouse button is pressed
-        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
-        {
-            c = GREEN;
-        }
-
-        // Check if mouse button is released
-        if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON))
-        {
-            c = RED;
-        }
-    }
-    else
-    {
-        // If mouse is not over the rectangle, reset the color
-        c = RED;
-    }
-}
-
 void RandomNodes()
 {
     int n = GetRandomValue(0, 9);
@@ -310,6 +285,13 @@ bool IsNumber(const char *text)
     return true;
 }
 
+void formatter(char c[MAX_INPUT_CHARS+1])
+{
+    for (int i = 0; i < MAX_INPUT_CHARS+1; i++)
+    {
+        c[i] = '\0';
+    }
+}
 //----------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------
 
@@ -324,7 +306,7 @@ int main(void)
     bool ActionInsert = false;
     bool actionRechercheDelete = false;
     bool rechercher = false;
-    bool resultaRechercher;
+    int resultaRechercher = -1;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT); // Enable Multi Sampling Anti Aliasing 4x
 
@@ -364,6 +346,8 @@ int main(void)
     while (!WindowShouldClose())
     {
         // Update
+
+        //add minimize and maximize
         if (IsWindowResized())
         {
             // Update content or layout based on new window size
@@ -371,6 +355,7 @@ int main(void)
             screenWidth = GetScreenWidth();
             screenHeight = GetScreenHeight();
         }
+
         mousePosition = GetMousePosition();
 
         if (IsMouseButtonDown(MOUSE_LEFT_BUTTON))
@@ -385,6 +370,8 @@ int main(void)
             Actionscroller = false;
         }
 
+
+        //Click Create 
         if (isClicked(buttonCreate))
         {
             RandomNodes();
@@ -422,7 +409,8 @@ int main(void)
         {
             actionRecherche = !actionRecherche;
             rechercher = actionRecherche;
-            strcpy(name, "");
+            formatter(name);
+            letterCount = 0;
         }
 
         if (rechercher)
@@ -431,13 +419,14 @@ int main(void)
             {
                 if (searchNode(head, atoi(name)))
                 {
-                    resultaRechercher = true;
+                    resultaRechercher = 0;
                 }
                 else
                 {
-                    resultaRechercher = false;
+                    resultaRechercher = 1;
                 }
-                // strcpy(name, "");
+                formatter(name);
+                letterCount=0;
             }
         }
 
@@ -447,6 +436,8 @@ int main(void)
             actionRecherche = false;
         }
 
+
+        //scroller and camera if use key Right
         if (IsKeyDown(KEY_RIGHT) && (camera.target.x >= 0))
         {
             camera.target.x += 10.0f;
@@ -458,6 +449,7 @@ int main(void)
             }
         }
 
+        //scroller and camera if use key Left
         else if (IsKeyDown(KEY_LEFT) && (camera.target.x >= 0))
         {
             camera.target.x -= 10.0f;
@@ -506,10 +498,14 @@ int main(void)
                 }
             }
         }
+
+        //click delete ===============================================
         if (isClicked(deleteRecherche))
         {
             actionRechercheDelete = !actionRechercheDelete;
             actionRecherche = actionRechercheDelete;
+            formatter(name);
+                letterCount=0;
         }
 
         // activer la recherche pour delete
@@ -518,7 +514,8 @@ int main(void)
             if (IsKeyPressed(KEY_ENTER))
             {
                 deleteNode(&head, atoi(name));
-                strcpy(name, "");
+                formatter(name);
+                letterCount=0;
             }
         }
 
@@ -553,13 +550,20 @@ int main(void)
             DrawButton(insertindex, "Insert Indice", GOLD);
         }
 
-        if (resultaRechercher)
+        if (rechercher)
         {
-            DrawText("Valeur is found", inputing.x, inputing.y + 200, 50, GREEN);
-        }
-        else
-        {
-            DrawText("Value not Found", inputing.x, inputing.y + 200, 50, RED);
+            if (resultaRechercher == 0)
+            {
+                DrawText("Valeur is found", inputing.x, inputing.y + 200, 50, GREEN);
+            }
+            else if (resultaRechercher == 1)
+            {
+                DrawText("Value not Found", inputing.x, inputing.y + 200, 50, RED);
+            }
+            else
+            {
+                DrawText("", inputing.x, inputing.y + 200, 50, RED);
+            }
         }
 
         // draw list
