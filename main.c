@@ -395,17 +395,6 @@ void createChoicesMenu()
     DrawButton(beginningButton, "Insert at Beginning", DARKGREEN);
 }
 
-// Function to insert a node at the beginning of the list
-void insertAtBeginning(Node **head, int data)
-{
-    data = GetRandomValue(0, 99);
-    Node *newNode = createNode(data);
-    newNode->next = *head;
-    if (*head != NULL)
-        (*head)->prev = newNode;
-    *head = newNode;
-}
-
 // Function to delete all nodes in the linked list
 void deleteAllNodes(Node **head)
 {
@@ -427,19 +416,6 @@ void deleteAllNodes(Node **head)
 void InsertNodes(int data)
 {
     insertNode(&head, data);
-}
-
-bool IsNumber(const char *text)
-{
-    while (*text)
-    {
-        if (!isdigit(*text))
-        {
-            return false;
-        }
-        text++;
-    }
-    return true;
 }
 
 void formatter(char c[MAX_INPUT_CHARS + 1])
@@ -622,7 +598,7 @@ int main(void)
         else if (createMode == 2)
         {
             // Insert at beginning
-            insertAtBeginning(&head, GetRandomValue(0, 99));
+            insertNode(&head, GetRandomValue(0, 99));
             createMode = -1;
         }
 
