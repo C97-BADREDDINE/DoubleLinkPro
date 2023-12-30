@@ -468,7 +468,7 @@ int main(void)
     Rectangle deleteRecherche = {buttonPosition.x + (buttonWidth + 10) * 3 + 20, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth + 30, buttonHeight};
 
     SetTargetFPS(60);
-    char feedbackText[80] = "";
+
     while (!WindowShouldClose())
     {
         
