@@ -320,24 +320,21 @@ bool IsNumber(const char *text)
 int createMode = -1; // 0: random, 1: insert at end, 2: insert at beginning
 
 void createChoicesMenu() {
-    Rectangle randomButton = {buttonPosition.x, buttonPosition.y + buttonHeight * 5 + 40, buttonWidth, buttonHeight};
-    Rectangle endButton = {buttonPosition.x + buttonWidth + 10, buttonPosition.y + buttonHeight * 5 + 40, buttonWidth, buttonHeight};
-    Rectangle beginningButton = {buttonPosition.x + (buttonWidth + 10) * 2 + 10, buttonPosition.y + buttonHeight * 5 + 40, buttonWidth + 30, buttonHeight};
+    Rectangle randomButton = {buttonPosition.x+buttonWidth+10, buttonPosition.y, buttonWidth, buttonHeight};
+    Rectangle endButton = {buttonPosition.x +(buttonWidth+10)*2+10, buttonPosition.y, buttonWidth, buttonHeight};
+    Rectangle beginningButton = {buttonPosition.x +(buttonWidth+10)*3+20, buttonPosition.y, buttonWidth + 70, buttonHeight};
 
     if (isClicked(randomButton)) createMode = 0;
     if (isClicked(endButton)) createMode = 1;
     if (isClicked(beginningButton)) createMode = 2;
 
     DrawButton(randomButton, "Random", DARKGREEN);
-    DrawButton(endButton, "Insert at End", GOLD);
-    DrawButton(beginningButton, "Insert at Beginning", ORANGE);
+    DrawButton(endButton, "Insert at End", DARKGREEN);
+    DrawButton(beginningButton, "Insert at Beginning", DARKGREEN);
 }
 
-// ... (existing code)
 
 
-
-// ... (existing code)
 
 // Function to insert a node at the beginning of the list
 void insertAtBeginning(Node** head, int data) {
@@ -370,7 +367,7 @@ void insertAtEnd(Node** head, int data) {
 }
 
 
-
+// ... (existing code)
 
 
 
@@ -423,7 +420,7 @@ int main(void)
 
     SetTargetFPS(60);
 
-    
+// ... (existing code)
     bool createMenuActive = false;
 
 // ... (existing code)
@@ -454,12 +451,14 @@ int main(void)
             Actionscroller = false;
         }
 
+    // ... (existing code)
+
     
     if (isClicked(buttonCreate)) {
     actionRecherche = false;
     createMenuActive = true;
     }
-    // ... (existing code)
+    
 
     if (createMenuActive) {
         createChoicesMenu();
@@ -468,8 +467,6 @@ int main(void)
             createMenuActive = false;
         }
     }
-
-    // ... (existing code)
 
     if (createMode == 0) {
         RandomNodes();
