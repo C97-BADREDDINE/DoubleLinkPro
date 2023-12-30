@@ -63,14 +63,15 @@ void deleteNode(Node **head, int data)
     free(current);
 }
 
-Node *searchNode(Node *head, int data)
+bool searchNode(Node *head, int data)
 {
     while (head != NULL && head->data != data)
     {
         head = head->next;
     }
-    return head;
+    return head != NULL;
 }
+
 // Function to print the doubly linked list
 void display(Node *head)
 {
@@ -111,6 +112,56 @@ void sortListSelection(Node **head)
     }
 }
 
+void DeletePremiereValeur(struct Node **head)
+{
+    if (*head == NULL)
+    {
+        return;
+    }
+
+    struct Node *temp = *head;
+
+    *head = (*head)->next;
+    if (*head != NULL)
+    {
+        (*head)->prev = NULL;
+    }
+
+    free(temp);
+}
+
+// Fonction pour supprimer la dernière valeur d'une liste doublement chaînée
+void supprimerDerniereValeur(struct Node **head)
+{
+    if (*head == NULL)
+    {
+        return;
+    }
+
+    struct Node *current = *head;
+
+    // Parcourir la liste jusqu'au dernier élément
+    while (current->next != NULL)
+    {
+        current = current->next;
+    }
+
+    // Si la liste a plus d'un élément
+    if (current->prev != NULL)
+    {
+        current->prev->next = NULL;
+    }
+    else
+    {
+        // Si la liste a un seul élément
+        *head = NULL;
+    }
+
+    free(current);
+
+    printf("La dernière valeur a été supprimée avec succès.\n");
+}
+
 //----------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------
 
@@ -118,7 +169,7 @@ void sortListSelection(Node **head)
 #define buttonWidth 180
 #define buttonHeight 70
 #define DebutposX 450
-#define DebutposY 800
+#define DebutposY GetScreenHeight() / 2
 #define ListWidth 170
 #define ListHeight 200
 
@@ -129,15 +180,9 @@ int AllScreenButton = 1920;
 
 bool isClicked(Rectangle rec)
 {
-    if (CheckCollisionPointRec(GetMousePosition(), rec) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    return CheckCollisionPointRec(GetMousePosition(), rec) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
 }
+
 
 bool is_mouse_over_button(Rectangle rect)
 {
@@ -156,9 +201,33 @@ void DrawButton(Rectangle rect, const char *text, Color co)
         co = SKYBLUE;
     }
 
-    DrawRectangleLinesEx(rect, 10, Fade(BLACK, 120));
+    DrawRectangleLinesEx(rect, 10, Fade(BLANK, 120));
     DrawRectangleRec(rect, isClicked(rect) ? DARKGRAY : co);                                                       // Draw button outline
     DrawText(text, rect.x + (rect.width - MeasureText(text, 20)) / 2, rect.y + (rect.height - 20) / 2, 23, WHITE); // Draw button text
+}
+
+void DrawButtonInput(Rectangle rect, const char *text, Color co)
+{
+    if (is_mouse_over_button(rect))
+    {
+        SetMouseCursor(2);
+        co = SKYBLUE;
+    }
+    else
+    {
+        SetMouseCursor(0);
+    }
+
+    if (isClicked(rect))
+    {
+        co = BLANK;
+    }
+
+    DrawRectangleLinesEx(rect, 10, BEIGE);
+    DrawRectangleRec(rect, isClicked(rect) ? LIGHTGRAY : co); // Draw button outline
+    DrawRectangle(rect.x + 10, rect.y + 10, rect.width - 20, rect.height - 20, WHITE);
+    DrawText(text, rect.x + (rect.width - MeasureText(text, 20)) / 2, rect.y + (rect.height - 20) / 2, 40, BLACK);    // Draw button text
+    DrawText("Entrer Le Numbre :", rect.x - 530 + (rect.width) / 2, rect.y - 20 + (rect.height - 20) / 2, 35, BLACK); // Draw button text
 }
 
 void DrawFlechRight(int firstX, int firstY, int FinX, int finY)
@@ -249,6 +318,79 @@ void RandomNodes()
     }
 }
 
+int createMode = -1; // 0: random, 1: insert at end, 2: insert at beginning
+
+void createChoicesMenu()
+{
+    Rectangle randomButton = {buttonPosition.x + buttonWidth + 10, buttonPosition.y, buttonWidth, buttonHeight};
+    Rectangle endButton = {buttonPosition.x + (buttonWidth + 10) * 2 + 10, buttonPosition.y, buttonWidth, buttonHeight};
+    Rectangle beginningButton = {buttonPosition.x + (buttonWidth + 10) * 3 + 20, buttonPosition.y, buttonWidth + 70, buttonHeight};
+
+    if (isClicked(randomButton))
+        createMode = 0;
+    if (isClicked(endButton))
+        createMode = 1;
+    if (isClicked(beginningButton))
+        createMode = 2;
+
+    DrawButton(randomButton, "Random", DARKGREEN);
+    DrawButton(endButton, "Insert at End", DARKGREEN);
+    DrawButton(beginningButton, "Insert at Beginning", DARKGREEN);
+}
+
+// Function to insert a node at the beginning of the list
+void insertAtBeginning(Node **head, int data)
+{
+    data = GetRandomValue(0, 99);
+    Node *newNode = createNode(data);
+    newNode->next = *head;
+    if (*head != NULL)
+        (*head)->prev = newNode;
+    *head = newNode;
+}
+
+// Function to insert a node at the end of the list
+void insertAtEnd(Node **head, int data)
+{
+    data = GetRandomValue(0, 99);
+    Node *newNode = createNode(data);
+
+    // If the list is empty, make the new node the head
+    if (*head == NULL)
+    {
+        *head = newNode;
+        return;
+    }
+
+    // Traverse to the last node
+    Node *last = *head;
+    while (last->next != NULL)
+    {
+        last = last->next;
+    }
+
+    last->next = newNode;
+    newNode->prev = last;
+}
+
+// Function to delete all nodes in the linked list
+void deleteAllNodes(Node **head)
+{
+    Node *current = *head;
+    Node *next;
+
+    while (current != NULL)
+    {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+
+    *head = NULL;
+}
+
+// exaiting++++++++++++++++++========================---------------------------
+
 void InsertNodes(int data)
 {
     insertNode(&head, data);
@@ -267,26 +409,38 @@ bool IsNumber(const char *text)
     return true;
 }
 
-
-
-
-
-
-
-
-
+void formatter(char c[MAX_INPUT_CHARS + 1])
+{
+    for (int i = 0; i < MAX_INPUT_CHARS + 1; i++)
+    {
+        c[i] = '\0';
+    }
+}
 //----------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------
 
 int main(void)
 {
+    int screenWidth = 1500;
+    int screenHeight = 1500;
+
     bool actionRecherche = false;
+    bool Actionscroller = false;
+    bool ActionDelete = false;
+    bool ActionInsert = false;
+    bool actionRechercheDelete = false;
+    bool rechercher = false;
+    bool createMenuActive = false;
+    int resultaRechercher = -1;
+
+    SetConfigFlags(FLAG_MSAA_4X_HINT); // Enable Multi Sampling Anti Aliasing 4x
 
     char name[MAX_INPUT_CHARS + 1] = "\0"; // Buffer to store input text (plus null terminator)
     int letterCount = 0;
 
-    Rectangle scroller = {5, 1800, 500, 30};
+
     int scrollSpeed = 10;
+    Vector2 mousePosition;
 
     Camera2D camera = {0};
     camera.target = (Vector2){0, 0};
@@ -294,14 +448,24 @@ int main(void)
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
 
-    InitWindow(GetScreenWidth(), GetScreenHeight(), "Raylib Demo");
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+    InitWindow(screenWidth, screenHeight, "Raylib Demo");
 
     Rectangle buttonCreate = {buttonPosition.x, buttonPosition.y, buttonWidth, buttonHeight};
     Rectangle buttoninsert = {buttonPosition.x, buttonPosition.y + buttonHeight + 10, buttonWidth, buttonHeight};
     Rectangle buttonRecherche = {buttonPosition.x, buttonPosition.y + 2 * (buttonHeight + 10), buttonWidth, buttonHeight};
     Rectangle buttonDelete = {buttonPosition.x, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth, buttonHeight};
     Rectangle buttonTRI = {buttonPosition.x, buttonPosition.y + 4 * (buttonHeight + 10), buttonWidth, buttonHeight};
-    Rectangle inpDelt = {buttonRecherche.x + 200, buttonRecherche.y, 350, 170};
+    Rectangle inputing = {1150, buttonRecherche.y, 350, 100};
+    Rectangle scroller = {5, 1800, 550, 30};
+
+    Rectangle insertDebut = {buttonPosition.x + buttonWidth + 10, buttonPosition.y + buttonHeight + 10, buttonWidth + 15, buttonHeight};
+    Rectangle insertFin = {buttonPosition.x + (buttonWidth + 10) * 2 + 15, buttonPosition.y + buttonHeight + 10, buttonWidth, buttonHeight};
+    Rectangle insertindex = {buttonPosition.x + (buttonWidth + 10) * 3 + 25, buttonPosition.y + buttonHeight + 10, buttonWidth + 15, buttonHeight};
+
+    Rectangle deletedebut = {buttonPosition.x + buttonWidth + 10, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth + 10, buttonHeight};
+    Rectangle deleteFin = {buttonPosition.x + (buttonWidth + 10) * 2 + 10, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth + 10, buttonHeight};
+    Rectangle deleteRecherche = {buttonPosition.x + (buttonWidth + 10) * 3 + 20, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth + 30, buttonHeight};
 
     SetTargetFPS(60);
     char feedbackText[80] = "";
@@ -309,79 +473,150 @@ int main(void)
     {
         
         // Update
-        if (IsKeyPressed(KEY_F11))
-        { // Toggle fullscreen on F11
-            ToggleFullscreen();
+
+        // add minimize and maximize
+        if (IsWindowResized())
+        {
+            // Update content or layout based on new window size
+            // You can get the new width and height using:
+            screenWidth = GetScreenWidth();
+            screenHeight = GetScreenHeight();
         }
 
-        if (isClicked(buttonCreate))
+        mousePosition = GetMousePosition();
+
+        if (IsMouseButtonDown(MOUSE_LEFT_BUTTON))
         {
-            RandomNodes();
+            if (CheckCollisionPointRec(mousePosition, scroller))
+            {
+                Actionscroller = true;
+            }
+        }
+        else
+        {
+            Actionscroller = false;
         }
 
         if (isClicked(buttoninsert))
         {
-            InsertNodes(GetRandomValue(0, 50));
+            createMenuActive = false;
+            actionRecherche = false;
+            ActionDelete = false;
+            rechercher = false;
+            ActionInsert = !ActionInsert;
         }
 
-        
-    // Recherche button action
-        if (isClicked(buttonRecherche)) {
-            int valueToSearch = atoi(name);
-            Node *foundNode = searchNode(head, valueToSearch);
-            if (foundNode) {
-            strcpy(feedbackText, "Value found!");
-            } else {
-            strcpy(feedbackText, "Value not found.");
-            }
+        //((((((((((((((((((((((((((((((((((((((((((((()))))))))))))))))))))))))))))))))))))))))))))
+        if (isClicked(buttonCreate))
+        {
+            actionRecherche = false;
+            createMenuActive = !createMenuActive;
+            ActionDelete = false;
+            ActionInsert = false;
+            rechercher = false;
         }
 
-        // Delete button action
-        if (isClicked(buttonDelete)) {
-            int valueToDelete = atoi(name);
-            deleteNode(&head, valueToDelete);
+        if (createMenuActive)
+        {
+            createChoicesMenu();
         }
 
-        // Input handling
-        if (CheckCollisionPointRec(GetMousePosition(), inpDelt)) {
-            // Check for input focus
-            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-                actionRecherche = true;
+        if (createMode == 0)
+        {
+            deleteAllNodes(&head);
+            RandomNodes();
+            createMode = -1; // Reset for next creation
+        }
+        else if (createMode == 1)
+        {
+            // Insert at end
+            insertAtEnd(&head, atoi(name));
+            createMode = -1;
+        }
+        else if (createMode == 2)
+        {
+            // Insert at beginning
+            insertAtBeginning(&head, atoi(name));
+            createMode = -1;
+        }
+
+        //+++++++++++++++++++=================================================--------------------------------
+
+        // click button Delete and active Action Delete
+        if (isClicked(buttonDelete))
+        {
+            // unactiver les button autres
+            actionRecherche = false;
+            rechercher = false;
+            ActionInsert = false;
+            createMenuActive = false;
+            ActionDelete = !ActionDelete;
+        }
+
+        if (ActionDelete)
+        {
+            if (IsKeyPressed(KEY_ENTER))
+                deleteNode(&head, atoi(name));
+        }
+
+        // click button Rechercher Valur in List===================================
+        if (isClicked(buttonRecherche))
+        {
+            // desaciver button is is On
+            ActionDelete = false;
+            ActionInsert = false;
+            createMenuActive = false;
+
+            actionRecherche = !actionRecherche;
+            rechercher = actionRecherche;
+            formatter(name);
+            letterCount = 0;
+        }
+
+        // activer signal recherche ============================================
+        if (rechercher)
+        {
+            if (IsKeyReleased(KEY_ENTER))
+            {
+                if (searchNode(head, atoi(name)))
+                {
+                    resultaRechercher = 0;
+                }
+                else
+                {
+                    resultaRechercher = 1;
+                }
+                formatter(name);
                 letterCount = 0;
             }
-        } else {
-            actionRecherche = false;
         }
 
-        if (actionRecherche) {
-            // Handle text input
-            if (IsKeyPressed(KEY_BACKSPACE) && letterCount > 0) {
-                name[letterCount--] = '\0';
-            } else if (letterCount < MAX_INPUT_CHARS) {
-                char newChar = GetCharPressed();
-                if (isalnum(newChar)) {
-                    name[letterCount++] = newChar;
-                }
-            }
-        }
-
-
+        // tri list if click button Tri ======================================
         if (isClicked(buttonTRI))
         {
             sortListSelection(&head);
+
+            // turn off other button
+            ActionDelete = false;
+            actionRecherche = false;
+            ActionInsert = false;
+            rechercher = false;
+            createMenuActive = false;
         }
 
+        // scroller and camera if use key Right
         if (IsKeyDown(KEY_RIGHT) && (camera.target.x >= 0))
         {
-
             camera.target.x += 10.0f;
             scroller.x += scrollSpeed;
+
             if (scroller.x + scroller.width > GetScreenWidth())
             {
                 scroller.x = GetScreenWidth() - scroller.width;
             }
         }
 
+        // scroller and camera if use key Left
         else if (IsKeyDown(KEY_LEFT) && (camera.target.x >= 0))
         {
             camera.target.x -= 10.0f;
@@ -393,9 +628,73 @@ int main(void)
             }
         }
 
-        
+        if (Actionscroller)
+        {
+            if (scroller.x < 0)
+            {
+                scroller.x = 0;
+                camera.target.x = 0;
+            }
+            scroller.x += GetMouseDelta().x;
+            camera.target.x += GetMouseDelta().x;
+        }
 
+        // input numbre ====================================================
+        if (actionRecherche)
+        {
+            if (letterCount < MAX_INPUT_CHARS)
+            {
+                int key = GetKeyPressed();
 
+                if (key != 0)
+                {
+                    // Only add ASCII characters
+                    if ((key >= 48) && (key <= 57))
+                    {
+                        name[letterCount] = (char)key;
+                        letterCount++;
+                    }
+                }
+            }
+
+            // Check for backspace key to remove characters from the text
+            if (IsKeyPressed(KEY_BACKSPACE))
+            {
+                if (letterCount > 0)
+                {
+                    letterCount--;
+                    name[letterCount] = '\0';
+                }
+            }
+        }
+
+        // click delete Recherche ===============================================
+        if (isClicked(deleteRecherche))
+        {
+            actionRechercheDelete = !actionRechercheDelete;
+            actionRecherche = actionRechercheDelete;
+            formatter(name);
+            letterCount = 0;
+        }
+
+        // supprimer la première valeur d'une liste doublement chaînée
+        if (isClicked(deletedebut))
+            DeletePremiereValeur(&head);
+
+        // supprimer la dernière valeur d'une liste doublement chaînée
+        if (isClicked(deleteFin))
+            supprimerDerniereValeur(&head);
+
+        // activer la recherche pour delete
+        if (actionRechercheDelete)
+        {
+            if (IsKeyPressed(KEY_ENTER))
+            {
+                deleteNode(&head, atoi(name));
+                formatter(name);
+                letterCount = 0;
+            }
+        }
 
         // Draw
         BeginDrawing();
@@ -412,21 +711,46 @@ int main(void)
         DrawButton(buttonDelete, "Delete", RED);
         DrawButton(buttonTRI, "Tri", GREEN);
 
+        if (actionRecherche)
+            DrawButtonInput(inputing, name, BLACK);
+
+        if (ActionDelete)
+        {
+            DrawButton(deletedebut, "Delete Debut", RED);
+            DrawButton(deleteFin, "Delete Fin", RED);
+            DrawButton(deleteRecherche, "Del Rechercher", RED);
+        }
+        if (ActionInsert)
+        {
+            DrawButton(insertDebut, "InsertToDebut", GOLD);
+            DrawButton(insertFin, "InsertToFin", GOLD);
+            DrawButton(insertindex, "Insert Indice", GOLD);
+        }
+
+        if (rechercher)
+        {
+            if (resultaRechercher == 0)
+            {
+                DrawText("Valeur is found", inputing.x, inputing.y + 200, 50, GREEN);
+            }
+            else if (resultaRechercher == 1)
+            {
+                DrawText("Value not Found", inputing.x, inputing.y + 200, 50, RED);
+            }
+            else
+            {
+                DrawText("", inputing.x, inputing.y + 200, 50, RED);
+            }
+        }
+
         // draw list
         drawList();
-
-        
 
         EndMode2D();
         DrawFPS(10, 10);
 
-    DrawRectangleRec(inpDelt, LIGHTGRAY);
-    DrawText(name, inpDelt.x + 10, inpDelt.y + 10, 20, BLACK);
-    DrawText(feedbackText, 300, 300, 40, GREEN);
-
         EndDrawing();
     }
-    DrawText(feedbackText, 300, 300, 40, GREEN);
     // close fenètre
     CloseWindow();
 
