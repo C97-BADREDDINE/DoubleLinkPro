@@ -207,7 +207,7 @@ int isValidIndex(Node **head)
         current = current->next;
     }
 
-    return  length ;
+    return length;
 }
 
 // Function to add data at a specific index in a doubly linked list
@@ -223,7 +223,7 @@ void insertAtIndex(Node **head, int data, int Index)
     }
 
     // Traverse to the node at index - 1
-    for (int i = 0; i < Index-1  && current != NULL; ++i)
+    for (int i = 0; i < Index - 1 && current != NULL; ++i)
     {
         current = current->next;
     }
@@ -317,12 +317,7 @@ void DrawButtonInput2(Rectangle rect, const char *text, Color co)
 {
     if (is_mouse_over_button(rect))
     {
-        SetMouseCursor(2);
         co = SKYBLUE;
-    }
-    else
-    {
-        SetMouseCursor(0);
     }
 
     if (isClicked(rect))
@@ -427,22 +422,14 @@ void RandomNodes()
 
 int createMode = -1; // 0: random, 1: insert at end, 2: insert at beginning
 
-void createChoicesMenu()
+void createChoicesMenu(Rectangle Rand, Rectangle End, Rectangle Begin)
 {
-    Rectangle randomButton = {buttonPosition.x + buttonWidth + 10, buttonPosition.y, buttonWidth, buttonHeight};
-    Rectangle endButton = {buttonPosition.x + (buttonWidth + 10) * 2 + 10, buttonPosition.y, buttonWidth, buttonHeight};
-    Rectangle beginningButton = {buttonPosition.x + (buttonWidth + 10) * 3 + 20, buttonPosition.y, buttonWidth + 70, buttonHeight};
-
-    if (isClicked(randomButton))
+    if (isClicked(Rand))
         createMode = 0;
-    if (isClicked(endButton))
+    if (isClicked(End))
         createMode = 1;
-    if (isClicked(beginningButton))
+    if (isClicked(Begin))
         createMode = 2;
-
-    DrawButton(randomButton, "Random", DARKGREEN);
-    DrawButton(endButton, "Insert at End", DARKGREEN);
-    DrawButton(beginningButton, "Insert at Beginning", DARKGREEN);
 }
 
 // Function to delete all nodes in the linked list
@@ -495,7 +482,8 @@ int main(void)
     bool insertfin = false;
     bool insertind = false;
     bool insertval = false;
-    int index=0;
+
+    int index = 0;
 
     int resultaRechercher = -1;
 
@@ -507,12 +495,15 @@ int main(void)
     int scrollSpeed = 10;
     Vector2 mousePosition;
 
+    // setting camera ====================================================================================
+
     Camera2D camera = {0};
     camera.target = (Vector2){0, 0};
     camera.offset = (Vector2){GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f};
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
 
+    // Setup init configuration flags (view FLAGS)
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(screenWidth, screenHeight, "Raylib Demo");
 
@@ -523,6 +514,10 @@ int main(void)
     Rectangle buttonTRI = {buttonPosition.x, buttonPosition.y + 4 * (buttonHeight + 10), buttonWidth, buttonHeight};
     Rectangle inputing = {1150, buttonRecherche.y, 350, 100};
     Rectangle scroller = {5, 1800, 550, 30};
+
+    Rectangle randomButton = {buttonPosition.x + buttonWidth + 10, buttonPosition.y, buttonWidth, buttonHeight};
+    Rectangle endButton = {buttonPosition.x + (buttonWidth + 10) * 2 + 10, buttonPosition.y, buttonWidth, buttonHeight};
+    Rectangle beginningButton = {buttonPosition.x + (buttonWidth + 10) * 3 + 20, buttonPosition.y, buttonWidth + 70, buttonHeight};
 
     Rectangle insertDebut = {buttonPosition.x + buttonWidth + 10, buttonPosition.y + buttonHeight + 10, buttonWidth + 15, buttonHeight};
     Rectangle insertFin = {buttonPosition.x + (buttonWidth + 10) * 2 + 15, buttonPosition.y + buttonHeight + 10, buttonWidth, buttonHeight};
@@ -568,6 +563,8 @@ int main(void)
             actionRecherche = false;
             ActionDelete = false;
             rechercher = false;
+            insertind = false;
+            insertval = false;
             ActionInsert = !ActionInsert;
         }
 
@@ -575,6 +572,9 @@ int main(void)
         {
             actionRecherche = !actionRecherche;
             insertdebut = actionRecherche;
+            rechercher = false;
+            insertind = false;
+            insertval = false;
             formatter(name);
             letterCount = 0;
         }
@@ -600,6 +600,9 @@ int main(void)
         {
             actionRecherche = !actionRecherche;
             insertfin = actionRecherche;
+            rechercher = false;
+            insertind = false;
+            insertval = false;
             formatter(name);
             letterCount = 0;
         }
@@ -621,9 +624,11 @@ int main(void)
             }
         }
 
-        //=====================================================66666666666666666666666666666===========
         if (isClicked(insertindex))
         {
+            insertfin = false;
+            insertdebut = false;
+            actionRecherche=false;
             insertind = !insertind;
             formatter(name);
             letterCount = 0;
@@ -660,27 +665,29 @@ int main(void)
             if (IsKeyPressed(KEY_ENTER))
             {
                 if (letterCount == 0)
+                // add affiche text =================================================================//
                 {
                     printf("please entrer valur");
                 }
-                else if (isValidIndex(&head)>atoi(name))
+                else if (isValidIndex(&head) > atoi(name))
                 {
                     index = atoi(name);
                     insertval = true;
                     formatter(name);
                     letterCount = 0;
-                    insertind=false;
-                    actionRecherche=true;                    
+                    insertind = false;
+                    actionRecherche = true;
                 }
                 else
                 {
+                    //==========================================AFFICHE TEXTE =====================
                     printf("valeur n exit pas");
                     formatter(name);
                     letterCount = 0;
                 }
             }
         }
-        // Search in list by index        
+        // Search in list by index
         if (insertval)
         {
             if (IsKeyPressedRepeat(KEY_ENTER))
@@ -689,7 +696,7 @@ int main(void)
                 formatter(name);
                 letterCount = 0;
                 insertval = false;
-                actionRecherche=false;
+                actionRecherche = false;
             }
         }
 
@@ -701,11 +708,13 @@ int main(void)
             ActionDelete = false;
             ActionInsert = false;
             rechercher = false;
+            insertind = false;
+            insertval = false;
         }
 
         if (createMenuActive)
         {
-            createChoicesMenu();
+            createChoicesMenu(randomButton, endButton, beginningButton);
         }
 
         if (createMode == 0)
@@ -727,7 +736,7 @@ int main(void)
             createMode = -1;
         }
 
-        //+++++++++++++++++++=================================================--------------------------------
+        //----------------------------------------------Delete Button--------------------------------------------
 
         // click button Delete and active Action Delete
         if (isClicked(buttonDelete))
@@ -737,6 +746,8 @@ int main(void)
             rechercher = false;
             ActionInsert = false;
             createMenuActive = false;
+            insertind = false;
+            insertval = false;
             ActionDelete = !ActionDelete;
         }
 
@@ -753,6 +764,10 @@ int main(void)
             ActionDelete = false;
             ActionInsert = false;
             createMenuActive = false;
+            insertind = false;
+            insertval = false;
+            insertfin = false;
+            insertdebut = false;
             resultaRechercher = -1;
 
             actionRecherche = !actionRecherche;
@@ -761,7 +776,7 @@ int main(void)
             letterCount = 0;
         }
 
-        // activer signal recherche ============================================
+        // ================================ activer signal recherche ========================
         if (rechercher)
         {
             if (IsKeyReleased(KEY_ENTER))
@@ -790,6 +805,8 @@ int main(void)
             ActionInsert = false;
             rechercher = false;
             createMenuActive = false;
+            insertind = false;
+            insertval = false;
         }
 
         // scroller and camera if use key Right
@@ -884,30 +901,42 @@ int main(void)
             }
         }
 
-        // Draw
+        //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$   Begin Draw   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         BeginDrawing();
 
+        // init Background
         ClearBackground(RAYWHITE);
-        // DrawRectangle(1500 - 2200 / 2, 1000 - 1500 / 2, 2200, 1500, RAYWHITE);
+
         DrawRectangleRec(scroller, DARKGRAY);
         BeginMode2D(camera);
 
-        // Draw text input rectangle
+        // =============================================Draw Button==================================
+
         DrawButton(buttonCreate, "Create", DARKGREEN);
         DrawButton(buttoninsert, "Insert", GOLD);
         DrawButton(buttonRecherche, "Rechercher", ORANGE);
         DrawButton(buttonDelete, "Delete", RED);
         DrawButton(buttonTRI, "Tri", GREEN);
 
+        //_______________________________________________<input number>___________________________________
         if (actionRecherche)
             DrawButtonInput(inputing, name, BLACK);
 
+        // _____________________________________< draw buttons creat >______________________________________
+        if (createMenuActive)
+        {
+            DrawButton(randomButton, "Random", DARKGREEN);
+            DrawButton(endButton, "Insert at End", DARKGREEN);
+            DrawButton(beginningButton, "Insert at Beginning", DARKGREEN);
+        }
+        //_______________________________________________<draw Buttons Delete>_______________________________________
         if (ActionDelete)
         {
             DrawButton(deletedebut, "Delete Debut", RED);
             DrawButton(deleteFin, "Delete Fin", RED);
             DrawButton(deleteRecherche, "Del Rechercher", RED);
         }
+        //_______________________________________________<draw Buttons Insert>______________________________________
         if (ActionInsert)
         {
             DrawButton(insertDebut, "InsertToDebut", GOLD);
@@ -915,33 +944,33 @@ int main(void)
             DrawButton(insertindex, "Insert Indice", GOLD);
         }
 
+        //_____________________________________________draw input Rechercher______________________________________________
         if (rechercher)
         {
             if (resultaRechercher == 0)
             {
-                DrawText("Valeur is found", inputing.x, inputing.y + 200, 50, GREEN);
+                DrawText("Valeur is found", inputing.x, DebutposY + 220, 50, GREEN);
             }
             else if (resultaRechercher == 1)
             {
-                DrawText("Value not Found", inputing.x, inputing.y + 200, 50, RED);
+                DrawText("Value not Found", inputing.x, DebutposY + 220, 50, RED);
             }
             else
             {
-                DrawText("", inputing.x, inputing.y + 200, 50, RED);
+                DrawText("", inputing.x, DebutposY + 220, 50, RED);
             }
         }
 
+        //______________________________________________<draw index Button>___________________________
         if (insertind)
         {
             DrawButtonInput2(inputing, name, BLACK);
         }
-        /*if(insertval){
-            DrawButtonInput(inputing,name,BLACK);
-        }*/
 
-        // draw list
+        //((((((((((((((((((((((((((<<<<<<<<<<<<<<<<<<Draw List<<<<<<<<<<<<<<<<<)))))))))))))))))))))))))))))
         drawList();
 
+        //===============================Close camera=============================================
         EndMode2D();
         DrawFPS(10, 10);
 
