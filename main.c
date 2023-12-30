@@ -112,39 +112,47 @@ void sortListSelection(Node **head)
     }
 }
 
-void DeletePremiereValeur(struct Node** head) {
-    if (*head == NULL) {
+void DeletePremiereValeur(struct Node **head)
+{
+    if (*head == NULL)
+    {
         return;
     }
 
-    struct Node* temp = *head;
+    struct Node *temp = *head;
 
     *head = (*head)->next;
-    if (*head != NULL) {
+    if (*head != NULL)
+    {
         (*head)->prev = NULL;
     }
 
     free(temp);
-
 }
 
 // Fonction pour supprimer la dernière valeur d'une liste doublement chaînée
-void supprimerDerniereValeur(struct Node** head) {
-    if (*head == NULL) {
+void supprimerDerniereValeur(struct Node **head)
+{
+    if (*head == NULL)
+    {
         return;
     }
 
-    struct Node* current = *head;
+    struct Node *current = *head;
 
     // Parcourir la liste jusqu'au dernier élément
-    while (current->next != NULL) {
+    while (current->next != NULL)
+    {
         current = current->next;
     }
 
     // Si la liste a plus d'un élément
-    if (current->prev != NULL) {
+    if (current->prev != NULL)
+    {
         current->prev->next = NULL;
-    } else {
+    }
+    else
+    {
         // Si la liste a un seul élément
         *head = NULL;
     }
@@ -153,7 +161,6 @@ void supprimerDerniereValeur(struct Node** head) {
 
     printf("La dernière valeur a été supprimée avec succès.\n");
 }
-
 
 //----------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------
@@ -310,6 +317,79 @@ void RandomNodes()
     }
 }
 
+int createMode = -1; // 0: random, 1: insert at end, 2: insert at beginning
+
+void createChoicesMenu()
+{
+    Rectangle randomButton = {buttonPosition.x + buttonWidth + 10, buttonPosition.y, buttonWidth, buttonHeight};
+    Rectangle endButton = {buttonPosition.x + (buttonWidth + 10) * 2 + 10, buttonPosition.y, buttonWidth, buttonHeight};
+    Rectangle beginningButton = {buttonPosition.x + (buttonWidth + 10) * 3 + 20, buttonPosition.y, buttonWidth + 70, buttonHeight};
+
+    if (isClicked(randomButton))
+        createMode = 0;
+    if (isClicked(endButton))
+        createMode = 1;
+    if (isClicked(beginningButton))
+        createMode = 2;
+
+    DrawButton(randomButton, "Random", DARKGREEN);
+    DrawButton(endButton, "Insert at End", DARKGREEN);
+    DrawButton(beginningButton, "Insert at Beginning", DARKGREEN);
+}
+
+// Function to insert a node at the beginning of the list
+void insertAtBeginning(Node **head, int data)
+{
+    data = GetRandomValue(0, 99);
+    Node *newNode = createNode(data);
+    newNode->next = *head;
+    if (*head != NULL)
+        (*head)->prev = newNode;
+    *head = newNode;
+}
+
+// Function to insert a node at the end of the list
+void insertAtEnd(Node **head, int data)
+{
+    data = GetRandomValue(0, 99);
+    Node *newNode = createNode(data);
+
+    // If the list is empty, make the new node the head
+    if (*head == NULL)
+    {
+        *head = newNode;
+        return;
+    }
+
+    // Traverse to the last node
+    Node *last = *head;
+    while (last->next != NULL)
+    {
+        last = last->next;
+    }
+
+    last->next = newNode;
+    newNode->prev = last;
+}
+
+// Function to delete all nodes in the linked list
+void deleteAllNodes(Node **head)
+{
+    Node *current = *head;
+    Node *next;
+
+    while (current != NULL)
+    {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+
+    *head = NULL;
+}
+
+// exaiting++++++++++++++++++========================---------------------------
+
 void InsertNodes(int data)
 {
     insertNode(&head, data);
@@ -328,9 +408,9 @@ bool IsNumber(const char *text)
     return true;
 }
 
-void formatter(char c[MAX_INPUT_CHARS+1])
+void formatter(char c[MAX_INPUT_CHARS + 1])
 {
-    for (int i = 0; i < MAX_INPUT_CHARS+1; i++)
+    for (int i = 0; i < MAX_INPUT_CHARS + 1; i++)
     {
         c[i] = '\0';
     }
@@ -349,12 +429,14 @@ int main(void)
     bool ActionInsert = false;
     bool actionRechercheDelete = false;
     bool rechercher = false;
+    bool createMenuActive = false;
     int resultaRechercher = -1;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT); // Enable Multi Sampling Anti Aliasing 4x
 
     char name[MAX_INPUT_CHARS + 1] = "\0"; // Buffer to store input text (plus null terminator)
     int letterCount = 0;
+
 
     int scrollSpeed = 10;
     Vector2 mousePosition;
@@ -390,7 +472,7 @@ int main(void)
     {
         // Update
 
-        //add minimize and maximize
+        // add minimize and maximize
         if (IsWindowResized())
         {
             // Update content or layout based on new window size
@@ -413,42 +495,59 @@ int main(void)
             Actionscroller = false;
         }
 
-
-        //Click Create 
-        if (isClicked(buttonCreate))
-        {
-            RandomNodes();
-            //turn off outre button
-            actionRecherche = false;
-            ActionDelete=false;
-            ActionInsert=false;
-            rechercher=false;
-        }
-
-        // click button Insert and active Action Insert
         if (isClicked(buttoninsert))
         {
+            createMenuActive = false;
             actionRecherche = false;
-            rechercher=false;
-            ActionDelete=false;
-
+            ActionDelete = false;
+            rechercher = false;
             ActionInsert = !ActionInsert;
         }
 
-        if (ActionInsert)
+        //((((((((((((((((((((((((((((((((((((((((((((()))))))))))))))))))))))))))))))))))))))))))))
+        if (isClicked(buttonCreate))
         {
-            if (IsKeyPressed(KEY_ENTER))
-                insertNode(&head, atoi(name));
+            actionRecherche = false;
+            createMenuActive = !createMenuActive;
+            ActionDelete = false;
+            ActionInsert = false;
+            rechercher = false;
         }
+
+        if (createMenuActive)
+        {
+            createChoicesMenu();
+        }
+
+        if (createMode == 0)
+        {
+            deleteAllNodes(&head);
+            RandomNodes();
+            createMode = -1; // Reset for next creation
+        }
+        else if (createMode == 1)
+        {
+            // Insert at end
+            insertAtEnd(&head, atoi(name));
+            createMode = -1;
+        }
+        else if (createMode == 2)
+        {
+            // Insert at beginning
+            insertAtBeginning(&head, atoi(name));
+            createMode = -1;
+        }
+
+        //+++++++++++++++++++=================================================--------------------------------
 
         // click button Delete and active Action Delete
         if (isClicked(buttonDelete))
         {
-            //unactiver les button autres
+            // unactiver les button autres
             actionRecherche = false;
-            rechercher=false;
-            ActionInsert=false;
-
+            rechercher = false;
+            ActionInsert = false;
+            createMenuActive = false;
             ActionDelete = !ActionDelete;
         }
 
@@ -461,9 +560,10 @@ int main(void)
         // click button Rechercher Valur in List===================================
         if (isClicked(buttonRecherche))
         {
-            //desaciver button is is On
-            ActionDelete=false;
-            ActionInsert=false;
+            // desaciver button is is On
+            ActionDelete = false;
+            ActionInsert = false;
+            createMenuActive = false;
 
             actionRecherche = !actionRecherche;
             rechercher = actionRecherche;
@@ -471,7 +571,7 @@ int main(void)
             letterCount = 0;
         }
 
-        //activer signal recherche ============================================
+        // activer signal recherche ============================================
         if (rechercher)
         {
             if (IsKeyReleased(KEY_ENTER))
@@ -485,24 +585,24 @@ int main(void)
                     resultaRechercher = 1;
                 }
                 formatter(name);
-                letterCount=0;
+                letterCount = 0;
             }
         }
 
-        //tri list if click button Tri ======================================
+        // tri list if click button Tri ======================================
         if (isClicked(buttonTRI))
         {
             sortListSelection(&head);
 
-            //turn off other button 
-            ActionDelete=false;
+            // turn off other button
+            ActionDelete = false;
             actionRecherche = false;
-            ActionInsert=false;
-            rechercher=false;
+            ActionInsert = false;
+            rechercher = false;
+            createMenuActive = false;
         }
 
-
-        //scroller and camera if use key Right
+        // scroller and camera if use key Right
         if (IsKeyDown(KEY_RIGHT) && (camera.target.x >= 0))
         {
             camera.target.x += 10.0f;
@@ -514,7 +614,7 @@ int main(void)
             }
         }
 
-        //scroller and camera if use key Left
+        // scroller and camera if use key Left
         else if (IsKeyDown(KEY_LEFT) && (camera.target.x >= 0))
         {
             camera.target.x -= 10.0f;
@@ -537,7 +637,7 @@ int main(void)
             camera.target.x += GetMouseDelta().x;
         }
 
-        //input numbre ====================================================
+        // input numbre ====================================================
         if (actionRecherche)
         {
             if (letterCount < MAX_INPUT_CHARS)
@@ -566,22 +666,22 @@ int main(void)
             }
         }
 
-        //click delete ===============================================
+        // click delete Recherche ===============================================
         if (isClicked(deleteRecherche))
         {
             actionRechercheDelete = !actionRechercheDelete;
             actionRecherche = actionRechercheDelete;
             formatter(name);
-                letterCount=0;
+            letterCount = 0;
         }
 
-        //supprimer la première valeur d'une liste doublement chaînée
-        if(isClicked(deletedebut))
+        // supprimer la première valeur d'une liste doublement chaînée
+        if (isClicked(deletedebut))
             DeletePremiereValeur(&head);
 
-        //supprimer la dernière valeur d'une liste doublement chaînée
-        if(isClicked(deleteFin))
-            supprimerDerniereValeur(&head);    
+        // supprimer la dernière valeur d'une liste doublement chaînée
+        if (isClicked(deleteFin))
+            supprimerDerniereValeur(&head);
 
         // activer la recherche pour delete
         if (actionRechercheDelete)
@@ -590,7 +690,7 @@ int main(void)
             {
                 deleteNode(&head, atoi(name));
                 formatter(name);
-                letterCount=0;
+                letterCount = 0;
             }
         }
 
