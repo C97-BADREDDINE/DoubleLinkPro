@@ -367,6 +367,22 @@ void insertAtEnd(Node** head, int data) {
 }
 
 
+// Function to delete all nodes in the linked list
+void deleteAllNodes(Node **head)
+{
+    Node *current = *head;
+    Node *next;
+
+    while (current != NULL)
+    {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+
+    *head = NULL;
+}
+
 // ... (existing code)
 
 
@@ -453,7 +469,7 @@ int main(void)
 
     // ... (existing code)
 
-    
+
     if (isClicked(buttonCreate)) {
     actionRecherche = false;
     createMenuActive = true;
@@ -469,6 +485,7 @@ int main(void)
     }
 
     if (createMode == 0) {
+        deleteAllNodes(&head);
         RandomNodes();
         createMode = -1; // Reset for next creation
     } else if (createMode == 1) {
