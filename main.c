@@ -43,7 +43,6 @@ void deleteNode(Node **head, int data)
     }
     if (current == NULL)
     {
-        printf("No such node found\n");
         return;
     }
 
@@ -462,12 +461,13 @@ void formatter(char c[MAX_INPUT_CHARS + 1])
         c[i] = '\0';
     }
 }
-//----------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------
+//((((((((((((((((((((((((((((((((((((((((((((((((((((()))))))))))))))))))))))))))))))))))))))))))))))))))))
+//---------------------------------------------------------------------------------------------------------
 
 int main(void)
 {
-    int screenWidth = 1500;
+    int screenWidth = 2000;
     int screenHeight = 1500;
 
     bool actionRecherche = false;
@@ -486,6 +486,7 @@ int main(void)
     int index = 0;
 
     int resultaRechercher = -1;
+    int clemessage = -1;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT); // Enable Multi Sampling Anti Aliasing 4x
 
@@ -512,12 +513,13 @@ int main(void)
     Rectangle buttonRecherche = {buttonPosition.x, buttonPosition.y + 2 * (buttonHeight + 10), buttonWidth, buttonHeight};
     Rectangle buttonDelete = {buttonPosition.x, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth, buttonHeight};
     Rectangle buttonTRI = {buttonPosition.x, buttonPosition.y + 4 * (buttonHeight + 10), buttonWidth, buttonHeight};
+    
     Rectangle inputing = {1150, buttonRecherche.y, 350, 100};
     Rectangle scroller = {5, 1800, 550, 30};
 
     Rectangle randomButton = {buttonPosition.x + buttonWidth + 10, buttonPosition.y, buttonWidth, buttonHeight};
-    Rectangle endButton = {buttonPosition.x + (buttonWidth + 10) * 2 + 10, buttonPosition.y, buttonWidth, buttonHeight};
-    Rectangle beginningButton = {buttonPosition.x + (buttonWidth + 10) * 3 + 20, buttonPosition.y, buttonWidth + 70, buttonHeight};
+    Rectangle endButton = {buttonPosition.x + (buttonWidth + 10) * 2 , buttonPosition.y, buttonWidth+20, buttonHeight};
+    Rectangle beginningButton = {buttonPosition.x + (buttonWidth + 10) * 3 + 20, buttonPosition.y, buttonWidth + 80, buttonHeight};
 
     Rectangle insertDebut = {buttonPosition.x + buttonWidth + 10, buttonPosition.y + buttonHeight + 10, buttonWidth + 15, buttonHeight};
     Rectangle insertFin = {buttonPosition.x + (buttonWidth + 10) * 2 + 15, buttonPosition.y + buttonHeight + 10, buttonWidth, buttonHeight};
@@ -577,6 +579,7 @@ int main(void)
             insertval = false;
             formatter(name);
             letterCount = 0;
+            clemessage = -1;
         }
 
         if (insertdebut)
@@ -585,7 +588,7 @@ int main(void)
             {
                 if (letterCount == 0)
                 {
-                    printf("please entrer valur");
+                    clemessage = 0;
                 }
                 else
                 {
@@ -605,6 +608,7 @@ int main(void)
             insertval = false;
             formatter(name);
             letterCount = 0;
+            clemessage = -1;
         }
 
         if (insertfin)
@@ -613,7 +617,7 @@ int main(void)
             {
                 if (letterCount == 0)
                 {
-                    printf("please entrer valur");
+                    clemessage = 0;
                 }
                 else
                 {
@@ -628,10 +632,11 @@ int main(void)
         {
             insertfin = false;
             insertdebut = false;
-            actionRecherche=false;
+            actionRecherche = false;
             insertind = !insertind;
             formatter(name);
             letterCount = 0;
+            clemessage = -1;
         }
 
         if (insertind)
@@ -661,13 +666,12 @@ int main(void)
                     name[letterCount] = '\0';
                 }
             }
-
+            //------------------while entrer index---------------------------
             if (IsKeyPressed(KEY_ENTER))
             {
                 if (letterCount == 0)
-                // add affiche text =================================================================//
                 {
-                    printf("please entrer valur");
+                    clemessage = 0;
                 }
                 else if (isValidIndex(&head) > atoi(name))
                 {
@@ -677,11 +681,11 @@ int main(void)
                     letterCount = 0;
                     insertind = false;
                     actionRecherche = true;
+                    clemessage = -1;
                 }
                 else
                 {
-                    //==========================================AFFICHE TEXTE =====================
-                    printf("valeur n exit pas");
+                    clemessage = 1;
                     formatter(name);
                     letterCount = 0;
                 }
@@ -692,11 +696,19 @@ int main(void)
         {
             if (IsKeyPressedRepeat(KEY_ENTER))
             {
-                insertAtIndex(&head, atoi(name), index);
-                formatter(name);
-                letterCount = 0;
-                insertval = false;
-                actionRecherche = false;
+                if (letterCount == 0)
+                {
+                    clemessage = 0;
+                }
+                else
+                {
+                    insertAtIndex(&head, atoi(name), index);
+                    formatter(name);
+                    letterCount = 0;
+                    insertval = false;
+                    actionRecherche = false;
+                    clemessage = -1;
+                }
             }
         }
 
@@ -710,6 +722,7 @@ int main(void)
             rechercher = false;
             insertind = false;
             insertval = false;
+            clemessage = -1;
         }
 
         if (createMenuActive)
@@ -748,13 +761,9 @@ int main(void)
             createMenuActive = false;
             insertind = false;
             insertval = false;
+            actionRechercheDelete=false;
             ActionDelete = !ActionDelete;
-        }
-
-        if (ActionDelete)
-        {
-            if (IsKeyPressed(KEY_ENTER))
-                deleteNode(&head, atoi(name));
+            clemessage = -1;
         }
 
         // click button Rechercher Valur in List===================================
@@ -769,6 +778,7 @@ int main(void)
             insertfin = false;
             insertdebut = false;
             resultaRechercher = -1;
+            clemessage = -1;
 
             actionRecherche = !actionRecherche;
             rechercher = actionRecherche;
@@ -785,10 +795,15 @@ int main(void)
                 {
                     resultaRechercher = 0;
                 }
-                else
+                else if (!searchNode(head, atoi(name)))
                 {
                     resultaRechercher = 1;
                 }
+                else
+                {
+                    resultaRechercher = 2;
+                }
+
                 formatter(name);
                 letterCount = 0;
             }
@@ -807,6 +822,7 @@ int main(void)
             createMenuActive = false;
             insertind = false;
             insertval = false;
+            clemessage = -1;
         }
 
         // scroller and camera if use key Right
@@ -880,22 +896,60 @@ int main(void)
             actionRecherche = actionRechercheDelete;
             formatter(name);
             letterCount = 0;
+            clemessage = -1;
         }
 
         // supprimer la première valeur d'une liste doublement chaînée
         if (isClicked(deletedebut))
-            DeletePremiereValeur(&head);
+        {
+            if (head == NULL)
+            {
+                clemessage = 0;
+            }
+            else
+            {
+                DeletePremiereValeur(&head);
+                clemessage = -1;
+            }
+        }
 
         // supprimer la dernière valeur d'une liste doublement chaînée
         if (isClicked(deleteFin))
-            supprimerDerniereValeur(&head);
+        {
+            if (head == NULL)
+            {
+                clemessage = 0;
+            }
+            else
+            {
+                supprimerDerniereValeur(&head);
+                clemessage = -1;
+            }
+        }
 
         // activer la recherche pour delete
         if (actionRechercheDelete)
         {
             if (IsKeyPressed(KEY_ENTER))
             {
-                deleteNode(&head, atoi(name));
+                if (head == NULL)
+                {
+                    clemessage = 0;
+                }
+                else if (letterCount == 0)
+                {
+                    clemessage = 1;
+                }
+                else if (!searchNode(head, atoi(name)))
+                {
+                    clemessage = 2;
+                }
+                else
+                {
+                    deleteNode(&head, atoi(name));
+                    clemessage = -1;
+                }
+
                 formatter(name);
                 letterCount = 0;
             }
@@ -935,6 +989,23 @@ int main(void)
             DrawButton(deletedebut, "Delete Debut", RED);
             DrawButton(deleteFin, "Delete Fin", RED);
             DrawButton(deleteRecherche, "Del Rechercher", RED);
+
+            if (clemessage == 0)
+            {
+                DrawText("List is Empty", inputing.x, DebutposY + 250, 50, RED);
+            }
+            else if (clemessage == 1)
+            {
+                DrawText("Please entrer numbre ", inputing.x, DebutposY + 250, 50, BLACK);
+            }
+            else if (clemessage == 2)
+            {
+                DrawText("No such found Value", inputing.x, DebutposY + 250, 50, RED);
+            }
+            else
+            {
+                DrawText("", inputing.x, DebutposY + 250, 50, RED);
+            }
         }
         //_______________________________________________<draw Buttons Insert>______________________________________
         if (ActionInsert)
@@ -949,11 +1020,28 @@ int main(void)
         {
             if (resultaRechercher == 0)
             {
-                DrawText("Valeur is found", inputing.x, DebutposY + 220, 50, GREEN);
+                DrawText("Value is found", inputing.x, DebutposY + 250, 50, GREEN);
             }
             else if (resultaRechercher == 1)
             {
-                DrawText("Value not Found", inputing.x, DebutposY + 220, 50, RED);
+                DrawText("Value not Found", inputing.x, DebutposY + 250, 50, RED);
+            }
+            else if (resultaRechercher == 2)
+            {
+                DrawText("Please entrer numbre", inputing.x, DebutposY + 250, 50, BLACK);
+            }
+            else
+            {
+                DrawText("", inputing.x, DebutposY + 250, 50, BLACK);
+            }
+        }
+
+        //===========================message insert debut======================================
+        if (insertdebut)
+        {
+            if (clemessage == 0)
+            {
+                DrawText("Please entrer numbre ", inputing.x, DebutposY + 250, 50, BLACK);
             }
             else
             {
@@ -961,12 +1049,46 @@ int main(void)
             }
         }
 
+        //========================  message insert fin ==========================================
+        if (insertfin)
+        {
+            if (clemessage == 0)
+            {
+                DrawText("Please entrer numbre ", inputing.x, DebutposY + 250, 50, BLACK);
+            }
+            else
+            {
+                DrawText("", inputing.x, DebutposY + 250, 50, BLACK);
+            }
+        }
         //______________________________________________<draw index Button>___________________________
         if (insertind)
         {
             DrawButtonInput2(inputing, name, BLACK);
+            if (clemessage == 0)
+            {
+                DrawText("please entrer numbre index", inputing.x, DebutposY + 250, 50, BLACK);
+            }
+            else if (clemessage == 1)
+            {
+                DrawText("index plus grand la taile list", inputing.x, DebutposY + 250, 50, RED);
+            }
+            else
+            {
+                DrawText("", inputing.x, DebutposY + 220, 50, RED);
+            }
         }
 
+        if(insertval){
+            if (clemessage == 0)
+            {
+                DrawText("please entrer numbre index", inputing.x, DebutposY + 250, 50, BLACK);
+            }
+            else
+            {
+                DrawText("", inputing.x, DebutposY + 220, 50, RED);
+            }
+        }
         //((((((((((((((((((((((((((<<<<<<<<<<<<<<<<<<Draw List<<<<<<<<<<<<<<<<<)))))))))))))))))))))))))))))
         drawList();
 
