@@ -280,7 +280,7 @@ void insertAtIndex(Node **head, int data, int Index)
 
 Node *head = NULL;
 
-Vector2 buttonPosition = {100, 100};
+Vector2 buttonPosition = {100, 90};
 int AllScreenButton = 1920;
 
 bool isClicked(Rectangle rec)
