@@ -276,7 +276,7 @@ void insertAtIndex(Node **head, int data, int Index)
 #define DebutposX 450
 #define DebutposY GetScreenHeight() / 2
 #define ListWidth 170
-#define ListHeight 200
+#define ListHeight 170
 
 Node *head = NULL;
 
@@ -555,8 +555,7 @@ int main(void)
     Rectangle deleteAll = {buttonPosition.x + (buttonWidth + 10) * 4 + 50, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth + 30, buttonHeight};
 
     Rectangle TriCroissant = {buttonPosition.x + buttonWidth + 10, buttonPosition.y + 4 * (buttonHeight + 10), buttonWidth + 10, buttonHeight};
-    Rectangle Tridecroissant =  {buttonPosition.x + (buttonWidth + 10) * 2 + 10, buttonPosition.y + 4 * (buttonHeight + 10), buttonWidth + 10, buttonHeight};
-    
+    Rectangle Tridecroissant = {buttonPosition.x + (buttonWidth + 10) * 2 + 10, buttonPosition.y + 4 * (buttonHeight + 10), buttonWidth + 10, buttonHeight};
 
     SetTargetFPS(60);
 
@@ -628,6 +627,7 @@ int main(void)
                     insertNode(&head, atoi(name));
                     formatter(name);
                     letterCount = 0;
+                    clemessage = -1;
                 }
             }
         }
@@ -658,6 +658,7 @@ int main(void)
                     insertAtend(&head, atoi(name));
                     formatter(name);
                     letterCount = 0;
+                    clemessage = -1;
                 }
             }
         }
@@ -833,7 +834,7 @@ int main(void)
             {
                 if (head == NULL)
                 {
-                    resultaRechercher=3;
+                    resultaRechercher = 3;
                 }
                 else if (searchNode(head, atoi(name)))
                 {
@@ -856,8 +857,6 @@ int main(void)
         // tri list if click button Tri ======================================
         if (isClicked(buttonTRI))
         {
-            
-
             // turn off other button
             ActionDelete = false;
             actionRecherche = false;
@@ -1105,7 +1104,7 @@ int main(void)
         }
 
         //_____________________________________________draw Buttons Tri______________________________________________
-         if (Actionsort)
+        if (Actionsort)
         {
             DrawButton(TriCroissant, "Croissant", GREEN);
             DrawButton(Tridecroissant, "Decroissant", GREEN);
@@ -1125,10 +1124,12 @@ int main(void)
             {
                 DrawText("Please entrer numbre", inputing.x, DebutposY + 250, 50, BLACK);
             }
-            else if(resultaRechercher==3)
+            else if (resultaRechercher == 3)
             {
                 DrawText("List is Empty", inputing.x, DebutposY + 250, 50, RED);
-            }else{
+            }
+            else
+            {
                 DrawText("", inputing.x, DebutposY + 250, 50, RED);
             }
         }
@@ -1181,6 +1182,17 @@ int main(void)
             if (clemessage == 0)
             {
                 DrawText("please entrer numbre index", inputing.x, DebutposY + 250, 50, BLACK);
+            }
+            else
+            {
+                DrawText("", inputing.x, DebutposY + 220, 50, RED);
+            }
+        }
+        if (Actionsort)
+        {
+            if (clemessage == 0)
+            {
+                DrawText("List is Empty", inputing.x, DebutposY + 250, 50, RED);
             }
             else
             {
