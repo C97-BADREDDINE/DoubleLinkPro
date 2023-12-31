@@ -254,7 +254,7 @@ void insertAtIndex(Node **head, int data, int Index)
 #define DebutposX 450
 #define DebutposY GetScreenHeight() / 2
 #define ListWidth 170
-#define ListHeight 200
+#define ListHeight 170
 
 Node *head = NULL;
 
