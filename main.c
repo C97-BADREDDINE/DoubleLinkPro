@@ -43,7 +43,6 @@ void deleteNode(Node **head, int data)
     }
     if (current == NULL)
     {
-        printf("No such node found\n");
         return;
     }
 
@@ -196,6 +195,56 @@ void insertAtend(Node **head, int newData)
     newNode->prev = last;
 }
 
+int isValidIndex(Node **head)
+{
+
+    Node *current = *head;
+    int length = 0;
+    while (current != NULL)
+    {
+        length++;
+        current = current->next;
+    }
+
+    return length;
+}
+
+// Function to add data at a specific index in a doubly linked list
+void insertAtIndex(Node **head, int data, int Index)
+{
+    Node *current = *head;
+
+    // If the list is empty or index is 0, insert at the beginning
+    if (*head == NULL || Index == 0)
+    {
+        insertNode(head, data);
+        return;
+    }
+
+    // Traverse to the node at index - 1
+    for (int i = 0; i < Index - 1 && current != NULL; ++i)
+    {
+        current = current->next;
+    }
+
+    // If index is greater than the number of nodes, insert at the end
+    if (current == NULL)
+    {
+        insertAtend(head, data);
+        return;
+    }
+
+    // Insert the new node
+    Node *newNode = createNode(data);
+
+    newNode->next = current->next;
+    newNode->prev = current;
+    if (current->next != NULL)
+    {
+        current->next->prev = newNode;
+    }
+    current->next = newNode;
+}
 //----------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------
 
@@ -267,12 +316,7 @@ void DrawButtonInput2(Rectangle rect, const char *text, Color co)
 {
     if (is_mouse_over_button(rect))
     {
-        SetMouseCursor(2);
         co = SKYBLUE;
-    }
-    else
-    {
-        SetMouseCursor(0);
     }
 
     if (isClicked(rect))
@@ -377,22 +421,14 @@ void RandomNodes()
 
 int createMode = -1; // 0: random, 1: insert at end, 2: insert at beginning
 
-void createChoicesMenu()
+void createChoicesMenu(Rectangle Rand, Rectangle End, Rectangle Begin)
 {
-    Rectangle randomButton = {buttonPosition.x + buttonWidth + 10, buttonPosition.y, buttonWidth, buttonHeight};
-    Rectangle endButton = {buttonPosition.x + (buttonWidth + 10) * 2 + 10, buttonPosition.y, buttonWidth, buttonHeight};
-    Rectangle beginningButton = {buttonPosition.x + (buttonWidth + 10) * 3 + 20, buttonPosition.y, buttonWidth + 70, buttonHeight};
-
-    if (isClicked(randomButton))
+    if (isClicked(Rand))
         createMode = 0;
-    if (isClicked(endButton))
+    if (isClicked(End))
         createMode = 1;
-    if (isClicked(beginningButton))
+    if (isClicked(Begin))
         createMode = 2;
-
-    DrawButton(randomButton, "Random", DARKGREEN);
-    DrawButton(endButton, "Insert at End", DARKGREEN);
-    DrawButton(beginningButton, "Insert at Beginning", DARKGREEN);
 }
 
 // Function to delete all nodes in the linked list
@@ -425,12 +461,13 @@ void formatter(char c[MAX_INPUT_CHARS + 1])
         c[i] = '\0';
     }
 }
-//----------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------
+//((((((((((((((((((((((((((((((((((((((((((((((((((((()))))))))))))))))))))))))))))))))))))))))))))))))))))
+//---------------------------------------------------------------------------------------------------------
 
 int main(void)
 {
-    int screenWidth = 1500;
+    int screenWidth = 2000;
     int screenHeight = 1500;
 
     bool actionRecherche = false;
@@ -443,8 +480,13 @@ int main(void)
 
     bool insertdebut = false;
     bool insertfin = false;
+    bool insertind = false;
+    bool insertval = false;
+
+    int index = 0;
 
     int resultaRechercher = -1;
+    int clemessage = -1;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT); // Enable Multi Sampling Anti Aliasing 4x
 
@@ -454,12 +496,15 @@ int main(void)
     int scrollSpeed = 10;
     Vector2 mousePosition;
 
+    // setting camera ====================================================================================
+
     Camera2D camera = {0};
     camera.target = (Vector2){0, 0};
     camera.offset = (Vector2){GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f};
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
 
+    // Setup init configuration flags (view FLAGS)
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(screenWidth, screenHeight, "Raylib Demo");
 
@@ -468,8 +513,13 @@ int main(void)
     Rectangle buttonRecherche = {buttonPosition.x, buttonPosition.y + 2 * (buttonHeight + 10), buttonWidth, buttonHeight};
     Rectangle buttonDelete = {buttonPosition.x, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth, buttonHeight};
     Rectangle buttonTRI = {buttonPosition.x, buttonPosition.y + 4 * (buttonHeight + 10), buttonWidth, buttonHeight};
+    
     Rectangle inputing = {1150, buttonRecherche.y, 350, 100};
     Rectangle scroller = {5, 1800, 550, 30};
+
+    Rectangle randomButton = {buttonPosition.x + buttonWidth + 10, buttonPosition.y, buttonWidth, buttonHeight};
+    Rectangle endButton = {buttonPosition.x + (buttonWidth + 10) * 2 , buttonPosition.y, buttonWidth+20, buttonHeight};
+    Rectangle beginningButton = {buttonPosition.x + (buttonWidth + 10) * 3 + 20, buttonPosition.y, buttonWidth + 80, buttonHeight};
 
     Rectangle insertDebut = {buttonPosition.x + buttonWidth + 10, buttonPosition.y + buttonHeight + 10, buttonWidth + 15, buttonHeight};
     Rectangle insertFin = {buttonPosition.x + (buttonWidth + 10) * 2 + 15, buttonPosition.y + buttonHeight + 10, buttonWidth, buttonHeight};
@@ -515,6 +565,8 @@ int main(void)
             actionRecherche = false;
             ActionDelete = false;
             rechercher = false;
+            insertind = false;
+            insertval = false;
             ActionInsert = !ActionInsert;
         }
 
@@ -522,8 +574,12 @@ int main(void)
         {
             actionRecherche = !actionRecherche;
             insertdebut = actionRecherche;
+            rechercher = false;
+            insertind = false;
+            insertval = false;
             formatter(name);
             letterCount = 0;
+            clemessage = -1;
         }
 
         if (insertdebut)
@@ -532,7 +588,7 @@ int main(void)
             {
                 if (letterCount == 0)
                 {
-                    printf("please entrer valur");
+                    clemessage = 0;
                 }
                 else
                 {
@@ -547,8 +603,12 @@ int main(void)
         {
             actionRecherche = !actionRecherche;
             insertfin = actionRecherche;
+            rechercher = false;
+            insertind = false;
+            insertval = false;
             formatter(name);
             letterCount = 0;
+            clemessage = -1;
         }
 
         if (insertfin)
@@ -557,13 +617,97 @@ int main(void)
             {
                 if (letterCount == 0)
                 {
-                    printf("please entrer value");
+                    clemessage = 0;
                 }
                 else
                 {
-                    insertAtend(&head,atoi(name));
+                    insertAtend(&head, atoi(name));
                     formatter(name);
                     letterCount = 0;
+                }
+            }
+        }
+
+        if (isClicked(insertindex))
+        {
+            insertfin = false;
+            insertdebut = false;
+            actionRecherche = false;
+            insertind = !insertind;
+            formatter(name);
+            letterCount = 0;
+            clemessage = -1;
+        }
+
+        if (insertind)
+        {
+
+            if (letterCount < MAX_INPUT_CHARS)
+            {
+                int key = GetKeyPressed();
+
+                if (key != 0)
+                {
+                    // Only add ASCII characters
+                    if ((key >= 48) && (key <= 57))
+                    {
+                        name[letterCount] = (char)key;
+                        letterCount++;
+                    }
+                }
+            }
+
+            // Check for backspace key to remove characters from the text
+            if (IsKeyPressed(KEY_BACKSPACE))
+            {
+                if (letterCount > 0)
+                {
+                    letterCount--;
+                    name[letterCount] = '\0';
+                }
+            }
+            //------------------while entrer index---------------------------
+            if (IsKeyPressed(KEY_ENTER))
+            {
+                if (letterCount == 0)
+                {
+                    clemessage = 0;
+                }
+                else if (isValidIndex(&head) > atoi(name))
+                {
+                    index = atoi(name);
+                    insertval = true;
+                    formatter(name);
+                    letterCount = 0;
+                    insertind = false;
+                    actionRecherche = true;
+                    clemessage = -1;
+                }
+                else
+                {
+                    clemessage = 1;
+                    formatter(name);
+                    letterCount = 0;
+                }
+            }
+        }
+        // Search in list by index
+        if (insertval)
+        {
+            if (IsKeyPressedRepeat(KEY_ENTER))
+            {
+                if (letterCount == 0)
+                {
+                    clemessage = 0;
+                }
+                else
+                {
+                    insertAtIndex(&head, atoi(name), index);
+                    formatter(name);
+                    letterCount = 0;
+                    insertval = false;
+                    actionRecherche = false;
+                    clemessage = -1;
                 }
             }
         }
@@ -576,11 +720,14 @@ int main(void)
             ActionDelete = false;
             ActionInsert = false;
             rechercher = false;
+            insertind = false;
+            insertval = false;
+            clemessage = -1;
         }
 
         if (createMenuActive)
         {
-            createChoicesMenu();
+            createChoicesMenu(randomButton, endButton, beginningButton);
         }
 
         if (createMode == 0)
@@ -602,7 +749,7 @@ int main(void)
             createMode = -1;
         }
 
-        //+++++++++++++++++++=================================================--------------------------------
+        //----------------------------------------------Delete Button--------------------------------------------
 
         // click button Delete and active Action Delete
         if (isClicked(buttonDelete))
@@ -612,13 +759,11 @@ int main(void)
             rechercher = false;
             ActionInsert = false;
             createMenuActive = false;
+            insertind = false;
+            insertval = false;
+            actionRechercheDelete=false;
             ActionDelete = !ActionDelete;
-        }
-
-        if (ActionDelete)
-        {
-            if (IsKeyPressed(KEY_ENTER))
-                deleteNode(&head, atoi(name));
+            clemessage = -1;
         }
 
         // click button Rechercher Valur in List===================================
@@ -628,7 +773,12 @@ int main(void)
             ActionDelete = false;
             ActionInsert = false;
             createMenuActive = false;
+            insertind = false;
+            insertval = false;
+            insertfin = false;
+            insertdebut = false;
             resultaRechercher = -1;
+            clemessage = -1;
 
             actionRecherche = !actionRecherche;
             rechercher = actionRecherche;
@@ -636,7 +786,7 @@ int main(void)
             letterCount = 0;
         }
 
-        // activer signal recherche ============================================
+        // ================================ activer signal recherche ========================
         if (rechercher)
         {
             if (IsKeyReleased(KEY_ENTER))
@@ -645,10 +795,15 @@ int main(void)
                 {
                     resultaRechercher = 0;
                 }
-                else
+                else if (!searchNode(head, atoi(name)))
                 {
                     resultaRechercher = 1;
                 }
+                else
+                {
+                    resultaRechercher = 2;
+                }
+
                 formatter(name);
                 letterCount = 0;
             }
@@ -665,6 +820,9 @@ int main(void)
             ActionInsert = false;
             rechercher = false;
             createMenuActive = false;
+            insertind = false;
+            insertval = false;
+            clemessage = -1;
         }
 
         // scroller and camera if use key Right
@@ -738,51 +896,118 @@ int main(void)
             actionRecherche = actionRechercheDelete;
             formatter(name);
             letterCount = 0;
+            clemessage = -1;
         }
 
         // supprimer la première valeur d'une liste doublement chaînée
         if (isClicked(deletedebut))
-            DeletePremiereValeur(&head);
+        {
+            if (head == NULL)
+            {
+                clemessage = 0;
+            }
+            else
+            {
+                DeletePremiereValeur(&head);
+                clemessage = -1;
+            }
+        }
 
         // supprimer la dernière valeur d'une liste doublement chaînée
         if (isClicked(deleteFin))
-            supprimerDerniereValeur(&head);
+        {
+            if (head == NULL)
+            {
+                clemessage = 0;
+            }
+            else
+            {
+                supprimerDerniereValeur(&head);
+                clemessage = -1;
+            }
+        }
 
         // activer la recherche pour delete
         if (actionRechercheDelete)
         {
             if (IsKeyPressed(KEY_ENTER))
             {
-                deleteNode(&head, atoi(name));
+                if (head == NULL)
+                {
+                    clemessage = 0;
+                }
+                else if (letterCount == 0)
+                {
+                    clemessage = 1;
+                }
+                else if (!searchNode(head, atoi(name)))
+                {
+                    clemessage = 2;
+                }
+                else
+                {
+                    deleteNode(&head, atoi(name));
+                    clemessage = -1;
+                }
+
                 formatter(name);
                 letterCount = 0;
             }
         }
 
-        // Draw
+        //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$   Begin Draw   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         BeginDrawing();
 
+        // init Background
         ClearBackground(RAYWHITE);
-        // DrawRectangle(1500 - 2200 / 2, 1000 - 1500 / 2, 2200, 1500, RAYWHITE);
+
         DrawRectangleRec(scroller, DARKGRAY);
         BeginMode2D(camera);
 
-        // Draw text input rectangle
+        // =============================================Draw Button==================================
+
         DrawButton(buttonCreate, "Create", DARKGREEN);
         DrawButton(buttoninsert, "Insert", GOLD);
         DrawButton(buttonRecherche, "Rechercher", ORANGE);
         DrawButton(buttonDelete, "Delete", RED);
         DrawButton(buttonTRI, "Tri", GREEN);
 
+        //_______________________________________________<input number>___________________________________
         if (actionRecherche)
             DrawButtonInput(inputing, name, BLACK);
 
+        // _____________________________________< draw buttons creat >______________________________________
+        if (createMenuActive)
+        {
+            DrawButton(randomButton, "Random", DARKGREEN);
+            DrawButton(endButton, "Insert at End", DARKGREEN);
+            DrawButton(beginningButton, "Insert at Beginning", DARKGREEN);
+        }
+        //_______________________________________________<draw Buttons Delete>_______________________________________
         if (ActionDelete)
         {
             DrawButton(deletedebut, "Delete Debut", RED);
             DrawButton(deleteFin, "Delete Fin", RED);
             DrawButton(deleteRecherche, "Del Rechercher", RED);
+
+            if (clemessage == 0)
+            {
+                DrawText("List is Empty", inputing.x, DebutposY + 250, 50, RED);
+            }
+            else if (clemessage == 1)
+            {
+                DrawText("Please entrer numbre ", inputing.x, DebutposY + 250, 50, BLACK);
+            }
+            else if (clemessage == 2)
+            {
+                DrawText("No such found Value", inputing.x, DebutposY + 250, 50, RED);
+            }
+            else
+            {
+                DrawText("", inputing.x, DebutposY + 250, 50, RED);
+            }
         }
+        //_______________________________________________<draw Buttons Insert>______________________________________
         if (ActionInsert)
         {
             DrawButton(insertDebut, "InsertToDebut", GOLD);
@@ -790,25 +1015,84 @@ int main(void)
             DrawButton(insertindex, "Insert Indice", GOLD);
         }
 
+        //_____________________________________________draw input Rechercher______________________________________________
         if (rechercher)
         {
             if (resultaRechercher == 0)
             {
-                DrawText("Valeur is found", inputing.x, inputing.y + 200, 50, GREEN);
+                DrawText("Value is found", inputing.x, DebutposY + 250, 50, GREEN);
             }
             else if (resultaRechercher == 1)
             {
-                DrawText("Value not Found", inputing.x, inputing.y + 200, 50, RED);
+                DrawText("Value not Found", inputing.x, DebutposY + 250, 50, RED);
+            }
+            else if (resultaRechercher == 2)
+            {
+                DrawText("Please entrer numbre", inputing.x, DebutposY + 250, 50, BLACK);
             }
             else
             {
-                DrawText("", inputing.x, inputing.y + 200, 50, RED);
+                DrawText("", inputing.x, DebutposY + 250, 50, BLACK);
             }
         }
 
-        // draw list
+        //===========================message insert debut======================================
+        if (insertdebut)
+        {
+            if (clemessage == 0)
+            {
+                DrawText("Please entrer numbre ", inputing.x, DebutposY + 250, 50, BLACK);
+            }
+            else
+            {
+                DrawText("", inputing.x, DebutposY + 220, 50, RED);
+            }
+        }
+
+        //========================  message insert fin ==========================================
+        if (insertfin)
+        {
+            if (clemessage == 0)
+            {
+                DrawText("Please entrer numbre ", inputing.x, DebutposY + 250, 50, BLACK);
+            }
+            else
+            {
+                DrawText("", inputing.x, DebutposY + 250, 50, BLACK);
+            }
+        }
+        //______________________________________________<draw index Button>___________________________
+        if (insertind)
+        {
+            DrawButtonInput2(inputing, name, BLACK);
+            if (clemessage == 0)
+            {
+                DrawText("please entrer numbre index", inputing.x, DebutposY + 250, 50, BLACK);
+            }
+            else if (clemessage == 1)
+            {
+                DrawText("index plus grand la taile list", inputing.x, DebutposY + 250, 50, RED);
+            }
+            else
+            {
+                DrawText("", inputing.x, DebutposY + 220, 50, RED);
+            }
+        }
+
+        if(insertval){
+            if (clemessage == 0)
+            {
+                DrawText("please entrer numbre index", inputing.x, DebutposY + 250, 50, BLACK);
+            }
+            else
+            {
+                DrawText("", inputing.x, DebutposY + 220, 50, RED);
+            }
+        }
+        //((((((((((((((((((((((((((<<<<<<<<<<<<<<<<<<Draw List<<<<<<<<<<<<<<<<<)))))))))))))))))))))))))))))
         drawList();
 
+        //===============================Close camera=============================================
         EndMode2D();
         DrawFPS(10, 10);
 
