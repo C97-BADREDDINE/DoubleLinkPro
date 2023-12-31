@@ -528,6 +528,7 @@ int main(void)
     Rectangle deletedebut = {buttonPosition.x + buttonWidth + 10, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth + 10, buttonHeight};
     Rectangle deleteFin = {buttonPosition.x + (buttonWidth + 10) * 2 + 10, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth + 10, buttonHeight};
     Rectangle deleteRecherche = {buttonPosition.x + (buttonWidth + 10) * 3 + 20, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth + 30, buttonHeight};
+    Rectangle deleteAll = {buttonPosition.x + (buttonWidth + 10) * 4 + 50, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth + 30, buttonHeight};
 
     SetTargetFPS(60);
 
@@ -955,6 +956,20 @@ int main(void)
             }
         }
 
+        // supprimer tout les valeurs d'une liste doublement chaînée
+        if (isClicked(deleteAll))
+        {
+            if (head == NULL)
+            {
+                clemessage = 0;
+            }
+            else
+            {
+                deleteAllNodes(&head);
+                clemessage = -1;
+            }
+        }
+
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$   Begin Draw   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         BeginDrawing();
 
@@ -989,6 +1004,7 @@ int main(void)
             DrawButton(deletedebut, "Delete Debut", RED);
             DrawButton(deleteFin, "Delete Fin", RED);
             DrawButton(deleteRecherche, "Del Rechercher", RED);
+            DrawButton(deleteAll, "Delete All", RED);
 
             if (clemessage == 0)
             {
