@@ -206,7 +206,7 @@ int isValidIndex(Node **head)
         current = current->next;
     }
 
-    return length+1;
+    return length + 1;
 }
 
 // Function to add data at a specific index in a doubly linked list
@@ -513,12 +513,12 @@ int main(void)
     Rectangle buttonRecherche = {buttonPosition.x, buttonPosition.y + 2 * (buttonHeight + 10), buttonWidth, buttonHeight};
     Rectangle buttonDelete = {buttonPosition.x, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth, buttonHeight};
     Rectangle buttonTRI = {buttonPosition.x, buttonPosition.y + 4 * (buttonHeight + 10), buttonWidth, buttonHeight};
-    
+
     Rectangle inputing = {1150, buttonRecherche.y, 350, 100};
     Rectangle scroller = {5, 1800, 550, 30};
 
     Rectangle randomButton = {buttonPosition.x + buttonWidth + 10, buttonPosition.y, buttonWidth, buttonHeight};
-    Rectangle endButton = {buttonPosition.x + (buttonWidth + 10) * 2 , buttonPosition.y, buttonWidth+20, buttonHeight};
+    Rectangle endButton = {buttonPosition.x + (buttonWidth + 10) * 2, buttonPosition.y, buttonWidth + 20, buttonHeight};
     Rectangle beginningButton = {buttonPosition.x + (buttonWidth + 10) * 3 + 20, buttonPosition.y, buttonWidth + 80, buttonHeight};
 
     Rectangle insertDebut = {buttonPosition.x + buttonWidth + 10, buttonPosition.y + buttonHeight + 10, buttonWidth + 15, buttonHeight};
@@ -528,6 +528,7 @@ int main(void)
     Rectangle deletedebut = {buttonPosition.x + buttonWidth + 10, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth + 10, buttonHeight};
     Rectangle deleteFin = {buttonPosition.x + (buttonWidth + 10) * 2 + 10, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth + 10, buttonHeight};
     Rectangle deleteRecherche = {buttonPosition.x + (buttonWidth + 10) * 3 + 20, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth + 30, buttonHeight};
+    Rectangle deleteAll = {buttonPosition.x + (buttonWidth + 10) * 4 + 50, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth + 30, buttonHeight};
 
     SetTargetFPS(60);
 
@@ -563,17 +564,20 @@ int main(void)
         {
             createMenuActive = false;
             actionRecherche = false;
+            actionRechercheDelete = false;
             ActionDelete = false;
             rechercher = false;
             insertind = false;
             insertval = false;
             ActionInsert = !ActionInsert;
+            clemessage = -1;
         }
 
         if (isClicked(insertDebut))
         {
             actionRecherche = !actionRecherche;
             insertdebut = actionRecherche;
+            insertfin = false;
             rechercher = false;
             insertind = false;
             insertval = false;
@@ -606,6 +610,7 @@ int main(void)
             rechercher = false;
             insertind = false;
             insertval = false;
+            insertdebut = false;
             formatter(name);
             letterCount = 0;
             clemessage = -1;
@@ -761,7 +766,9 @@ int main(void)
             createMenuActive = false;
             insertind = false;
             insertval = false;
-            actionRechercheDelete=false;
+            insertdebut = false;
+            insertfin = false;
+            actionRechercheDelete = false;
             ActionDelete = !ActionDelete;
             clemessage = -1;
         }
@@ -777,6 +784,7 @@ int main(void)
             insertval = false;
             insertfin = false;
             insertdebut = false;
+            actionRechercheDelete = false;
             resultaRechercher = -1;
             clemessage = -1;
 
@@ -791,7 +799,11 @@ int main(void)
         {
             if (IsKeyReleased(KEY_ENTER))
             {
-                if (searchNode(head, atoi(name)))
+                if (head == NULL)
+                {
+                    resultaRechercher=3;
+                }
+                else if (searchNode(head, atoi(name)))
                 {
                     resultaRechercher = 0;
                 }
@@ -902,6 +914,7 @@ int main(void)
         // supprimer la première valeur d'une liste doublement chaînée
         if (isClicked(deletedebut))
         {
+            actionRecherche = false;
             if (head == NULL)
             {
                 clemessage = 0;
@@ -916,6 +929,7 @@ int main(void)
         // supprimer la dernière valeur d'une liste doublement chaînée
         if (isClicked(deleteFin))
         {
+            actionRecherche = false;
             if (head == NULL)
             {
                 clemessage = 0;
@@ -955,6 +969,21 @@ int main(void)
             }
         }
 
+        // supprimer tout les valeurs d'une liste doublement chaînée
+        if (isClicked(deleteAll))
+        {
+            actionRecherche = false;
+            if (head == NULL)
+            {
+                clemessage = 0;
+            }
+            else
+            {
+                deleteAllNodes(&head);
+                clemessage = -1;
+            }
+        }
+
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$   Begin Draw   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         BeginDrawing();
 
@@ -989,6 +1018,7 @@ int main(void)
             DrawButton(deletedebut, "Delete Debut", RED);
             DrawButton(deleteFin, "Delete Fin", RED);
             DrawButton(deleteRecherche, "Del Rechercher", RED);
+            DrawButton(deleteAll, "Delete All", RED);
 
             if (clemessage == 0)
             {
@@ -1030,9 +1060,11 @@ int main(void)
             {
                 DrawText("Please entrer numbre", inputing.x, DebutposY + 250, 50, BLACK);
             }
-            else
+            else if(resultaRechercher==3)
             {
-                DrawText("", inputing.x, DebutposY + 250, 50, BLACK);
+                DrawText("List is Empty", inputing.x, DebutposY + 250, 50, RED);
+            }else{
+                DrawText("", inputing.x, DebutposY + 250, 50, RED);
             }
         }
 
@@ -1079,7 +1111,8 @@ int main(void)
             }
         }
 
-        if(insertval){
+        if (insertval)
+        {
             if (clemessage == 0)
             {
                 DrawText("please entrer numbre index", inputing.x, DebutposY + 250, 50, BLACK);
