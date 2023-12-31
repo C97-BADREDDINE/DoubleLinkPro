@@ -557,7 +557,7 @@ int main(void)
             {
                 if (letterCount == 0)
                 {
-                    printf("please entrer valur");
+                    printf("please entrer value");
                 }
                 else
                 {
