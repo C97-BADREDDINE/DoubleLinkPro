@@ -89,7 +89,7 @@ void swap(struct Node *a, struct Node *b)
     b->data = temp;
 }
 
-void sortListSelection(Node **head)
+void sortListSelectionAscending(Node **head)
 {
     Node *i, *j, *min;
 
@@ -108,6 +108,28 @@ void sortListSelection(Node **head)
         if (min != i)
         {
             swap(i, min);
+        }
+    }
+}
+void sortListSelectionDescending(Node **head)
+{
+    Node *i, *j, *max;
+
+    for (i = *head; i != NULL; i = i->next)
+    {
+        max = i;
+
+        for (j = i->next; j != NULL; j = j->next)
+        {
+            if (j->data > max->data)
+            {
+                max = j;
+            }
+        }
+
+        if (max != i)
+        {
+            swap(i, max);
         }
     }
 }
@@ -478,6 +500,8 @@ int main(void)
     bool rechercher = false;
     bool createMenuActive = false;
 
+    bool Actionsort = false;
+
     bool insertdebut = false;
     bool insertfin = false;
     bool insertind = false;
@@ -529,6 +553,10 @@ int main(void)
     Rectangle deleteFin = {buttonPosition.x + (buttonWidth + 10) * 2 + 10, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth + 10, buttonHeight};
     Rectangle deleteRecherche = {buttonPosition.x + (buttonWidth + 10) * 3 + 20, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth + 30, buttonHeight};
     Rectangle deleteAll = {buttonPosition.x + (buttonWidth + 10) * 4 + 50, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth + 30, buttonHeight};
+
+    Rectangle TriCroissant = {buttonPosition.x + buttonWidth + 10, buttonPosition.y + 4 * (buttonHeight + 10), buttonWidth + 10, buttonHeight};
+    Rectangle Tridecroissant =  {buttonPosition.x + (buttonWidth + 10) * 2 + 10, buttonPosition.y + 4 * (buttonHeight + 10), buttonWidth + 10, buttonHeight};
+    
 
     SetTargetFPS(60);
 
@@ -813,7 +841,7 @@ int main(void)
         // tri list if click button Tri ======================================
         if (isClicked(buttonTRI))
         {
-            sortListSelection(&head);
+            
 
             // turn off other button
             ActionDelete = false;
@@ -823,6 +851,7 @@ int main(void)
             createMenuActive = false;
             insertind = false;
             insertval = false;
+            Actionsort = !Actionsort;
             clemessage = -1;
         }
 
@@ -969,6 +998,32 @@ int main(void)
                 clemessage = -1;
             }
         }
+        // Tri croissant la liste doublement chaînée
+        if (isClicked(TriCroissant))
+        {
+            if (head == NULL)
+            {
+                clemessage = 0;
+            }
+            else
+            {
+                sortListSelectionAscending(&head);
+                clemessage = -1;
+            }
+        }
+        // Tri Decroissant la liste doublement chaînée
+        if (isClicked(Tridecroissant))
+        {
+            if (head == NULL)
+            {
+                clemessage = 0;
+            }
+            else
+            {
+                sortListSelectionDescending(&head);
+                clemessage = -1;
+            }
+        }
 
         //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$   Begin Draw   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         BeginDrawing();
@@ -1031,6 +1086,12 @@ int main(void)
             DrawButton(insertindex, "Insert Indice", GOLD);
         }
 
+        //_____________________________________________draw Buttons Tri______________________________________________
+         if (Actionsort)
+        {
+            DrawButton(TriCroissant, "Croissant", GREEN);
+            DrawButton(Tridecroissant, "Decroissant", GREEN);
+        }
         //_____________________________________________draw input Rechercher______________________________________________
         if (rechercher)
         {
