@@ -627,6 +627,7 @@ int main(void)
                     insertNode(&head, atoi(name));
                     formatter(name);
                     letterCount = 0;
+                    clemessage = -1;
                 }
             }
         }
@@ -657,6 +658,7 @@ int main(void)
                     insertAtend(&head, atoi(name));
                     formatter(name);
                     letterCount = 0;
+                    clemessage = -1;
                 }
             }
         }
@@ -855,6 +857,7 @@ int main(void)
         // tri list if click button Tri ======================================
         if (isClicked(buttonTRI))
         {
+            
 
             // turn off other button
             ActionDelete = false;
