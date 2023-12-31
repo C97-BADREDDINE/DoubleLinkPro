@@ -206,7 +206,7 @@ int isValidIndex(Node **head)
         current = current->next;
     }
 
-    return length;
+    return length+1;
 }
 
 // Function to add data at a specific index in a doubly linked list
