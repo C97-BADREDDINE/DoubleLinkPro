@@ -596,6 +596,7 @@ int main(void)
             rechercher = false;
             insertind = false;
             insertval = false;
+            Actionsort = false;
             ActionInsert = !ActionInsert;
         }
 
@@ -751,6 +752,7 @@ int main(void)
             rechercher = false;
             insertind = false;
             insertval = false;
+            Actionsort = false;
             clemessage = -1;
         }
 
@@ -792,6 +794,7 @@ int main(void)
             insertval = false;
             actionRechercheDelete=false;
             ActionDelete = !ActionDelete;
+            Actionsort = false;
             clemessage = -1;
         }
 
@@ -808,6 +811,7 @@ int main(void)
             insertdebut = false;
             resultaRechercher = -1;
             clemessage = -1;
+            Actionsort = false;
 
             actionRecherche = !actionRecherche;
             rechercher = actionRecherche;
