@@ -876,21 +876,21 @@ int main(void)
             if (IsKeyReleased(KEY_ENTER))
             {
 
-                if (head == NULL)
+                if (letterCount == 0)
                 {
-                    resultaRechercher = 3;
+                    resultaRechercher = 2; // entrz le nombre
+                }
+                else if (head==NULL)
+                {
+                    resultaRechercher = 3; 
                 }
                 else if (searchNode(head, atoi(name)))
                 {
-                    resultaRechercher = 0;
-                }
-                else if (!searchNode(head, atoi(name)))
-                {
-                    resultaRechercher = 1;
+                    resultaRechercher = 0; // value is found
                 }
                 else
                 {
-                    resultaRechercher = 2;
+                    resultaRechercher = 1;// Value not found
                 }
 
                 formatter(name);
@@ -1124,19 +1124,19 @@ int main(void)
 
             if (clemessage == 0)
             {
-                DrawText("List is Empty", inputing.x, DebutposY + 250, 50, RED);
+                DrawZoomingText("List is empty", &textPosition, &fontSize, &zoomFactor, zoomSpeed, screenWidth, RED);
             }
             else if (clemessage == 1)
             {
-                DrawText("Please entrer numbre ", inputing.x, DebutposY + 250, 50, BLACK);
+                DrawZoomingText("Please entrer numbre", &textPosition, &fontSize, &zoomFactor, zoomSpeed, screenWidth, BLACK);
             }
             else if (clemessage == 2)
             {
-                DrawText("No such found Value", inputing.x, DebutposY + 250, 50, RED);
+                DrawZoomingText("No such found Value", &textPosition, &fontSize, &zoomFactor, zoomSpeed, screenWidth, RED);
             }
             else
             {
-                DrawText("", inputing.x, DebutposY + 250, 50, RED);
+                DrawZoomingText("", &textPosition, &fontSize, &zoomFactor, zoomSpeed, screenWidth, BLACK);
             }
         }
         //_______________________________________________<draw Buttons Insert>______________________________________
@@ -1158,28 +1158,24 @@ int main(void)
         {
             if (resultaRechercher == 0)
             {
-                DrawText("", inputing.x, DebutposY + 250, 50, GREEN);
                 DrawZoomingText("Value is found", &textPosition, &fontSize, &zoomFactor, zoomSpeed, screenWidth, GREEN);
             }
             else if (resultaRechercher == 1)
             {
-                DrawText("", inputing.x, DebutposY + 250, 50, RED);
                 DrawZoomingText("Value not Found", &textPosition, &fontSize, &zoomFactor, zoomSpeed, screenWidth, RED);
             }
             else if (resultaRechercher == 2)
             {
-                DrawText("", inputing.x, DebutposY + 250, 50, BLACK);
                 DrawZoomingText("Please entrer numbre", &textPosition, &fontSize, &zoomFactor, zoomSpeed, screenWidth, BLACK);
             }
             else if (resultaRechercher == 3)
             {
-                DrawText("", inputing.x, DebutposY + 250, 50, RED);
                 DrawZoomingText("List is Empty", &textPosition, &fontSize, &zoomFactor, zoomSpeed, screenWidth, RED);
             }
             else
             {
-                DrawText("", inputing.x, DebutposY + 250, 50, RED);
-                DrawZoomingText("try animation", &textPosition, &fontSize, &zoomFactor, zoomSpeed, screenWidth, BLACK);
+
+                DrawZoomingText("", &textPosition, &fontSize, &zoomFactor, zoomSpeed, screenWidth, BLACK);
             }
         }
 
@@ -1188,11 +1184,11 @@ int main(void)
         {
             if (clemessage == 0)
             {
-                DrawText("Please entrer numbre ", inputing.x, DebutposY + 250, 50, BLACK);
+                DrawZoomingText("Please entrer numbre", &textPosition, &fontSize, &zoomFactor, zoomSpeed, screenWidth, BLACK);
             }
             else
             {
-                DrawText("", inputing.x, DebutposY + 220, 50, RED);
+                DrawZoomingText("", &textPosition, &fontSize, &zoomFactor, zoomSpeed, screenWidth, BLACK);
             }
         }
 
@@ -1201,11 +1197,11 @@ int main(void)
         {
             if (clemessage == 0)
             {
-                DrawText("Please entrer numbre ", inputing.x, DebutposY + 250, 50, BLACK);
+                DrawZoomingText("Please entrer numbre", &textPosition, &fontSize, &zoomFactor, zoomSpeed, screenWidth, BLACK);
             }
             else
             {
-                DrawText("", inputing.x, DebutposY + 250, 50, BLACK);
+                DrawZoomingText("", &textPosition, &fontSize, &zoomFactor, zoomSpeed, screenWidth, BLACK);
             }
         }
         //______________________________________________<draw index Button>___________________________
@@ -1214,15 +1210,15 @@ int main(void)
             DrawButtonInput2(inputing, name, BLACK);
             if (clemessage == 0)
             {
-                DrawText("please entrer numbre index", inputing.x, DebutposY + 250, 50, BLACK);
+                DrawZoomingText("Please entrer numbre index", &textPosition, &fontSize, &zoomFactor, zoomSpeed, screenWidth, BLACK);
             }
             else if (clemessage == 1)
             {
-                DrawText("index plus grand la taile list", inputing.x, DebutposY + 250, 50, RED);
+                DrawZoomingText("index plus grand la taile list", &textPosition, &fontSize, &zoomFactor, zoomSpeed, screenWidth, RED);
             }
             else
             {
-                DrawText("", inputing.x, DebutposY + 220, 50, RED);
+                DrawZoomingText("", &textPosition, &fontSize, &zoomFactor, zoomSpeed, screenWidth, BLACK);
             }
         }
 
@@ -1230,18 +1226,18 @@ int main(void)
         {
             if (clemessage == 0)
             {
-                DrawText("please entrer numbre index", inputing.x, DebutposY + 250, 50, BLACK);
+                DrawZoomingText("Please entrer numbre", &textPosition, &fontSize, &zoomFactor, zoomSpeed, screenWidth, BLACK);
             }
             else
             {
-                DrawText("", inputing.x, DebutposY + 220, 50, RED);
+                DrawZoomingText("", &textPosition, &fontSize, &zoomFactor, zoomSpeed, screenWidth, BLACK);
             }
         }
         if (Actionsort)
         {
             if (clemessage == 0)
             {
-                DrawText("List is Empty", inputing.x, DebutposY + 250, 50, RED);
+                DrawZoomingText("List is Empty", &textPosition, &fontSize, &zoomFactor, zoomSpeed, screenWidth,RED);
             }
             else
             {
