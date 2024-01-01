@@ -520,6 +520,7 @@ void formatter(char c[MAX_INPUT_CHARS + 1])
         c[i] = '\0';
     }
 }
+
 //---------------------------------------------------------------------------------------------------------
 //((((((((((((((((((((((((((((((((((((((((((((((((((((()))))))))))))))))))))))))))))))))))))))))))))))))))))
 //---------------------------------------------------------------------------------------------------------
@@ -573,11 +574,11 @@ int main(void)
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(screenWidth, screenHeight, "Raylib Demo");
 
-    Rectangle buttonCreate = {buttonPosition.x, buttonPosition.y, buttonWidth, buttonHeight};
-    Rectangle buttoninsert = {buttonPosition.x, buttonPosition.y + buttonHeight + 10, buttonWidth, buttonHeight};
-    Rectangle buttonRecherche = {buttonPosition.x, buttonPosition.y + 2 * (buttonHeight + 10), buttonWidth, buttonHeight};
-    Rectangle buttonDelete = {buttonPosition.x, buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth, buttonHeight};
-    Rectangle buttonTRI = {buttonPosition.x, buttonPosition.y + 4 * (buttonHeight + 10), buttonWidth, buttonHeight};
+    Rectangle buttonCreate = {-(buttonWidth + 100), buttonPosition.y, buttonWidth, buttonHeight};
+    Rectangle buttoninsert = {-(buttonWidth + 100), buttonPosition.y + buttonHeight + 10, buttonWidth, buttonHeight};
+    Rectangle buttonRecherche = {-(buttonWidth + 100), buttonPosition.y + 2 * (buttonHeight + 10), buttonWidth, buttonHeight};
+    Rectangle buttonDelete = {-(buttonWidth + 100), buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth, buttonHeight};
+    Rectangle buttonTRI = {-(buttonWidth + 100), buttonPosition.y + 4 * (buttonHeight + 10), buttonWidth, buttonHeight};
 
     Rectangle inputing = {1150, buttonRecherche.y, 350, 100};
     Rectangle scroller = {5, 1800, 550, 30};
@@ -603,7 +604,13 @@ int main(void)
     while (!WindowShouldClose())
     {
         // Update
-
+       if(buttonCreate.x<=100){
+        buttonCreate.x++;
+        buttoninsert.x++;
+        buttonRecherche.x++;
+        buttonDelete.x++;
+        buttonTRI.x++;
+       }
         // add minimize and maximize
         if (IsWindowResized())
         {
@@ -880,9 +887,9 @@ int main(void)
                 {
                     resultaRechercher = 2; // entrz le nombre
                 }
-                else if (head==NULL)
+                else if (head == NULL)
                 {
-                    resultaRechercher = 3; 
+                    resultaRechercher = 3;
                 }
                 else if (searchNode(head, atoi(name)))
                 {
@@ -890,7 +897,7 @@ int main(void)
                 }
                 else
                 {
-                    resultaRechercher = 1;// Value not found
+                    resultaRechercher = 1; // Value not found
                 }
 
                 formatter(name);
@@ -1237,7 +1244,7 @@ int main(void)
         {
             if (clemessage == 0)
             {
-                DrawZoomingText("List is Empty", &textPosition, &fontSize, &zoomFactor, zoomSpeed, screenWidth,RED);
+                DrawZoomingText("List is Empty", &textPosition, &fontSize, &zoomFactor, zoomSpeed, screenWidth, RED);
             }
             else
             {
