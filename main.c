@@ -302,9 +302,9 @@ void DrawButton(Rectangle rect, const char *text, Color co)
     if (is_mouse_over_button(rect))
     {
         co = SKYBLUE;
+        DrawRectangle(rect.x-7,rect.y-7,rect.width+14,rect.height+14,(Color){ 0, 0, 0, 5});
     }
 
-    DrawRectangleLinesEx(rect, 10, Fade(BLANK, 120));
     DrawRectangleRec(rect, isClicked(rect) ? DARKGRAY : co);                                                       // Draw button outline
     DrawText(text, rect.x + (rect.width - MeasureText(text, 20)) / 2, rect.y + (rect.height - 20) / 2, 23, WHITE); // Draw button text
 }
