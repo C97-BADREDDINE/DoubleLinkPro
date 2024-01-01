@@ -857,6 +857,8 @@ int main(void)
         // tri list if click button Tri ======================================
         if (isClicked(buttonTRI))
         {
+            
+
             // turn off other button
             ActionDelete = false;
             actionRecherche = false;
