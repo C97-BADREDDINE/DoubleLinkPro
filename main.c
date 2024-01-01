@@ -4,7 +4,6 @@
 #include "stdbool.h"
 #include <string.h>
 #include <ctype.h>
-#include <time.h>
 
 // Structures
 typedef struct Node
@@ -432,6 +431,44 @@ void drawList()
     AllScreenButton = xPos;
 }
 
+float fontSize = 20;
+float zoomSpeed = 0.01f;
+float zoomFactor = 1.0f;
+
+void animationreset()
+{
+    fontSize = 20;
+    zoomSpeed = 0.02f;
+    zoomFactor = 1.0f;
+}
+
+void DrawZoomingText(const char *text, Vector2 *position, float *fontSize, float *zoomFactor, float zoomSpeed, int screenWidth, Color color)
+{
+    // Update zoom factor
+    if (*fontSize < 70)
+    {
+        (*zoomFactor) += zoomSpeed;
+
+        // Check for zoom boundaries
+        if ((*zoomFactor) > 2.0f || (*zoomFactor) < 1.0f)
+            zoomSpeed *= -1;
+
+        // Calculate new font size
+        (*fontSize) = 20 * (*zoomFactor);
+
+        // Calculate new text position based on zoom
+        position->x = (screenWidth - MeasureText(text, (*fontSize))) / 2;
+        position->y = DebutposY + 250;
+
+        // Draw the zooming text
+        DrawText(text, (int)position->x, (int)position->y, (int)(*fontSize), color);
+    }
+    else
+    {
+        animationreset();
+    }
+}
+
 void RandomNodes()
 {
     int n = GetRandomValue(0, 9);
@@ -519,6 +556,10 @@ int main(void)
 
     int scrollSpeed = 10;
     Vector2 mousePosition;
+
+    // declaration for using animation text
+    const char *text = "Please entrer numbre";
+    Vector2 textPosition = {(float)(screenWidth - MeasureText(text, 20)) / 2, DebutposY + 250};
 
     // setting camera ====================================================================================
 
@@ -618,6 +659,7 @@ int main(void)
         {
             if (IsKeyPressed(KEY_ENTER))
             {
+                animationreset();
                 if (letterCount == 0)
                 {
                     clemessage = 0;
@@ -649,6 +691,7 @@ int main(void)
         {
             if (IsKeyPressed(KEY_ENTER))
             {
+                animationreset();
                 if (letterCount == 0)
                 {
                     clemessage = 0;
@@ -832,6 +875,7 @@ int main(void)
         {
             if (IsKeyReleased(KEY_ENTER))
             {
+
                 if (head == NULL)
                 {
                     resultaRechercher = 3;
@@ -857,8 +901,6 @@ int main(void)
         // tri list if click button Tri ======================================
         if (isClicked(buttonTRI))
         {
-            
-
             // turn off other button
             ActionDelete = false;
             actionRecherche = false;
@@ -1116,23 +1158,28 @@ int main(void)
         {
             if (resultaRechercher == 0)
             {
-                DrawText("Value is found", inputing.x, DebutposY + 250, 50, GREEN);
+                DrawText("", inputing.x, DebutposY + 250, 50, GREEN);
+                DrawZoomingText("Value is found", &textPosition, &fontSize, &zoomFactor, zoomSpeed, screenWidth, GREEN);
             }
             else if (resultaRechercher == 1)
             {
-                DrawText("Value not Found", inputing.x, DebutposY + 250, 50, RED);
+                DrawText("", inputing.x, DebutposY + 250, 50, RED);
+                DrawZoomingText("Value not Found", &textPosition, &fontSize, &zoomFactor, zoomSpeed, screenWidth, RED);
             }
             else if (resultaRechercher == 2)
             {
-                DrawText("Please entrer numbre", inputing.x, DebutposY + 250, 50, BLACK);
+                DrawText("", inputing.x, DebutposY + 250, 50, BLACK);
+                DrawZoomingText("Please entrer numbre", &textPosition, &fontSize, &zoomFactor, zoomSpeed, screenWidth, BLACK);
             }
             else if (resultaRechercher == 3)
             {
-                DrawText("List is Empty", inputing.x, DebutposY + 250, 50, RED);
+                DrawText("", inputing.x, DebutposY + 250, 50, RED);
+                DrawZoomingText("List is Empty", &textPosition, &fontSize, &zoomFactor, zoomSpeed, screenWidth, RED);
             }
             else
             {
                 DrawText("", inputing.x, DebutposY + 250, 50, RED);
+                DrawZoomingText("try animation", &textPosition, &fontSize, &zoomFactor, zoomSpeed, screenWidth, BLACK);
             }
         }
 
