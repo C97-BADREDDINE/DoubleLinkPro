@@ -605,11 +605,11 @@ int main(void)
     {
         // Update
        if(buttonCreate.x<=100){
-        buttonCreate.x++;
-        buttoninsert.x++;
-        buttonRecherche.x++;
-        buttonDelete.x++;
-        buttonTRI.x++;
+        buttonCreate.x+=2;
+        buttoninsert.x+=2;
+        buttonRecherche.x+=2;
+        buttonDelete.x+=2;
+        buttonTRI.x+=2;
        }
         // add minimize and maximize
         if (IsWindowResized())
