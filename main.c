@@ -447,9 +447,9 @@ void DrawZoomingText(const char *text, Vector2 *position, float *fontSize, float
     // Update zoom factor
     if (position->y > DebutposY + 250)
     {
-        if(*fontSize<70){
+        if (*fontSize < 70)
+        {
 
-        
             (*zoomFactor) += zoomSpeed;
 
             // Check for zoom boundaries
@@ -458,7 +458,7 @@ void DrawZoomingText(const char *text, Vector2 *position, float *fontSize, float
 
             // Calculate new font size
             (*fontSize) = 20 * (*zoomFactor);
-       }
+        }
         // Calculate new text position based on zoom
         position->x = (screenWidth - MeasureText(text, (*fontSize))) / 2;
         position->y -= 2;
@@ -608,6 +608,12 @@ int main(void)
     while (!WindowShouldClose())
     {
         // Update
+        if (IsKeyPressed(KEY_ENTER))
+        {
+            textPosition.y = GetScreenHeight();
+            animationreset();
+        }
+
         if (buttonCreate.x <= 100)
         {
             buttonCreate.x += 2;
