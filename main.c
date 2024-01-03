@@ -302,7 +302,7 @@ void DrawButton(Rectangle rect, const char *text, Color co)
     if (is_mouse_over_button(rect))
     {
         co = SKYBLUE;
-        DrawRectangle(rect.x-7,rect.y-7,rect.width+14,rect.height+14,(Color){ 0, 0, 0, 5});
+        DrawRectangle(rect.x - 7, rect.y - 7, rect.width + 14, rect.height + 14, (Color){0, 0, 0, 5});
     }
 
     DrawRectangleRec(rect, isClicked(rect) ? DARKGRAY : co);                                                       // Draw button outline
@@ -445,26 +445,30 @@ void animationreset()
 void DrawZoomingText(const char *text, Vector2 *position, float *fontSize, float *zoomFactor, float zoomSpeed, int screenWidth, Color color)
 {
     // Update zoom factor
-    if (*fontSize < 70)
+    if (position->y > DebutposY + 250)
     {
-        (*zoomFactor) += zoomSpeed;
+        if(*fontSize<70){
 
-        // Check for zoom boundaries
-        if ((*zoomFactor) > 2.0f || (*zoomFactor) < 1.0f)
-            zoomSpeed *= -1;
+        
+            (*zoomFactor) += zoomSpeed;
 
-        // Calculate new font size
-        (*fontSize) = 20 * (*zoomFactor);
+            // Check for zoom boundaries
+            if ((*zoomFactor) > 2.0f || (*zoomFactor) < 1.0f)
+                zoomSpeed *= -1;
 
+            // Calculate new font size
+            (*fontSize) = 20 * (*zoomFactor);
+       }
         // Calculate new text position based on zoom
         position->x = (screenWidth - MeasureText(text, (*fontSize))) / 2;
-        position->y = DebutposY + 250;
+        position->y -= 2;
 
         // Draw the zooming text
         DrawText(text, (int)position->x, (int)position->y, (int)(*fontSize), color);
     }
     else
     {
+        position->y = GetScreenHeight();
         animationreset();
     }
 }
@@ -604,13 +608,14 @@ int main(void)
     while (!WindowShouldClose())
     {
         // Update
-       if(buttonCreate.x<=100){
-        buttonCreate.x+=2;
-        buttoninsert.x+=2;
-        buttonRecherche.x+=2;
-        buttonDelete.x+=2;
-        buttonTRI.x+=2;
-       }
+        if (buttonCreate.x <= 100)
+        {
+            buttonCreate.x += 2;
+            buttoninsert.x += 2;
+            buttonRecherche.x += 2;
+            buttonDelete.x += 2;
+            buttonTRI.x += 2;
+        }
         // add minimize and maximize
         if (IsWindowResized())
         {
