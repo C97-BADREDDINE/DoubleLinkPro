@@ -5,7 +5,7 @@
 #include <string.h>
 #include <ctype.h>
 
-// Structures
+// Structure
 typedef struct Node
 {
     int data;
@@ -22,7 +22,7 @@ Node *createNode(int data)
     newNode->prev = NULL;
     return newNode;
 }
-
+// ajouter un noeud 
 void insertNode(Node **head, int data)
 {
     Node *newNode = createNode(data);
@@ -33,6 +33,7 @@ void insertNode(Node **head, int data)
     }
     *head = newNode;
 }
+// suprimer un noeud
 void deleteNode(Node **head, int data)
 {
     Node *current = *head;
@@ -61,7 +62,7 @@ void deleteNode(Node **head, int data)
 
     free(current);
 }
-
+// rechercher une valeur dans la liste
 bool searchNode(Node *head, int data)
 {
     while (head != NULL && head->data != data)
@@ -81,6 +82,7 @@ void display(Node *head)
     }
 }
 
+// fonction de permutation
 void swap(struct Node *a, struct Node *b)
 {
     int temp = a->data;
@@ -88,6 +90,7 @@ void swap(struct Node *a, struct Node *b)
     b->data = temp;
 }
 
+// fonction de tri croissant
 void sortListSelectionAscending(Node **head)
 {
     Node *i, *j, *min;
@@ -110,6 +113,8 @@ void sortListSelectionAscending(Node **head)
         }
     }
 }
+
+// fonction de tri decroissant
 void sortListSelectionDescending(Node **head)
 {
     Node *i, *j, *max;
@@ -133,6 +138,7 @@ void sortListSelectionDescending(Node **head)
     }
 }
 
+// fonction pour suprimer la premier valeur
 void DeletePremiereValeur(struct Node **head)
 {
     if (*head == NULL)
@@ -216,6 +222,7 @@ void insertAtend(Node **head, int newData)
     newNode->prev = last;
 }
 
+// fonction pour verifier si l'index est valide
 int isValidIndex(Node **head)
 {
 
@@ -282,9 +289,15 @@ Node *head = NULL;
 Vector2 buttonPosition = {100, 100};
 int AllScreenButton = 1920;
 
+// Cette fonction semble vérifier si le curseur de la souris est sur un rectangle spécifié (rec) et si le bouton gauche de la souris est enfoncé simultanément
 bool isClicked(Rectangle rec)
 {
     return CheckCollisionPointRec(GetMousePosition(), rec) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
+
+    // GetMousePosition(): this function is likely getting the current position of the mouse cursor
+    // CheckCollisionPointRec(GetMousePosition(), rec) : ceci vérifie si le curseur de la souris se trouve dans les limites du rectangle spécifié (rec)
+    // IsMouseButtonPressed(MOUSE_LEFT_BUTTON): this checks if the left mouse button is pressed.
+
 }
 
 bool is_mouse_over_button(Rectangle rect)
@@ -297,18 +310,22 @@ bool is_mouse_over_button(Rectangle rect)
     return CheckCollisionPointRec(GetMousePosition(), rect);
 }
 
+// L'apparence du bouton change selon que la souris se trouve sur le bouton ou si l'utilisateur clique sur le bouton.
 void DrawButton(Rectangle rect, const char *text, Color co)
 {
+    // checks if the mouse cursor is over the button
     if (is_mouse_over_button(rect))
     {
+        // changes the color (co) to SKYBLUE and draws a slightly larger, semi-transparent black rectangle around the button
         co = SKYBLUE;
         DrawRectangle(rect.x - 7, rect.y - 7, rect.width + 14, rect.height + 14, (Color){0, 0, 0, 5});
     }
-
-    DrawRectangleRec(rect, isClicked(rect) ? DARKGRAY : co);                                                       // Draw button outline
+    
+    DrawRectangleRec(rect, isClicked(rect) ? DARKGRAY : co); // Draw button outline
     DrawText(text, rect.x + (rect.width - MeasureText(text, 20)) / 2, rect.y + (rect.height - 20) / 2, 23, WHITE); // Draw button text
 }
 
+// fonction qui designer le rectangle de input pour entrer la valeur à rechercher ou à inseret
 void DrawButtonInput(Rectangle rect, const char *text, Color co)
 {
     if (is_mouse_over_button(rect))
@@ -333,6 +350,7 @@ void DrawButtonInput(Rectangle rect, const char *text, Color co)
     DrawText("Entrer Le Numbre :", rect.x - 530 + (rect.width) / 2, rect.y - 20 + (rect.height - 20) / 2, 35, BLACK); // Draw button text
 }
 
+// fonction qui designer le rectangle de input pour entrer l'index 
 void DrawButtonInput2(Rectangle rect, const char *text, Color co)
 {
     if (is_mouse_over_button(rect))
@@ -352,6 +370,7 @@ void DrawButtonInput2(Rectangle rect, const char *text, Color co)
     DrawText("Entrer Indice:", rect.x - 530 + (rect.width) / 2, rect.y - 20 + (rect.height - 20) / 2, 35, BLACK);  // Draw button text
 }
 
+// fonction qui designer les fleches entre les noeud de la liste (le suivant) 
 void DrawFlechRight(int firstX, int firstY, int FinX, int finY)
 {
     // Calculate arrow shaft vector
@@ -376,6 +395,7 @@ void DrawFlechRight(int firstX, int firstY, int FinX, int finY)
     DrawLineEx(end, arrowHeadLeft, 4.0f, color);
 }
 
+// fonction qui designer les fleches entre les noeud de la liste (le precedent) 
 void DrawFlechLeft(int firstX, int firstY, int FinX, int finY)
 {
     // Calculate arrow shaft vector
@@ -399,6 +419,8 @@ void DrawFlechLeft(int firstX, int firstY, int FinX, int finY)
     // Draw arrow head (left side)
     DrawLineEx(start, arrowHeadLeft, 4.0f, color);
 }
+
+// fonction qui designer la liste doublement chainée
 void drawList()
 {
     Node *current = head;
@@ -435,6 +457,7 @@ float fontSize = 20;
 float zoomSpeed = 0.01f;
 float zoomFactor = 1.0f;
 
+// fonction POUR réinitialiser certaines variables liées à l'animation
 void animationreset()
 {
     fontSize = 20;
@@ -442,6 +465,7 @@ void animationreset()
     zoomFactor = 1.0f;
 }
 
+// fonction pour dessiner le texte message qui effectue un zoom avant et arrière à mesure qu'il monte sur l'écran
 void DrawZoomingText(const char *text, Vector2 *position, float *fontSize, float *zoomFactor, float zoomSpeed, int screenWidth, Color color)
 {
     // Update zoom factor
@@ -473,6 +497,7 @@ void DrawZoomingText(const char *text, Vector2 *position, float *fontSize, float
     }
 }
 
+// fonction pour créer une liste qui contient des valeur random
 void RandomNodes()
 {
     int n = GetRandomValue(0, 9);
@@ -484,6 +509,7 @@ void RandomNodes()
 
 int createMode = -1; // 0: random, 1: insert at end, 2: insert at beginning
 
+// fonction pour créer le menu de la fonction creation
 void createChoicesMenu(Rectangle Rand, Rectangle End, Rectangle Begin)
 {
     if (isClicked(Rand))
