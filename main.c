@@ -807,6 +807,9 @@ int main(void)
             rechercher = false;
             insertind = false;
             insertval = false;
+            insertdebut = false;
+            insertfin = false;
+            actionRechercheDelete = false;
             Actionsort = false;
             clemessage = -1;
         }
@@ -1106,7 +1109,7 @@ int main(void)
 
         DrawButton(buttonCreate, "Create", DARKGREEN);
         DrawButton(buttoninsert, "Insert", GOLD);
-        DrawButton(buttonRecherche, "Rechercher", ORANGE);
+        DrawButton(buttonRecherche, "Search", ORANGE);
         DrawButton(buttonDelete, "Delete", RED);
         DrawButton(buttonTRI, "Tri", GREEN);
 
@@ -1118,8 +1121,8 @@ int main(void)
         if (createMenuActive)
         {
             DrawButton(randomButton, "Random", DARKGREEN);
-            DrawButton(endButton, "Insert at End", DARKGREEN);
-            DrawButton(beginningButton, "Insert at Beginning", DARKGREEN);
+            DrawButton(endButton, "at End", DARKGREEN);
+            DrawButton(beginningButton, "at Beginning", DARKGREEN);
         }
         //_______________________________________________<draw Buttons Delete>_______________________________________
         if (ActionDelete)
