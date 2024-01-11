@@ -280,13 +280,15 @@ void insertAtIndex(Node **head, int data, int Index)
 Node *head = NULL;
 
 Vector2 buttonPosition = {100, 100};
-int AllScreenButton = 1920;
+int AllScreenButton;
 
+//-------------------------- function check is button clicked ! --------------------------------------
 bool isClicked(Rectangle rec)
 {
     return CheckCollisionPointRec(GetMousePosition(), rec) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
 }
 
+//------------------------check mouse is over button ! -----------------------------------------------
 bool is_mouse_over_button(Rectangle rect)
 {
     /*
@@ -360,7 +362,7 @@ void DrawFlechRight(int firstX, int firstY, int FinX, int finY)
 
     // Define arrow shaft thickness and color
     float thickness = 5.0f;
-    Color color = RED;
+    Color color = BEIGE;
 
     // Draw arrow shaft
     DrawLineEx(start, end, thickness, color);
@@ -384,7 +386,7 @@ void DrawFlechLeft(int firstX, int firstY, int FinX, int finY)
 
     // Define arrow shaft thickness and color
     float thickness = 5.0f;
-    Color color = RED;
+    Color color = BEIGE;
 
     // Draw arrow shaft
     DrawLineEx(start, end, thickness, color);
@@ -460,7 +462,7 @@ void DrawZoomingText(const char *text, Vector2 *position, float *fontSize, float
             (*fontSize) = 20 * (*zoomFactor);
         }
         // Calculate new text position based on zoom
-        position->x = (screenWidth - MeasureText(text, (*fontSize))) / 2;
+        position->x = (GetScreenWidth() - MeasureText(text, (*fontSize))) / 2;
         position->y -= 2;
 
         // Draw the zooming text
@@ -512,11 +514,6 @@ void deleteAllNodes(Node **head)
 
 // exaiting++++++++++++++++++========================---------------------------
 
-void InsertNodes(int data)
-{
-    insertNode(&head, data);
-}
-
 void formatter(char c[MAX_INPUT_CHARS + 1])
 {
     for (int i = 0; i < MAX_INPUT_CHARS + 1; i++)
@@ -531,8 +528,8 @@ void formatter(char c[MAX_INPUT_CHARS + 1])
 
 int main(void)
 {
-    int screenWidth = 2000;
-    int screenHeight = 1500;
+    int screenWidth = GetMonitorWidth(1);
+    int screenHeight = GetMonitorHeight(1);
 
     bool actionRecherche = false;
     bool Actionscroller = false;
@@ -570,13 +567,14 @@ int main(void)
 
     Camera2D camera = {0};
     camera.target = (Vector2){0, 0};
-    camera.offset = (Vector2){GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f};
+    camera.offset = (Vector2){GetMonitorWidth(1) / 2.0f, GetMonitorHeight(1) / 2.0f};
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
 
-    // Setup init configuration flags (view FLAGS)
+    // Setup init configuration flags (view FLAGS) ========================init window ===============================
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(screenWidth, screenHeight, "Raylib Demo");
+    ToggleFullscreen();
 
     Rectangle buttonCreate = {-(buttonWidth + 100), buttonPosition.y, buttonWidth, buttonHeight};
     Rectangle buttoninsert = {-(buttonWidth + 100), buttonPosition.y + buttonHeight + 10, buttonWidth, buttonHeight};
@@ -627,8 +625,8 @@ int main(void)
         {
             // Update content or layout based on new window size
             // You can get the new width and height using:
-            screenWidth = GetScreenWidth();
-            screenHeight = GetScreenHeight();
+            screenWidth = 2000;
+            screenHeight = 1500;
         }
 
         mousePosition = GetMousePosition();
@@ -660,7 +658,7 @@ int main(void)
             clemessage = -1;
         }
 
-        if (isClicked(insertDebut))
+        if (isClicked(insertDebut)&&ActionInsert)
         {
             actionRecherche = !actionRecherche;
             insertdebut = actionRecherche;
@@ -673,7 +671,7 @@ int main(void)
             clemessage = -1;
         }
 
-        if (insertdebut)
+        if (insertdebut&&ActionInsert)
         {
             if (IsKeyPressed(KEY_ENTER))
             {
@@ -692,7 +690,7 @@ int main(void)
             }
         }
 
-        if (isClicked(insertFin))
+        if (isClicked(insertFin)&&ActionInsert)
         {
             actionRecherche = !actionRecherche;
             insertfin = actionRecherche;
@@ -724,7 +722,7 @@ int main(void)
             }
         }
 
-        if (isClicked(insertindex))
+        if (isClicked(insertindex)&&ActionInsert)
         {
             insertfin = false;
             insertdebut = false;
@@ -932,7 +930,7 @@ int main(void)
         }
 
         // scroller and camera if use key Right
-        if (IsKeyDown(KEY_RIGHT) && (camera.target.x >= 0))
+        if (IsKeyDown(KEY_RIGHT) && (scroller.x + scroller.width < AllScreenButton / 2))
         {
             camera.target.x += 10.0f;
             scroller.x += scrollSpeed;
@@ -995,18 +993,8 @@ int main(void)
             }
         }
 
-        // click delete Recherche ===============================================
-        if (isClicked(deleteRecherche))
-        {
-            actionRechercheDelete = !actionRechercheDelete;
-            actionRecherche = actionRechercheDelete;
-            formatter(name);
-            letterCount = 0;
-            clemessage = -1;
-        }
-
         // supprimer la première valeur d'une liste doublement chaînée
-        if (isClicked(deletedebut))
+        if (isClicked(deletedebut) && ActionDelete)
         {
             actionRecherche = false;
             if (head == NULL)
@@ -1021,7 +1009,7 @@ int main(void)
         }
 
         // supprimer la dernière valeur d'une liste doublement chaînée
-        if (isClicked(deleteFin))
+        if (isClicked(deleteFin) && ActionDelete)
         {
             actionRecherche = false;
             if (head == NULL)
@@ -1033,6 +1021,16 @@ int main(void)
                 supprimerDerniereValeur(&head);
                 clemessage = -1;
             }
+        }
+
+        // click delete Recherche ===============================================
+        if (isClicked(deleteRecherche) && ActionDelete)
+        {
+            actionRechercheDelete = !actionRechercheDelete;
+            actionRecherche = actionRechercheDelete;
+            formatter(name);
+            letterCount = 0;
+            clemessage = -1;
         }
 
         // activer la recherche pour delete
@@ -1064,7 +1062,7 @@ int main(void)
         }
 
         // supprimer tout les valeurs d'une liste doublement chaînée
-        if (isClicked(deleteAll))
+        if (isClicked(deleteAll)&&ActionDelete)
         {
             actionRecherche = false;
             if (head == NULL)
@@ -1078,7 +1076,7 @@ int main(void)
             }
         }
         // Tri croissant la liste doublement chaînée
-        if (isClicked(TriCroissant))
+        if (isClicked(TriCroissant)&&Actionsort)
         {
             if (head == NULL)
             {
@@ -1091,7 +1089,7 @@ int main(void)
             }
         }
         // Tri Decroissant la liste doublement chaînée
-        if (isClicked(Tridecroissant))
+        if (isClicked(Tridecroissant)&&Actionsort)
         {
             if (head == NULL)
             {
@@ -1108,9 +1106,9 @@ int main(void)
         BeginDrawing();
 
         // init Background
-        ClearBackground(RAYWHITE);
+        ClearBackground(DARKGRAY);
 
-        DrawRectangleRec(scroller, DARKGRAY);
+        DrawRectangleRec(scroller, BEIGE);
         BeginMode2D(camera);
 
         // =============================================Draw Button==================================
