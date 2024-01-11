@@ -532,7 +532,6 @@ int main(void)
     int screenHeight = GetMonitorHeight(1);
 
     bool actionRecherche = false;
-    bool Actionscroller = false;
     bool ActionDelete = false;
     bool ActionInsert = false;
     bool actionRechercheDelete = false;
@@ -557,7 +556,6 @@ int main(void)
     int letterCount = 0;
 
     int scrollSpeed = 10;
-    Vector2 mousePosition;
 
     // declaration for using animation text
     const char *text = "Please entrer numbre";
@@ -583,7 +581,7 @@ int main(void)
     Rectangle buttonTRI = {-(buttonWidth + 100), buttonPosition.y + 4 * (buttonHeight + 10), buttonWidth, buttonHeight};
 
     Rectangle inputing = {1150, buttonRecherche.y, 350, 100};
-    Rectangle scroller = {5, 1800, 550, 30};
+    Rectangle scroller = {5, GetMonitorPhysicalHeight(1), 550, 30};
 
     Rectangle randomButton = {buttonPosition.x + buttonWidth + 10, buttonPosition.y, buttonWidth, buttonHeight};
     Rectangle endButton = {buttonPosition.x + (buttonWidth + 10) * 2, buttonPosition.y, buttonWidth + 20, buttonHeight};
@@ -629,19 +627,6 @@ int main(void)
             screenHeight = 1500;
         }
 
-        mousePosition = GetMousePosition();
-
-        if (IsMouseButtonDown(MOUSE_LEFT_BUTTON))
-        {
-            if (CheckCollisionPointRec(mousePosition, scroller))
-            {
-                Actionscroller = true;
-            }
-        }
-        else
-        {
-            Actionscroller = false;
-        }
         //=====================================================insert button===========================
 
         if (isClicked(buttoninsert))
@@ -658,7 +643,7 @@ int main(void)
             clemessage = -1;
         }
 
-        if (isClicked(insertDebut)&&ActionInsert)
+        if (isClicked(insertDebut) && ActionInsert)
         {
             actionRecherche = !actionRecherche;
             insertdebut = actionRecherche;
@@ -671,7 +656,7 @@ int main(void)
             clemessage = -1;
         }
 
-        if (insertdebut&&ActionInsert)
+        if (insertdebut && ActionInsert)
         {
             if (IsKeyPressed(KEY_ENTER))
             {
@@ -690,7 +675,7 @@ int main(void)
             }
         }
 
-        if (isClicked(insertFin)&&ActionInsert)
+        if (isClicked(insertFin) && ActionInsert)
         {
             actionRecherche = !actionRecherche;
             insertfin = actionRecherche;
@@ -722,7 +707,7 @@ int main(void)
             }
         }
 
-        if (isClicked(insertindex)&&ActionInsert)
+        if (isClicked(insertindex) && ActionInsert)
         {
             insertfin = false;
             insertdebut = false;
@@ -929,20 +914,18 @@ int main(void)
             clemessage = -1;
         }
 
-        // scroller and camera if use key Right
-        if (IsKeyDown(KEY_RIGHT) && (scroller.x + scroller.width < AllScreenButton / 2))
+        if (AllScreenButton > GetScreenWidth())
         {
-            camera.target.x += 10.0f;
-            scroller.x += scrollSpeed;
-
-            if (scroller.x + scroller.width > GetScreenWidth())
+            // scroller and camera if use key Right
+            if (IsKeyDown(KEY_RIGHT) && (scroller.x + scroller.width < AllScreenButton / 2))
             {
-                scroller.x = GetScreenWidth() - scroller.width;
+                camera.target.x += 10.0f;
+                scroller.x += scrollSpeed;
             }
         }
 
         // scroller and camera if use key Left
-        else if (IsKeyDown(KEY_LEFT) && (camera.target.x >= 0))
+        if (IsKeyDown(KEY_LEFT) && (camera.target.x >= 0))
         {
             camera.target.x -= 10.0f;
             scroller.x -= scrollSpeed;
@@ -953,7 +936,7 @@ int main(void)
             }
         }
 
-        if (Actionscroller)
+        /*if (Actionscroller)
         {
             if (scroller.x < 0)
             {
@@ -962,7 +945,7 @@ int main(void)
             }
             scroller.x += GetMouseDelta().x;
             camera.target.x += GetMouseDelta().x;
-        }
+        }*/
 
         // input numbre ====================================================
         if (actionRecherche)
@@ -1062,7 +1045,7 @@ int main(void)
         }
 
         // supprimer tout les valeurs d'une liste doublement chaînée
-        if (isClicked(deleteAll)&&ActionDelete)
+        if (isClicked(deleteAll) && ActionDelete)
         {
             actionRecherche = false;
             if (head == NULL)
@@ -1076,7 +1059,7 @@ int main(void)
             }
         }
         // Tri croissant la liste doublement chaînée
-        if (isClicked(TriCroissant)&&Actionsort)
+        if (isClicked(TriCroissant) && Actionsort)
         {
             if (head == NULL)
             {
@@ -1089,7 +1072,7 @@ int main(void)
             }
         }
         // Tri Decroissant la liste doublement chaînée
-        if (isClicked(Tridecroissant)&&Actionsort)
+        if (isClicked(Tridecroissant) && Actionsort)
         {
             if (head == NULL)
             {
@@ -1108,7 +1091,7 @@ int main(void)
         // init Background
         ClearBackground(DARKGRAY);
 
-        DrawRectangleRec(scroller, BEIGE);
+        DrawRectangleRec(scroller, DARKGRAY);
         BeginMode2D(camera);
 
         // =============================================Draw Button==================================
