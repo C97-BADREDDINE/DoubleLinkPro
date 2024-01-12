@@ -286,10 +286,11 @@ void insertAtIndex(Node **head, int data, int Index)
 
 Node *head = NULL;
 
-Vector2 buttonPosition = {100, 100};
-int AllScreenButton = 1920;
 
-// Cette fonction semble vérifier si le curseur de la souris est sur un rectangle spécifié (rec) et si le bouton gauche de la souris est enfoncé simultanément
+Vector2 buttonPosition = {100, 100};
+int AllScreenButton;
+
+//-------------------------- function check is button clicked ! --------------------------------------
 bool isClicked(Rectangle rec)
 {
     return CheckCollisionPointRec(GetMousePosition(), rec) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
@@ -300,6 +301,7 @@ bool isClicked(Rectangle rec)
 
 }
 
+//------------------------check mouse is over button ! -----------------------------------------------
 bool is_mouse_over_button(Rectangle rect)
 {
     /*
@@ -379,7 +381,7 @@ void DrawFlechRight(int firstX, int firstY, int FinX, int finY)
 
     // Define arrow shaft thickness and color
     float thickness = 5.0f;
-    Color color = RED;
+    Color color = BEIGE;
 
     // Draw arrow shaft
     DrawLineEx(start, end, thickness, color);
@@ -404,7 +406,7 @@ void DrawFlechLeft(int firstX, int firstY, int FinX, int finY)
 
     // Define arrow shaft thickness and color
     float thickness = 5.0f;
-    Color color = RED;
+    Color color = BEIGE;
 
     // Draw arrow shaft
     DrawLineEx(start, end, thickness, color);
@@ -420,11 +422,11 @@ void DrawFlechLeft(int firstX, int firstY, int FinX, int finY)
     DrawLineEx(start, arrowHeadLeft, 4.0f, color);
 }
 
-// fonction qui designer la liste doublement chainée
-void drawList()
+
+void drawList(int Debut)
 {
     Node *current = head;
-    int xPos = DebutposX;
+    int xPos = Debut;
     int rectWidth = ListWidth;
     int rectHeight = ListHeight;
     int arrowSpacing = DebutposY; // Ajustez cette valeur pour séparer davantage les flèches
@@ -433,7 +435,7 @@ void drawList()
     {
         // Dessiner le rectangle avec la valeur
         Rectangle rec = {xPos, DebutposY, rectWidth, rectHeight};
-        DrawButton(rec, TextFormat("%d", current->data), DARKBLUE);
+        DrawButton(rec, TextFormat("%d", current->data),(Color){ 0, 121, 211, 200 });
 
         // Dessiner la flèche suivante (si elle existe)
         if (current->next != NULL)
@@ -484,7 +486,7 @@ void DrawZoomingText(const char *text, Vector2 *position, float *fontSize, float
             (*fontSize) = 20 * (*zoomFactor);
         }
         // Calculate new text position based on zoom
-        position->x = (screenWidth - MeasureText(text, (*fontSize))) / 2;
+        position->x = (GetScreenWidth() - MeasureText(text, (*fontSize))) / 2;
         position->y -= 2;
 
         // Draw the zooming text
@@ -538,11 +540,6 @@ void deleteAllNodes(Node **head)
 
 // exaiting++++++++++++++++++========================---------------------------
 
-void InsertNodes(int data)
-{
-    insertNode(&head, data);
-}
-
 void formatter(char c[MAX_INPUT_CHARS + 1])
 {
     for (int i = 0; i < MAX_INPUT_CHARS + 1; i++)
@@ -557,26 +554,22 @@ void formatter(char c[MAX_INPUT_CHARS + 1])
 
 int main(void)
 {
-    int screenWidth = 2000;
-    int screenHeight = 1500;
+    int screenWidth = GetMonitorWidth(1);
+    int screenHeight = GetMonitorHeight(1);
 
     bool actionRecherche = false;
-    bool Actionscroller = false;
     bool ActionDelete = false;
     bool ActionInsert = false;
     bool actionRechercheDelete = false;
     bool rechercher = false;
     bool createMenuActive = false;
-
     bool Actionsort = false;
-
     bool insertdebut = false;
     bool insertfin = false;
     bool insertind = false;
     bool insertval = false;
 
     int index = 0;
-
     int resultaRechercher = -1;
     int clemessage = -1;
 
@@ -584,25 +577,18 @@ int main(void)
 
     char name[MAX_INPUT_CHARS + 1] = "\0"; // Buffer to store input text (plus null terminator)
     int letterCount = 0;
-
-    int scrollSpeed = 10;
-    Vector2 mousePosition;
+    int debut = (GetScreenWidth()-(AllScreenButton-500))/2;
 
     // declaration for using animation text
     const char *text = "Please entrer numbre";
     Vector2 textPosition = {(float)(screenWidth - MeasureText(text, 20)) / 2, DebutposY + 250};
 
-    // setting camera ====================================================================================
 
-    Camera2D camera = {0};
-    camera.target = (Vector2){0, 0};
-    camera.offset = (Vector2){GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f};
-    camera.rotation = 0.0f;
-    camera.zoom = 1.0f;
+    // Setup init configuration flags (view FLAGS) ========================init window ===============================
 
-    // Setup init configuration flags (view FLAGS)
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(screenWidth, screenHeight, "Raylib Demo");
+    ToggleFullscreen();
 
     Rectangle buttonCreate = {-(buttonWidth + 100), buttonPosition.y, buttonWidth, buttonHeight};
     Rectangle buttoninsert = {-(buttonWidth + 100), buttonPosition.y + buttonHeight + 10, buttonWidth, buttonHeight};
@@ -610,9 +596,8 @@ int main(void)
     Rectangle buttonDelete = {-(buttonWidth + 100), buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth, buttonHeight};
     Rectangle buttonTRI = {-(buttonWidth + 100), buttonPosition.y + 4 * (buttonHeight + 10), buttonWidth, buttonHeight};
 
-    Rectangle inputing = {1150, buttonRecherche.y, 350, 100};
-    Rectangle scroller = {5, 1800, 550, 30};
-
+    Rectangle inputing = {(GetScreenWidth()- 350)/2, buttonRecherche.y, 350, 100};
+    
     Rectangle randomButton = {buttonPosition.x + buttonWidth + 10, buttonPosition.y, buttonWidth, buttonHeight};
     Rectangle endButton = {buttonPosition.x + (buttonWidth + 10) * 2, buttonPosition.y, buttonWidth + 20, buttonHeight};
     Rectangle beginningButton = {buttonPosition.x + (buttonWidth + 10) * 3 + 20, buttonPosition.y, buttonWidth + 80, buttonHeight};
@@ -640,6 +625,7 @@ int main(void)
             animationreset();
         }
 
+        //************************************ begin animation ****************
         if (buttonCreate.x <= 100)
         {
             buttonCreate.x += 2;
@@ -648,28 +634,31 @@ int main(void)
             buttonDelete.x += 2;
             buttonTRI.x += 2;
         }
+
+
+        // move list "Left" or "Right" and where click "Space"
+        if (IsKeyDown(KEY_LEFT))
+        {
+            debut -= 10.f;
+        }
+        if (IsKeyDown(KEY_RIGHT))
+        {
+            debut += 10.f;
+        }
+        if (IsKeyPressed(KEY_SPACE))
+        {
+            debut = (GetScreenWidth()-(AllScreenButton-debut))/2; 
+        }
+
         // add minimize and maximize
         if (IsWindowResized())
         {
             // Update content or layout based on new window size
             // You can get the new width and height using:
-            screenWidth = GetScreenWidth();
-            screenHeight = GetScreenHeight();
+            screenWidth = 2000;
+            screenHeight = 1500;
         }
 
-        mousePosition = GetMousePosition();
-
-        if (IsMouseButtonDown(MOUSE_LEFT_BUTTON))
-        {
-            if (CheckCollisionPointRec(mousePosition, scroller))
-            {
-                Actionscroller = true;
-            }
-        }
-        else
-        {
-            Actionscroller = false;
-        }
         //=====================================================insert button===========================
 
         if (isClicked(buttoninsert))
@@ -686,7 +675,7 @@ int main(void)
             clemessage = -1;
         }
 
-        if (isClicked(insertDebut))
+        if (isClicked(insertDebut) && ActionInsert)
         {
             actionRecherche = !actionRecherche;
             insertdebut = actionRecherche;
@@ -699,7 +688,7 @@ int main(void)
             clemessage = -1;
         }
 
-        if (insertdebut)
+        if (insertdebut && ActionInsert)
         {
             if (IsKeyPressed(KEY_ENTER))
             {
@@ -718,7 +707,7 @@ int main(void)
             }
         }
 
-        if (isClicked(insertFin))
+        if (isClicked(insertFin) && ActionInsert)
         {
             actionRecherche = !actionRecherche;
             insertfin = actionRecherche;
@@ -750,7 +739,7 @@ int main(void)
             }
         }
 
-        if (isClicked(insertindex))
+        if (isClicked(insertindex) && ActionInsert)
         {
             insertfin = false;
             insertdebut = false;
@@ -957,41 +946,6 @@ int main(void)
             clemessage = -1;
         }
 
-        // scroller and camera if use key Right
-        if (IsKeyDown(KEY_RIGHT) && (camera.target.x >= 0))
-        {
-            camera.target.x += 10.0f;
-            scroller.x += scrollSpeed;
-
-            if (scroller.x + scroller.width > GetScreenWidth())
-            {
-                scroller.x = GetScreenWidth() - scroller.width;
-            }
-        }
-
-        // scroller and camera if use key Left
-        else if (IsKeyDown(KEY_LEFT) && (camera.target.x >= 0))
-        {
-            camera.target.x -= 10.0f;
-            scroller.x -= scrollSpeed;
-            if (scroller.x < 0)
-            {
-                scroller.x = 0;
-                camera.target.x = 0;
-            }
-        }
-
-        if (Actionscroller)
-        {
-            if (scroller.x < 0)
-            {
-                scroller.x = 0;
-                camera.target.x = 0;
-            }
-            scroller.x += GetMouseDelta().x;
-            camera.target.x += GetMouseDelta().x;
-        }
-
         // input numbre ====================================================
         if (actionRecherche)
         {
@@ -1021,18 +975,8 @@ int main(void)
             }
         }
 
-        // click delete Recherche ===============================================
-        if (isClicked(deleteRecherche))
-        {
-            actionRechercheDelete = !actionRechercheDelete;
-            actionRecherche = actionRechercheDelete;
-            formatter(name);
-            letterCount = 0;
-            clemessage = -1;
-        }
-
         // supprimer la première valeur d'une liste doublement chaînée
-        if (isClicked(deletedebut))
+        if (isClicked(deletedebut) && ActionDelete)
         {
             actionRecherche = false;
             if (head == NULL)
@@ -1047,7 +991,7 @@ int main(void)
         }
 
         // supprimer la dernière valeur d'une liste doublement chaînée
-        if (isClicked(deleteFin))
+        if (isClicked(deleteFin) && ActionDelete)
         {
             actionRecherche = false;
             if (head == NULL)
@@ -1059,6 +1003,16 @@ int main(void)
                 supprimerDerniereValeur(&head);
                 clemessage = -1;
             }
+        }
+
+        // click delete Recherche ===============================================
+        if (isClicked(deleteRecherche) && ActionDelete)
+        {
+            actionRechercheDelete = !actionRechercheDelete;
+            actionRecherche = actionRechercheDelete;
+            formatter(name);
+            letterCount = 0;
+            clemessage = -1;
         }
 
         // activer la recherche pour delete
@@ -1090,7 +1044,7 @@ int main(void)
         }
 
         // supprimer tout les valeurs d'une liste doublement chaînée
-        if (isClicked(deleteAll))
+        if (isClicked(deleteAll) && ActionDelete)
         {
             actionRecherche = false;
             if (head == NULL)
@@ -1104,7 +1058,7 @@ int main(void)
             }
         }
         // Tri croissant la liste doublement chaînée
-        if (isClicked(TriCroissant))
+        if (isClicked(TriCroissant) && Actionsort)
         {
             if (head == NULL)
             {
@@ -1117,7 +1071,7 @@ int main(void)
             }
         }
         // Tri Decroissant la liste doublement chaînée
-        if (isClicked(Tridecroissant))
+        if (isClicked(Tridecroissant) && Actionsort)
         {
             if (head == NULL)
             {
@@ -1134,10 +1088,7 @@ int main(void)
         BeginDrawing();
 
         // init Background
-        ClearBackground(RAYWHITE);
-
-        DrawRectangleRec(scroller, DARKGRAY);
-        BeginMode2D(camera);
+        ClearBackground(DARKGRAY);
 
         // =============================================Draw Button==================================
 
@@ -1289,10 +1240,9 @@ int main(void)
             }
         }
         //((((((((((((((((((((((((((<<<<<<<<<<<<<<<<<<Draw List<<<<<<<<<<<<<<<<<)))))))))))))))))))))))))))))
-        drawList();
+        drawList(debut);
 
         //===============================Close camera=============================================
-        EndMode2D();
         DrawFPS(10, 10);
 
         EndDrawing();
