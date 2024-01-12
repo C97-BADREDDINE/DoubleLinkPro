@@ -1096,7 +1096,7 @@ int main(void)
         DrawButton(buttoninsert, "Insert", GOLD);
         DrawButton(buttonRecherche, "Rechercher", ORANGE);
         DrawButton(buttonDelete, "Delete", RED);
-        DrawButton(buttonTRI, "Tri", GREEN);
+        DrawButton(buttonTRI, "Sort", GREEN);
 
         //_______________________________________________<input number>___________________________________
         if (actionRecherche)
@@ -1137,8 +1137,8 @@ int main(void)
         //_______________________________________________<draw Buttons Insert>______________________________________
         if (ActionInsert)
         {
-            DrawButton(insertDebut, "InsertToDebut", GOLD);
-            DrawButton(insertFin, "InsertToFin", GOLD);
+            DrawButton(insertDebut, "Insert Debut", GOLD);
+            DrawButton(insertFin, "Insert Fin", GOLD);
             DrawButton(insertindex, "Insert Indice", GOLD);
         }
 
@@ -1146,7 +1146,7 @@ int main(void)
         if (Actionsort)
         {
             DrawButton(TriCroissant, "Croissant", GREEN);
-            DrawButton(Tridecroissant, "Decroissant", GREEN);
+            DrawButton(Tridecroissant, "Decreasing", GREEN);
         }
         //_____________________________________________draw input Rechercher______________________________________________
         if (rechercher)
