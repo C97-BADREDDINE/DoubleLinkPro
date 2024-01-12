@@ -22,7 +22,7 @@ Node *createNode(int data)
     newNode->prev = NULL;
     return newNode;
 }
-// ajouter un noeud 
+// ajouter un noeud
 void insertNode(Node **head, int data)
 {
     Node *newNode = createNode(data);
@@ -273,6 +273,20 @@ void insertAtIndex(Node **head, int data, int Index)
     }
     current->next = newNode;
 }
+
+int countElements(Node **head)
+{
+    int count = 0;
+    Node *current = *head;
+
+    while (current != NULL)
+    {
+        count++;
+        current = current->next;
+    }
+
+    return count;
+}
 //----------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------
 
@@ -286,9 +300,10 @@ void insertAtIndex(Node **head, int data, int Index)
 
 Node *head = NULL;
 
-
 Vector2 buttonPosition = {100, 100};
+int countList = 0;
 int AllScreenButton;
+int c;
 
 //-------------------------- function check is button clicked ! --------------------------------------
 bool isClicked(Rectangle rec)
@@ -298,7 +313,6 @@ bool isClicked(Rectangle rec)
     // GetMousePosition(): this function is likely getting the current position of the mouse cursor
     // CheckCollisionPointRec(GetMousePosition(), rec) : ceci vérifie si le curseur de la souris se trouve dans les limites du rectangle spécifié (rec)
     // IsMouseButtonPressed(MOUSE_LEFT_BUTTON): this checks if the left mouse button is pressed.
-
 }
 
 //------------------------check mouse is over button ! -----------------------------------------------
@@ -322,8 +336,8 @@ void DrawButton(Rectangle rect, const char *text, Color co)
         co = SKYBLUE;
         DrawRectangle(rect.x - 7, rect.y - 7, rect.width + 14, rect.height + 14, (Color){0, 0, 0, 5});
     }
-    
-    DrawRectangleRec(rect, isClicked(rect) ? DARKGRAY : co); // Draw button outline
+
+    DrawRectangleRec(rect, isClicked(rect) ? DARKGRAY : co);                                                       // Draw button outline
     DrawText(text, rect.x + (rect.width - MeasureText(text, 20)) / 2, rect.y + (rect.height - 20) / 2, 23, WHITE); // Draw button text
 }
 
@@ -352,7 +366,7 @@ void DrawButtonInput(Rectangle rect, const char *text, Color co)
     DrawText("Entrer Le Numbre :", rect.x - 530 + (rect.width) / 2, rect.y - 20 + (rect.height - 20) / 2, 35, BLACK); // Draw button text
 }
 
-// fonction qui designer le rectangle de input pour entrer l'index 
+// fonction qui designer le rectangle de input pour entrer l'index
 void DrawButtonInput2(Rectangle rect, const char *text, Color co)
 {
     if (is_mouse_over_button(rect))
@@ -372,7 +386,7 @@ void DrawButtonInput2(Rectangle rect, const char *text, Color co)
     DrawText("Entrer Indice:", rect.x - 530 + (rect.width) / 2, rect.y - 20 + (rect.height - 20) / 2, 35, BLACK);  // Draw button text
 }
 
-// fonction qui designer les fleches entre les noeud de la liste (le suivant) 
+// fonction qui designer les fleches entre les noeud de la liste (le suivant)
 void DrawFlechRight(int firstX, int firstY, int FinX, int finY)
 {
     // Calculate arrow shaft vector
@@ -397,7 +411,7 @@ void DrawFlechRight(int firstX, int firstY, int FinX, int finY)
     DrawLineEx(end, arrowHeadLeft, 4.0f, color);
 }
 
-// fonction qui designer les fleches entre les noeud de la liste (le precedent) 
+// fonction qui designer les fleches entre les noeud de la liste (le precedent)
 void DrawFlechLeft(int firstX, int firstY, int FinX, int finY)
 {
     // Calculate arrow shaft vector
@@ -422,11 +436,11 @@ void DrawFlechLeft(int firstX, int firstY, int FinX, int finY)
     DrawLineEx(start, arrowHeadLeft, 4.0f, color);
 }
 
-
-void drawList(int Debut)
+int debut = 0;
+void drawList()
 {
     Node *current = head;
-    int xPos = Debut;
+    int xPos = debut;
     int rectWidth = ListWidth;
     int rectHeight = ListHeight;
     int arrowSpacing = DebutposY; // Ajustez cette valeur pour séparer davantage les flèches
@@ -435,7 +449,7 @@ void drawList(int Debut)
     {
         // Dessiner le rectangle avec la valeur
         Rectangle rec = {xPos, DebutposY, rectWidth, rectHeight};
-        DrawButton(rec, TextFormat("%d", current->data),(Color){ 0, 121, 211, 200 });
+        DrawButton(rec, TextFormat("%d", current->data), (Color){0, 121, 211, 200});
 
         // Dessiner la flèche suivante (si elle existe)
         if (current->next != NULL)
@@ -452,7 +466,15 @@ void drawList(int Debut)
         current = current->next;
         xPos += 250;
     }
+
+    countList = countElements(&head);
     AllScreenButton = xPos;
+
+    if (countList != c)
+    {
+        c = countList;
+        debut = (GetScreenWidth() - (AllScreenButton - debut)) / 2;
+    }
 }
 
 float fontSize = 20;
@@ -577,12 +599,10 @@ int main(void)
 
     char name[MAX_INPUT_CHARS + 1] = "\0"; // Buffer to store input text (plus null terminator)
     int letterCount = 0;
-    int debut = (GetScreenWidth()-(AllScreenButton-500))/2;
 
     // declaration for using animation text
     const char *text = "Please entrer numbre";
     Vector2 textPosition = {(float)(screenWidth - MeasureText(text, 20)) / 2, DebutposY + 250};
-
 
     // Setup init configuration flags (view FLAGS) ========================init window ===============================
 
@@ -596,8 +616,8 @@ int main(void)
     Rectangle buttonDelete = {-(buttonWidth + 100), buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth, buttonHeight};
     Rectangle buttonTRI = {-(buttonWidth + 100), buttonPosition.y + 4 * (buttonHeight + 10), buttonWidth, buttonHeight};
 
-    Rectangle inputing = {(GetScreenWidth()- 350)/2, buttonRecherche.y, 350, 100};
-    
+    Rectangle inputing = {(GetScreenWidth() - 350) / 2, buttonRecherche.y, 350, 100};
+
     Rectangle randomButton = {buttonPosition.x + buttonWidth + 10, buttonPosition.y, buttonWidth, buttonHeight};
     Rectangle endButton = {buttonPosition.x + (buttonWidth + 10) * 2, buttonPosition.y, buttonWidth + 20, buttonHeight};
     Rectangle beginningButton = {buttonPosition.x + (buttonWidth + 10) * 3 + 20, buttonPosition.y, buttonWidth + 80, buttonHeight};
@@ -635,7 +655,6 @@ int main(void)
             buttonTRI.x += 2;
         }
 
-
         // move list "Left" or "Right" and where click "Space"
         if (IsKeyDown(KEY_LEFT))
         {
@@ -647,7 +666,7 @@ int main(void)
         }
         if (IsKeyPressed(KEY_SPACE))
         {
-            debut = (GetScreenWidth()-(AllScreenButton-debut))/2; 
+            debut = (GetScreenWidth() - (AllScreenButton - debut)) / 2;
         }
 
         // add minimize and maximize
@@ -1240,7 +1259,7 @@ int main(void)
             }
         }
         //((((((((((((((((((((((((((<<<<<<<<<<<<<<<<<<Draw List<<<<<<<<<<<<<<<<<)))))))))))))))))))))))))))))
-        drawList(debut);
+        drawList();
 
         //===============================Close camera=============================================
         DrawFPS(10, 10);
