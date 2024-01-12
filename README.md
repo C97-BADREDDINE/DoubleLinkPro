@@ -1,12 +1,12 @@
 # DoubleLinkPro
 
-## Description de projet
+## Project description
 
 - **Mission:** Sort by selection
 - **GUI Library:** Raylib
   
   <br>
- ## Fonctionnalités:
+ ## features:
 ### Create
 
 - Random: Create a random list
@@ -18,7 +18,7 @@
 - Use the button to insert a node at the start, end, or a specific index.
 - Enter the number the way you want it in the node.
 
-### Suppression
+### Deletion
 
 - Press the button to remove a node from the beginning, end, or a specific index.
 - Delete the entire list option available.
