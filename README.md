@@ -1,35 +1,43 @@
-# DoubleLinkPro 
+# DoubleLinkPro
 
-<h2>Description de projet </h2>
-<ul>
-    <li> Le nom : DoubleLinkPro </li>
-    <li> GUI Library : Raylib </li>
-    <li>Les fonctionnalitées :</li>
-</ul> 
-<dl>
-    <dt> creation : </dt>
-        <dd>Random: create a random list, at End: create the list in FIFO, at Beginning: create the list in LIFO</dd>
-    <dt> insertion : </dt>
-        <dd></dd>
-    <dt> supression : </dt>
-    <dt> Trie : </dt>
-        <dd></dd>
-</dl>
-    
+## Description de projet
 
-<h2>Team members</h2>
+- **Mission:** Sort by selection
+- **GUI Library:** Raylib
+- **Fonctionnalités:**
 
-<ul>
-    <li>Boukaoula Aymen 222231586401 G4</li>
-    <li>Bensalma Badreddine 222231389211 G4</li>
-</ul> 
+### Create
 
+- Random: Create a random list
+- At End: Create the list in FIFO
+- At Beginning: Create the list in LIFO
 
-<h2>Notes</h2>
+### Insertion
 
-<ul>
-    <li> To enter the index: press on the writing window to type the index. To access it, press and hold the <b>'Enter'</b>  key .</li>
-    <li> To scroll: to scroll to the right, press the <b>'Right'</b> key, and to go left press the 'Left' key. To initialize the list press the 'Space' key.</li>
-    <li>To close the system click on 'ESC' key</li>
-</ul> 
+- Use the button to insert a node at the start, end, or a specific index.
+- Enter the number the way you want it in the node.
 
+### Suppression
+
+- Press the button to remove a node from the beginning, end, or a specific index.
+- Delete the entire list option available.
+
+### Trie
+
+- Press the button to sort the list
+  - Croissant: Sort in ascending order
+  - Decroissant: Sort in descending order
+
+## Team Members
+
+- Boukaoula Aymen 222231586401 G4
+- Bensalma Badreddine 222231389211 G4
+
+## Notes
+
+- To enter the index, press on the writing window to type the index. To access it, press and hold the **'Enter'** key.
+- To scroll:
+  - To scroll to the right, press the **'Right'** key.
+  - To scroll to the left, press the **'Left'** key.
+  - To initialize the list, press the **'Space'** key.
+- To close the system, click on **'ESC'** key.
