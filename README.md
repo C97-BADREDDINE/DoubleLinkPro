@@ -1,4 +1,14 @@
 # DoubleLinkPro 
+
+<h2>Description de projet </h2>
+<ul>
+    <li> Le nom : DoubleLinkPro </li>
+    <li> GUI Library : Raylib </li>
+    <li> Les fonctionnalitées : </li>
+    <dl> gddf </dl>.
+    <dt> efrgesdg </dt>
+</ul> 
+
 <h2>Team members</h2>
 
 <ul>
@@ -7,10 +17,7 @@
 </ul> 
 
 
-<h2>Description de projet </h2>
-
-
-<h2>Description des fonctionnalités</h2>
+<h2>Notes</h2>
 
 <ul>
     <li> Pour enter l'indice : Appuyez sur la fenètre d'ecriture pour taper l'indice et pour y accéder appuyer et maintenez key-entrer</li>
