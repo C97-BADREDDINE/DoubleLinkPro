@@ -4,13 +4,15 @@
 <ul>
     <li> Le nom : DoubleLinkPro </li>
     <li> GUI Library : Raylib </li>
-    <li> Les fonctionnalitées : </li>
-    <dl> creation : </dl>
-    <dl> insertion : </dl>
-    <dl> supression : </dl>
-    <dl> Trie : </dl>
-    
+    <li>Les fonctionnalitées : </li>
 </ul> 
+    <dl>
+    <li> creation : </li>
+    <li> insertion : </li>
+    <li> supression : </li>
+    <li> Trie : </li>
+    </dl>
+    
 
 <h2>Team members</h2>
 
