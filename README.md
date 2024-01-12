@@ -6,9 +6,7 @@
     <li> GUI Library : Raylib </li>
     
 </ul> 
- <ul>
-<li>Les fonctionnalitées : </li>
-</ul>
+
 
     <dl>
     <dt> creation : </dt>
