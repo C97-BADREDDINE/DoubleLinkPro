@@ -278,7 +278,7 @@ void insertAtIndex(Node **head, int data, int Index)
 #define ListHeight 170
 
 Node *head = NULL;
-int debut = 400;
+
 
 Vector2 buttonPosition = {100, 100};
 int AllScreenButton;
@@ -403,6 +403,7 @@ void DrawFlechLeft(int firstX, int firstY, int FinX, int finY)
     DrawLineEx(start, arrowHeadLeft, 4.0f, color);
 }
 
+
 void drawList(int Debut)
 {
     Node *current = head;
@@ -415,7 +416,7 @@ void drawList(int Debut)
     {
         // Dessiner le rectangle avec la valeur
         Rectangle rec = {xPos, DebutposY, rectWidth, rectHeight};
-        DrawButton(rec, TextFormat("%d", current->data), DARKBLUE);
+        DrawButton(rec, TextFormat("%d", current->data),(Color){ 0, 121, 211, 200 });
 
         // Dessiner la flèche suivante (si elle existe)
         if (current->next != NULL)
@@ -539,16 +540,13 @@ int main(void)
     bool actionRechercheDelete = false;
     bool rechercher = false;
     bool createMenuActive = false;
-
     bool Actionsort = false;
-
     bool insertdebut = false;
     bool insertfin = false;
     bool insertind = false;
     bool insertval = false;
 
     int index = 0;
-
     int resultaRechercher = -1;
     int clemessage = -1;
 
@@ -556,8 +554,7 @@ int main(void)
 
     char name[MAX_INPUT_CHARS + 1] = "\0"; // Buffer to store input text (plus null terminator)
     int letterCount = 0;
-
-    int scrollSpeed = 10;
+    int debut = (GetScreenWidth()-(AllScreenButton-500))/2;
 
     // declaration for using animation text
     const char *text = "Please entrer numbre";
@@ -565,6 +562,7 @@ int main(void)
 
 
     // Setup init configuration flags (view FLAGS) ========================init window ===============================
+
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(screenWidth, screenHeight, "Raylib Demo");
     ToggleFullscreen();
@@ -577,7 +575,6 @@ int main(void)
 
     Rectangle inputing = {(GetScreenWidth()- 350)/2, buttonRecherche.y, 350, 100};
     
-
     Rectangle randomButton = {buttonPosition.x + buttonWidth + 10, buttonPosition.y, buttonWidth, buttonHeight};
     Rectangle endButton = {buttonPosition.x + (buttonWidth + 10) * 2, buttonPosition.y, buttonWidth + 20, buttonHeight};
     Rectangle beginningButton = {buttonPosition.x + (buttonWidth + 10) * 3 + 20, buttonPosition.y, buttonWidth + 80, buttonHeight};
@@ -627,7 +624,7 @@ int main(void)
         }
         if (IsKeyPressed(KEY_SPACE))
         {
-            debut = 400;
+            debut = (GetScreenWidth()-(AllScreenButton-debut))/2; 
         }
 
         // add minimize and maximize
