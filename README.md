@@ -4,8 +4,9 @@
 <ul>
     <li> Le nom : DoubleLinkPro </li>
     <li> GUI Library : Raylib </li>
-    <li>Les fonctionnalitées : </li>
+    
 </ul> 
+<li>Les fonctionnalitées : </li>
     <dl>
     <dt> creation : </dt>
         <dd></dd>
