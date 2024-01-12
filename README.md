@@ -4,8 +4,9 @@
 
 - **Mission:** Sort by selection
 - **GUI Library:** Raylib
-- **Fonctionnalités:**
-
+  
+  <br>
+ ## Fonctionnalités:
 ### Create
 
 - Random: Create a random list
@@ -35,7 +36,7 @@
 
 ## Notes
 
-- To enter the index, press on the writing window to type the index. To access it, press and hold the **'Enter'** key.
+- After insert a number at a specific index, press and hold the 'Enter' key to insert value in Node.
 - To scroll:
   - To scroll to the right, press the **'Right'** key.
   - To scroll to the left, press the **'Left'** key.
