@@ -5,8 +5,11 @@
     <li> Le nom : DoubleLinkPro </li>
     <li> GUI Library : Raylib </li>
     <li> Les fonctionnalitées : </li>
-    <dl> gddf </dl>.
-    <dt> efrgesdg </dt>
+    <dl> creation : </dl>
+    <dl> insertion : </dl>
+    <dl> supression : </dl>
+    <dl> Trie : </dl>
+    
 </ul> 
 
 <h2>Team members</h2>
