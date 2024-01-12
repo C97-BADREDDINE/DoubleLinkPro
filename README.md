@@ -23,7 +23,7 @@
 - Press the button to remove a node from the beginning, end, or a specific index.
 - Delete the entire list option available.
 
-### Trie
+### Sort
 
 - Press the button to sort the list
   - Croissant: Sort in ascending order
