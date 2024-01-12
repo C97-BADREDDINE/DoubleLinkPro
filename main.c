@@ -278,6 +278,7 @@ void insertAtIndex(Node **head, int data, int Index)
 #define ListHeight 170
 
 Node *head = NULL;
+int debut = 400;
 
 Vector2 buttonPosition = {100, 100};
 int AllScreenButton;
@@ -401,10 +402,11 @@ void DrawFlechLeft(int firstX, int firstY, int FinX, int finY)
     // Draw arrow head (left side)
     DrawLineEx(start, arrowHeadLeft, 4.0f, color);
 }
-void drawList()
+
+void drawList(int Debut)
 {
     Node *current = head;
-    int xPos = DebutposX;
+    int xPos = Debut;
     int rectWidth = ListWidth;
     int rectHeight = ListHeight;
     int arrowSpacing = DebutposY; // Ajustez cette valeur pour séparer davantage les flèches
@@ -561,13 +563,6 @@ int main(void)
     const char *text = "Please entrer numbre";
     Vector2 textPosition = {(float)(screenWidth - MeasureText(text, 20)) / 2, DebutposY + 250};
 
-    // setting camera ====================================================================================
-
-    Camera2D camera = {0};
-    camera.target = (Vector2){0, 0};
-    camera.offset = (Vector2){GetMonitorWidth(1) / 2.0f, GetMonitorHeight(1) / 2.0f};
-    camera.rotation = 0.0f;
-    camera.zoom = 1.0f;
 
     // Setup init configuration flags (view FLAGS) ========================init window ===============================
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
@@ -580,8 +575,8 @@ int main(void)
     Rectangle buttonDelete = {-(buttonWidth + 100), buttonPosition.y + 3 * (buttonHeight + 10), buttonWidth, buttonHeight};
     Rectangle buttonTRI = {-(buttonWidth + 100), buttonPosition.y + 4 * (buttonHeight + 10), buttonWidth, buttonHeight};
 
-    Rectangle inputing = {1150, buttonRecherche.y, 350, 100};
-    Rectangle scroller = {5, GetMonitorPhysicalHeight(1), 550, 30};
+    Rectangle inputing = {(GetScreenWidth()- 350)/2, buttonRecherche.y, 350, 100};
+    
 
     Rectangle randomButton = {buttonPosition.x + buttonWidth + 10, buttonPosition.y, buttonWidth, buttonHeight};
     Rectangle endButton = {buttonPosition.x + (buttonWidth + 10) * 2, buttonPosition.y, buttonWidth + 20, buttonHeight};
@@ -610,6 +605,7 @@ int main(void)
             animationreset();
         }
 
+        //************************************ begin animation ****************
         if (buttonCreate.x <= 100)
         {
             buttonCreate.x += 2;
@@ -618,6 +614,22 @@ int main(void)
             buttonDelete.x += 2;
             buttonTRI.x += 2;
         }
+
+
+        // move list "Left" or "Right" and where click "Space"
+        if (IsKeyDown(KEY_LEFT))
+        {
+            debut -= 10.f;
+        }
+        if (IsKeyDown(KEY_RIGHT))
+        {
+            debut += 10.f;
+        }
+        if (IsKeyPressed(KEY_SPACE))
+        {
+            debut = 400;
+        }
+
         // add minimize and maximize
         if (IsWindowResized())
         {
@@ -914,39 +926,6 @@ int main(void)
             clemessage = -1;
         }
 
-        if (AllScreenButton > GetScreenWidth())
-        {
-            // scroller and camera if use key Right
-            if (IsKeyDown(KEY_RIGHT) && (scroller.x + scroller.width < AllScreenButton / 2))
-            {
-                camera.target.x += 10.0f;
-                scroller.x += scrollSpeed;
-            }
-        }
-
-        // scroller and camera if use key Left
-        if (IsKeyDown(KEY_LEFT) && (camera.target.x >= 0))
-        {
-            camera.target.x -= 10.0f;
-            scroller.x -= scrollSpeed;
-            if (scroller.x < 0)
-            {
-                scroller.x = 0;
-                camera.target.x = 0;
-            }
-        }
-
-        /*if (Actionscroller)
-        {
-            if (scroller.x < 0)
-            {
-                scroller.x = 0;
-                camera.target.x = 0;
-            }
-            scroller.x += GetMouseDelta().x;
-            camera.target.x += GetMouseDelta().x;
-        }*/
-
         // input numbre ====================================================
         if (actionRecherche)
         {
@@ -1090,9 +1069,6 @@ int main(void)
 
         // init Background
         ClearBackground(DARKGRAY);
-
-        DrawRectangleRec(scroller, DARKGRAY);
-        BeginMode2D(camera);
 
         // =============================================Draw Button==================================
 
@@ -1244,10 +1220,9 @@ int main(void)
             }
         }
         //((((((((((((((((((((((((((<<<<<<<<<<<<<<<<<<Draw List<<<<<<<<<<<<<<<<<)))))))))))))))))))))))))))))
-        drawList();
+        drawList(debut);
 
         //===============================Close camera=============================================
-        EndMode2D();
         DrawFPS(10, 10);
 
         EndDrawing();
