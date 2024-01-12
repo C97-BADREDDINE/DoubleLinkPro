@@ -7,10 +7,13 @@
     <li>Les fonctionnalitées : </li>
 </ul> 
     <dl>
-    <li> creation : </li>
-    <li> insertion : </li>
-    <li> supression : </li>
-    <li> Trie : </li>
+    <dt> creation : </dt>
+        <dd></dd>
+    <dt> insertion : </dt>
+        <dd></dd>
+    <dt> supression : </dt>
+    <dt> Trie : </dt>
+        <dd></dd>
     </dl>
     
 
@@ -25,7 +28,8 @@
 <h2>Notes</h2>
 
 <ul>
-    <li> Pour enter l'indice : Appuyez sur la fenètre d'ecriture pour taper l'indice et pour y accéder appuyer et maintenez key-entrer</li>
-    <li> scroll : pour scroll à droite appuyez sur key-right et key-left à gauche et pour initialiser la liste appuyez sur key-espace</li>
+    <li> To enter the index: press on the writing window to type the index. To access it, press and hold the <b>'Enter'</b>  key .</li>
+    <li> To scroll: to scroll to the right, press the <b>'Right'</b> key, and to go left press the 'Left' key. To initialize the list press the 'Space' key.</li>
+    <li>To close the system click on 'ESC' key</li>
 </ul> 
 
