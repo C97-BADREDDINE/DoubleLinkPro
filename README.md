@@ -8,7 +8,7 @@
 </ul> 
 <dl>
     <dt> creation : </dt>
-        <dd></dd>
+        <dd>Random: create a random list, at End: create the list in FIFO, at Beginning: create the list in LIFO</dd>
     <dt> insertion : </dt>
         <dd></dd>
     <dt> supression : </dt>
