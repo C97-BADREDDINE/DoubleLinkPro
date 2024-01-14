@@ -436,6 +436,7 @@ void DrawFlechLeft(int firstX, int firstY, int FinX, int finY)
     DrawLineEx(start, arrowHeadLeft, 4.0f, color);
 }
 
+//affiche all list 
 int debut = 0;
 void drawList()
 {
@@ -477,6 +478,7 @@ void drawList()
     }
 }
 
+//var using in animation text
 float fontSize = 20;
 float zoomSpeed = 0.01f;
 float zoomFactor = 1.0f;
@@ -524,7 +526,7 @@ void DrawZoomingText(const char *text, Vector2 *position, float *fontSize, float
 // fonction pour créer une liste qui contient des valeur random
 void RandomNodes()
 {
-    int n = GetRandomValue(0, 9);
+    int n = GetRandomValue(1, 9);
     for (int i = 0; i < n; i++)
     {
         insertNode(&head, GetRandomValue(0, 99));
@@ -560,8 +562,8 @@ void deleteAllNodes(Node **head)
     *head = NULL;
 }
 
-// exaiting++++++++++++++++++========================---------------------------
 
+//Clear String
 void formatter(char c[MAX_INPUT_CHARS + 1])
 {
     for (int i = 0; i < MAX_INPUT_CHARS + 1; i++)
@@ -571,14 +573,17 @@ void formatter(char c[MAX_INPUT_CHARS + 1])
 }
 
 //---------------------------------------------------------------------------------------------------------
-//((((((((((((((((((((((((((((((((((((((((((((((((((((()))))))))))))))))))))))))))))))))))))))))))))))))))))
+//(((((((((((((((((((((((((((((((((((((((((((((((((((((int main)))))))))))))))))))))))))))))))))))))))))))))))))))))
 //---------------------------------------------------------------------------------------------------------
 
 int main(void)
 {
+
+    //================ get width and height your monitor ==========================
     int screenWidth = GetMonitorWidth(1);
     int screenHeight = GetMonitorHeight(1);
 
+    //___________________declaration for Turn/Off button________________________ 
     bool actionRecherche = false;
     bool ActionDelete = false;
     bool ActionInsert = false;
@@ -604,12 +609,13 @@ int main(void)
     const char *text = "Please entrer numbre";
     Vector2 textPosition = {(float)(screenWidth - MeasureText(text, 20)) / 2, DebutposY + 250};
 
-    // Setup init configuration flags (view FLAGS) ========================init window ===============================
-
+    // Setup init configuration flags (view FLAGS)
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+    // ________________________________________init window_______________________ ________________________________
     InitWindow(screenWidth, screenHeight, "Raylib Demo");
     ToggleFullscreen();
 
+    // __________________________________________Declaration button position__________________________________________________________
     Rectangle buttonCreate = {-(buttonWidth + 100), buttonPosition.y, buttonWidth, buttonHeight};
     Rectangle buttoninsert = {-(buttonWidth + 100), buttonPosition.y + buttonHeight + 10, buttonWidth, buttonHeight};
     Rectangle buttonRecherche = {-(buttonWidth + 100), buttonPosition.y + 2 * (buttonHeight + 10), buttonWidth, buttonHeight};
@@ -634,8 +640,10 @@ int main(void)
     Rectangle TriCroissant = {buttonPosition.x + buttonWidth + 10, buttonPosition.y + 4 * (buttonHeight + 10), buttonWidth + 10, buttonHeight};
     Rectangle Tridecroissant = {buttonPosition.x + (buttonWidth + 10) * 2 + 10, buttonPosition.y + 4 * (buttonHeight + 10), buttonWidth + 10, buttonHeight};
 
+    //init fps
     SetTargetFPS(60);
 
+ //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$  <-§ While §->   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
     while (!WindowShouldClose())
     {
         // Update
@@ -645,7 +653,7 @@ int main(void)
             animationreset();
         }
 
-        //************************************ begin animation ****************
+        //************************************ animation for debut****************
         if (buttonCreate.x <= 100)
         {
             buttonCreate.x += 2;
@@ -694,6 +702,7 @@ int main(void)
             clemessage = -1;
         }
 
+        // Check if the 'insertDebut' button is clicked and the 'ActionInsert' condition is true
         if (isClicked(insertDebut) && ActionInsert)
         {
             actionRecherche = !actionRecherche;
@@ -702,11 +711,13 @@ int main(void)
             rechercher = false;
             insertind = false;
             insertval = false;
+            // Call the 'formatter' function with the 'name' as its argument
             formatter(name);
             letterCount = 0;
             clemessage = -1;
         }
 
+        
         if (insertdebut && ActionInsert)
         {
             if (IsKeyPressed(KEY_ENTER))
@@ -726,6 +737,7 @@ int main(void)
             }
         }
 
+        // Check if the 'insertFin' button is clicked and the 'ActionInsert' condition is true
         if (isClicked(insertFin) && ActionInsert)
         {
             actionRecherche = !actionRecherche;
@@ -758,6 +770,7 @@ int main(void)
             }
         }
 
+        // Check if the 'insertindex' button is clicked and the 'ActionInsert' condition is true
         if (isClicked(insertindex) && ActionInsert)
         {
             insertfin = false;
@@ -880,27 +893,7 @@ int main(void)
             createMode = -1;
         }
 
-        //----------------------------------------------Delete Button--------------------------------------------
-
-        // click button Delete and active Action Delete
-        if (isClicked(buttonDelete))
-        {
-            // unactiver les button autres
-            actionRecherche = false;
-            rechercher = false;
-            ActionInsert = false;
-            createMenuActive = false;
-            insertind = false;
-            insertval = false;
-            insertdebut = false;
-            insertfin = false;
-            actionRechercheDelete = false;
-            ActionDelete = !ActionDelete;
-            Actionsort = false;
-            clemessage = -1;
-        }
-
-        // click button Rechercher Valur in List===================================
+        // ================================== button Rechercher Value in List===================================
         if (isClicked(buttonRecherche))
         {
             // desaciver button is is On
@@ -922,7 +915,7 @@ int main(void)
             letterCount = 0;
         }
 
-        // ================================ activer signal recherche ========================
+        // ============ activer signal recherche 
         if (rechercher)
         {
             if (IsKeyReleased(KEY_ENTER))
@@ -950,7 +943,7 @@ int main(void)
             }
         }
 
-        // tri list if click button Tri ======================================
+        // =============================================== button Tri ========================================
         if (isClicked(buttonTRI))
         {
             // turn off other button
@@ -965,7 +958,35 @@ int main(void)
             clemessage = -1;
         }
 
-        // input numbre ====================================================
+        // Tri croissant la liste doublement chaînée
+        if (isClicked(TriCroissant) && Actionsort)
+        {
+            if (head == NULL)
+            {
+                clemessage = 0;
+            }
+            else
+            {
+                sortListSelectionAscending(&head);
+                clemessage = -1;
+            }
+        }
+
+        // Tri Decroissant la liste doublement chaînée
+        if (isClicked(Tridecroissant) && Actionsort)
+        {
+            if (head == NULL)
+            {
+                clemessage = 0;
+            }
+            else
+            {
+                sortListSelectionDescending(&head);
+                clemessage = -1;
+            }
+        }
+
+        // ==============================================input numbre ====================================================
         if (actionRecherche)
         {
             if (letterCount < MAX_INPUT_CHARS)
@@ -992,6 +1013,26 @@ int main(void)
                     name[letterCount] = '\0';
                 }
             }
+        }
+
+        //----------------------------------------------Delete Button--------------------------------------------
+
+        // click button Delete and active Action Delete
+        if (isClicked(buttonDelete))
+        {
+            // unactiver les button autres
+            actionRecherche = false;
+            rechercher = false;
+            ActionInsert = false;
+            createMenuActive = false;
+            insertind = false;
+            insertval = false;
+            insertdebut = false;
+            insertfin = false;
+            actionRechercheDelete = false;
+            ActionDelete = !ActionDelete;
+            Actionsort = false;
+            clemessage = -1;
         }
 
         // supprimer la première valeur d'une liste doublement chaînée
@@ -1076,38 +1117,12 @@ int main(void)
                 clemessage = -1;
             }
         }
-        // Tri croissant la liste doublement chaînée
-        if (isClicked(TriCroissant) && Actionsort)
-        {
-            if (head == NULL)
-            {
-                clemessage = 0;
-            }
-            else
-            {
-                sortListSelectionAscending(&head);
-                clemessage = -1;
-            }
-        }
-        // Tri Decroissant la liste doublement chaînée
-        if (isClicked(Tridecroissant) && Actionsort)
-        {
-            if (head == NULL)
-            {
-                clemessage = 0;
-            }
-            else
-            {
-                sortListSelectionDescending(&head);
-                clemessage = -1;
-            }
-        }
 
-        //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$   Begin Draw   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+        //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$  <-§ Begin Draw §->   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         BeginDrawing();
 
-        // init Background
-        ClearBackground(DARKGRAY);
+        // ___________init Background______________________
+        ClearBackground(GRAY);
 
         // =============================================Draw Button==================================
 
@@ -1161,13 +1176,13 @@ int main(void)
             DrawButton(insertindex, "Insert Indice", GOLD);
         }
 
-        //_____________________________________________draw Buttons Tri______________________________________________
+        //_____________________________________________<draw Buttons Tri>______________________________________________
         if (Actionsort)
         {
             DrawButton(TriCroissant, "Croissant", GREEN);
             DrawButton(Tridecroissant, "Decreasing", GREEN);
         }
-        //_____________________________________________draw input Rechercher______________________________________________
+        //_____________________________________________<draw input Rechercher>______________________________________________
         if (rechercher)
         {
             if (resultaRechercher == 0)
@@ -1218,10 +1233,10 @@ int main(void)
                 DrawZoomingText("", &textPosition, &fontSize, &zoomFactor, zoomSpeed, screenWidth, BLACK);
             }
         }
-        //______________________________________________<draw index Button>___________________________
+        
         if (insertind)
         {
-            DrawButtonInput2(inputing, name, BLACK);
+            DrawButtonInput2(inputing, name, BLACK);//_______<draw index Button>________
             if (clemessage == 0)
             {
                 DrawZoomingText("Please entrer numbre index", &textPosition, &fontSize, &zoomFactor, zoomSpeed, screenWidth, BLACK);
@@ -1236,6 +1251,7 @@ int main(void)
             }
         }
 
+        //_____________warning message_________________
         if (insertval)
         {
             if (clemessage == 0)
@@ -1247,6 +1263,7 @@ int main(void)
                 DrawZoomingText("", &textPosition, &fontSize, &zoomFactor, zoomSpeed, screenWidth, BLACK);
             }
         }
+
         if (Actionsort)
         {
             if (clemessage == 0)
@@ -1258,10 +1275,9 @@ int main(void)
                 DrawText("", inputing.x, DebutposY + 220, 50, RED);
             }
         }
-        //((((((((((((((((((((((((((<<<<<<<<<<<<<<<<<<Draw List<<<<<<<<<<<<<<<<<)))))))))))))))))))))))))))))
+        //((((((((((((((((((((((((((<<<<<<<<<<<<<<<<<<Draw List>>>>>>>>>>>>>>>>>)))))))))))))))))))))))))))))
         drawList();
 
-        //===============================Close camera=============================================
         DrawFPS(10, 10);
 
         EndDrawing();
