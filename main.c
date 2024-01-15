@@ -436,7 +436,7 @@ void DrawFlechLeft(int firstX, int firstY, int FinX, int finY)
     DrawLineEx(start, arrowHeadLeft, 4.0f, color);
 }
 
-//affiche all list 
+// affiche all list
 int debut = 0;
 void drawList()
 {
@@ -478,7 +478,7 @@ void drawList()
     }
 }
 
-//var using in animation text
+// var using in animation text
 float fontSize = 20;
 float zoomSpeed = 0.01f;
 float zoomFactor = 1.0f;
@@ -562,8 +562,7 @@ void deleteAllNodes(Node **head)
     *head = NULL;
 }
 
-
-//Clear String
+// Clear String
 void formatter(char c[MAX_INPUT_CHARS + 1])
 {
     for (int i = 0; i < MAX_INPUT_CHARS + 1; i++)
@@ -583,7 +582,7 @@ int main(void)
     int screenWidth = GetMonitorWidth(1);
     int screenHeight = GetMonitorHeight(1);
 
-    //___________________declaration for Turn/Off button________________________ 
+    //___________________declaration for Turn/Off button________________________
     bool actionRecherche = false;
     bool ActionDelete = false;
     bool ActionInsert = false;
@@ -640,10 +639,10 @@ int main(void)
     Rectangle TriCroissant = {buttonPosition.x + buttonWidth + 10, buttonPosition.y + 4 * (buttonHeight + 10), buttonWidth + 10, buttonHeight};
     Rectangle Tridecroissant = {buttonPosition.x + (buttonWidth + 10) * 2 + 10, buttonPosition.y + 4 * (buttonHeight + 10), buttonWidth + 10, buttonHeight};
 
-    //init fps
+    // init fps
     SetTargetFPS(60);
 
- //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$  <-§ While §->   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+    //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$  <-§ While §->   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
     while (!WindowShouldClose())
     {
         // Update
@@ -717,7 +716,6 @@ int main(void)
             clemessage = -1;
         }
 
-        
         if (insertdebut && ActionInsert)
         {
             if (IsKeyPressed(KEY_ENTER))
@@ -915,7 +913,7 @@ int main(void)
             letterCount = 0;
         }
 
-        // ============ activer signal recherche 
+        // ============ activer signal recherche
         if (rechercher)
         {
             if (IsKeyReleased(KEY_ENTER))
@@ -1080,13 +1078,13 @@ int main(void)
         {
             if (IsKeyPressed(KEY_ENTER))
             {
-                if (head == NULL)
-                {
-                    clemessage = 0;
-                }
-                else if (letterCount == 0)
+                if (letterCount == 0)
                 {
                     clemessage = 1;
+                }
+                else if ( head == NULL)
+                {
+                    clemessage = 0;
                 }
                 else if (!searchNode(head, atoi(name)))
                 {
@@ -1094,8 +1092,11 @@ int main(void)
                 }
                 else
                 {
-                    deleteNode(&head, atoi(name));
-                    clemessage = -1;
+                    while (head !=NULL && searchNode(head, atoi(name)))
+                    {
+                        deleteNode(&head, atoi(name));
+                        clemessage = -1;
+                    }
                 }
 
                 formatter(name);
@@ -1203,7 +1204,6 @@ int main(void)
             }
             else
             {
-
                 DrawZoomingText("", &textPosition, &fontSize, &zoomFactor, zoomSpeed, screenWidth, BLACK);
             }
         }
@@ -1233,10 +1233,10 @@ int main(void)
                 DrawZoomingText("", &textPosition, &fontSize, &zoomFactor, zoomSpeed, screenWidth, BLACK);
             }
         }
-        
+
         if (insertind)
         {
-            DrawButtonInput2(inputing, name, BLACK);//_______<draw index Button>________
+            DrawButtonInput2(inputing, name, BLACK); //_______<draw index Button>________
             if (clemessage == 0)
             {
                 DrawZoomingText("Please entrer numbre index", &textPosition, &fontSize, &zoomFactor, zoomSpeed, screenWidth, BLACK);
