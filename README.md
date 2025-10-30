@@ -31,8 +31,8 @@
 
 ## Team Members
 
-- Boukaoula Aymen 222231586401 G4
-- Bensalma Badreddine 222231389211 G4
+- Boukaoula Aymen
+- Bensalma Badreddine
 
 ## Notes
 
